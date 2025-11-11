@@ -294,13 +294,15 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, getCurrentInstance, watch, onBeforeUnmount } from 'vue'
+import { ref, reactive, onMounted, getCurrentInstance, watch, onBeforeUnmount, nextTick } from 'vue'
 import { formatDate, getImageUrl } from '@/utils/common.js'
-import { 
-  getActualStatus, 
-  getStatusText, 
-  getStatusClass, 
-  getApplyStatusText, 
+import wsClient from '@/utils/websocket'
+import apiModule from '@/api/api.js'
+import {
+  getActualStatus,
+  getStatusText,
+  getStatusClass,
+  getApplyStatusText,
   getApplyStatusClass,
   checkUserInfoComplete,
   getFieldDisplayName,
@@ -354,10 +356,7 @@ const minSwipeDistance = 100
 const edgeWidth = 30 // 边缘检测宽度，单位px
 
 // 在script setup部分添加一个新的ref变量
-const showApplyBtn = ref(true);
-
-// 添加定时刷新器
-let refreshTimer = null;
+const showApplyBtn = ref(false); // 默认隐藏，等确认不是管理员后再显示
 
 // 弹窗状态变化处理
 const handlePopupChange = (e) => {
@@ -449,18 +448,15 @@ onMounted(() => {
     
     // 获取用户信息
     getUserInfo()
-    
+
     // 检查是否已报名
     checkApplyStatus()
 
     // 监听签到成功事件，实现自动刷新
     uni.$on('activityCheckInSuccess', handleCheckInSuccess)
 
-    // 设置定时刷新，每15秒刷新一次数据
-    refreshTimer = setInterval(() => {
-      refreshActivityData()
-      checkApplyStatus(false) // 后台刷新不显示加载框
-    }, 15000) // 15秒刷新一次
+    // 设置WebSocket签到通知监听
+    setupWebSocketListener()
   } else {
     console.error('获取页面参数失败')
     uni.showToast({
@@ -470,15 +466,13 @@ onMounted(() => {
   }
 })
 
-// 组件销毁前清除定时器和事件监听
+// 组件销毁前清除事件监听
 onBeforeUnmount(() => {
-  if (refreshTimer) {
-    clearInterval(refreshTimer);
-    refreshTimer = null;
-  }
-
   // 移除签到成功事件监听
   uni.$off('activityCheckInSuccess', handleCheckInSuccess)
+
+  // 移除WebSocket签到通知监听
+  wsClient.messageHandlers.delete('check_in_notification')
 })
 
 // 处理签到成功事件
@@ -487,13 +481,70 @@ const handleCheckInSuccess = async (data) => {
   if (data && data.activityId && data.activityId.toString() === id.value.toString()) {
     console.log('收到签到成功事件，开始刷新活动详情')
 
-    // 刷新活动数据
-    await refreshActivityData()
-
     // 刷新用户的报名状态（包括签到状态），不显示加载框
     await checkApplyStatus(false)
 
-    console.log('活动详情刷新完成')
+    // 刷新活动数据
+    await refreshActivityData()
+
+    // 使用 nextTick 确保视图更新
+    await nextTick()
+
+    console.log('活动详情刷新完成，当前签到状态:', applyInfo.value.checkInStatus)
+  }
+}
+
+// 设置WebSocket签到通知监听
+const setupWebSocketListener = async () => {
+  try {
+    // 获取后端服务器地址
+    const serverUrl = apiModule.baseURL || 'localhost:8081'
+
+    // 检查WebSocket是否已连接
+    if (!wsClient.isConnected) {
+      console.log('WebSocket未连接，正在建立连接...')
+      try {
+        await wsClient.connect(serverUrl)
+        console.log('WebSocket连接成功')
+      } catch (error) {
+        console.warn('WebSocket连接失败，将在重连后自动注册监听器:', error)
+        // 不影响页面加载，WebSocket会自动重连
+      }
+    } else {
+      console.log('WebSocket已连接，直接注册监听器')
+    }
+
+    // 注册签到通知消息处理器
+    wsClient.onMessageType('check_in_notification', (message) => {
+      console.log('【WebSocket】收到签到通知:', message)
+
+      // 检查是否是当前活动的签到通知
+      if (message.activityId && message.activityId.toString() === id.value.toString()) {
+        console.log('【WebSocket】签到通知匹配当前活动，开始刷新')
+
+        // 刷新活动数据和报名状态
+        handleCheckInSuccess({
+          activityId: message.activityId,
+          checkInStatus: message.checkInStatus
+        })
+
+        // 显示签到成功提示
+        uni.showToast({
+          title: '签到成功',
+          icon: 'success',
+          duration: 2000
+        })
+      } else {
+        console.log('【WebSocket】签到通知不匹配当前活动', {
+          messageActivityId: message.activityId,
+          currentActivityId: id.value
+        })
+      }
+    })
+
+    console.log('WebSocket签到通知监听已设置，当前连接状态:', wsClient.isConnected)
+  } catch (error) {
+    console.error('设置WebSocket监听器失败:', error)
   }
 }
 
@@ -639,23 +690,34 @@ const checkAdmin = async () => {
     const clubId = activityDetail.value.clubId || (clubInfo.value ? clubInfo.value.id : null);
     if (!clubId) {
       isAdmin.value = false;
+      console.log('没有clubId，设置为非管理员');
+      checkCanApply(); // 确认不是管理员后，更新按钮状态
       return;
     }
-    
+
     // 通过社团Id发送api查询
     const res = await proxy.$api.club.getUserRole(clubId);
-    
+
+    console.log('getUserRole 返回结果:', res);
+
     // 判断用户是否是管理员
     if (res.code === 200 && res.data && res.data.type > 0 && res.data.status == 1) {
       isAdmin.value = true;
+      console.log('确认用户是管理员');
     } else {
       isAdmin.value = false;
+      console.log('确认用户不是管理员');
     }
-    
+
+    // 管理员身份确认后，重新检查是否可以报名（更新按钮显示状态）
+    checkCanApply();
+
     // 查询完管理员状态后，刷新活动数据以获取最新的浏览量和报名人数
     refreshActivityData();
   } catch (error) {
+    console.error('检查管理员身份失败:', error);
     isAdmin.value = false;
+    checkCanApply(); // 出错时也要更新按钮状态
   }
 }
 
@@ -671,13 +733,17 @@ const checkApplyStatus = async (showLoading = true) => {
     
     // 调用API检查用户是否已报名该活动
     const res = await proxy.$api.activity.checkApplyStatus(id.value)
-    
+
+    console.log('checkApplyStatus API 返回结果:', res)
+
     if (res.code === 200) {
       if (res.data) {
         // 有报名数据，表示已报名
         hasApplied.value = true
-        // 确保applyInfo是一个对象，然后更新它的属性
-        applyInfo.value = res.data || {}
+        // 直接替换整个对象以确保响应式更新
+        applyInfo.value = { ...res.data }
+
+        console.log('applyInfo 已更新:', JSON.stringify(applyInfo.value))
           
           // 解析已提交的表单数据
           try {
@@ -702,12 +768,16 @@ const checkApplyStatus = async (showLoading = true) => {
         applyInfo.value = {} // 使用空对象而不是null
         parsedForms.value = {}
       }
-      
-      // 在获取报名状态后，更新按钮显示状态
-      showApplyBtn.value = !hasApplied.value && getActualStatus(activityDetail.value) === 1
-      
-      // 检查完报名状态后，刷新活动数据以获取最新的浏览量和报名人数
-      refreshActivityData()
+
+      // 在获取报名状态后，不在这里更新按钮显示状态
+      // 按钮状态由 checkAdmin() -> checkCanApply() 统一控制
+
+      // 打印签到状态用于调试
+      console.log('报名信息已更新:', {
+        hasApplied: hasApplied.value,
+        checkInStatus: applyInfo.value.checkInStatus,
+        applyId: applyInfo.value.id
+      })
     } else {
       uni.showToast({
         title: res.message || '获取报名状态失败',
@@ -736,9 +806,23 @@ const checkApplyStatus = async (showLoading = true) => {
 const checkCanApply = () => {
   // 获取活动实际状态
   const actualStatus = getActualStatus(activityDetail.value)
-  
+
+  console.log('checkCanApply 执行:', {
+    isAdmin: isAdmin.value,
+    actualStatus: actualStatus,
+    hasApplied: hasApplied.value
+  })
+
+  // 如果用户是管理员，不显示报名按钮
+  if (isAdmin.value) {
+    showApplyBtn.value = false
+    console.log('用户是管理员，隐藏报名按钮')
+    return
+  }
+
   // 只有在实际状态为"报名中"(1)时且未报名才可以报名
   showApplyBtn.value = actualStatus === 1 && !hasApplied.value
+  console.log('用户不是管理员，showApplyBtn =', showApplyBtn.value)
 }
 
 // 获取无法报名的原因
@@ -1082,7 +1166,7 @@ const showQRCode = async () => {
     const res = await proxy.$api.activity.generateCheckInCode({
       activityId: id.value,
       applyId: applyInfo.value.id,
-      expireMinutes: 1  // 30分钟有效期
+      expireMinutes: 1  // 1分钟有效期
     })
     
     if (res.code === 200 && res.data) {
@@ -1108,12 +1192,12 @@ const showQRCode = async () => {
       // 打开二维码弹窗
       qrcodePopup.value.open()
       
-      // 设置定时器，在签到码过期前5分钟提醒用户
+      // 设置定时器，在签到码过期前10秒提醒用户
       const now = Date.now()
       const expireTime = res.data.expireTime
       const timeToExpire = expireTime - now
       
-      if (timeToExpire > 5 * 60 * 1000) {  // 如果还有超过5分钟过期
+      if (timeToExpire > 1000) {  // 如果还有超过10秒过期
             setTimeout(() => {
           if (qrcodePopup.value && qrcodePopup.value.isOpen) {  // 确保弹窗对象存在且在打开状态
             uni.showToast({

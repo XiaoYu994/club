@@ -61,7 +61,7 @@ const _sfc_main = {
     });
     return (_ctx, _cache) => {
       return {
-        a: common_assets._imports_0$6,
+        a: common_assets._imports_0$7,
         b: common_vendor.p({
           type: "person",
           size: "20",

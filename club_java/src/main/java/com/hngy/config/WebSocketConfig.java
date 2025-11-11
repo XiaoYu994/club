@@ -21,8 +21,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatWebSocketHandler, "/ws/chat")
-                .addInterceptors(webSocketInterceptor)
+        registry.addHandler(chatWebSocketHandler, "/ws/chat") // 注册路由
+                .addInterceptors(webSocketInterceptor) // 添加拦截器
                 .setAllowedOrigins("*"); // 允许所有来源的WebSocket连接
     }
 } 

@@ -303,7 +303,7 @@ const _sfc_main = {
       } : {}, {
         h: historyRecruitments.value.length === 0
       }, historyRecruitments.value.length === 0 ? {
-        i: common_assets._imports_0$5
+        i: common_assets._imports_0$6
       } : {}, {
         j: common_vendor.f(historyRecruitments.value, (item, index, i0) => {
           return {

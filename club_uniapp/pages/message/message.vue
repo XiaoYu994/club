@@ -2,7 +2,7 @@
   <view class="message-container pageBg">
     <!-- 顶部导航栏 -->
     <custom-nav-bar title="群聊" background="#fff" title-color="#333"></custom-nav-bar>
-    
+
     <!-- 群聊列表 -->
     <scroll-view scroll-y class="scroll-panel">
       <view class="chat-list">
@@ -25,7 +25,7 @@
             <view class="chat-time">{{ formatTime(chat.lastTime) }}</view>
           </view>
         </view>
-        
+
         <!-- 空状态 -->
         <view v-if="chatGroups.length === 0" class="empty-data">
           <image class="empty-image" src="/static/img/empty-chat.png" mode="aspectFit"></image>
@@ -34,7 +34,7 @@
         </view>
       </view>
     </scroll-view>
-    
+
     <!-- 创建群组按钮 -->
     <view v-if="isAdmin" class="float-btn" @tap="createChatGroup">
       <uni-icons type="plus" size="24" color="#fff"></uni-icons>
@@ -101,24 +101,24 @@ const createChatGroup = () => {
 // 时间格式化
 function formatTime(timestamp) {
   if (!timestamp) return "";
-  
+
   const date = new Date(timestamp);
   const now = new Date();
-  
+
   // 今天
   if (date.toDateString() === now.toDateString()) {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   }
-  
+
   // 昨天
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
   if (date.toDateString() === yesterday.toDateString()) {
     return "昨天";
   }
-  
+
   // 本周
   const oneWeekAgo = new Date(now);
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -126,7 +126,7 @@ function formatTime(timestamp) {
     const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     return days[date.getDay()];
   }
-  
+
   // 更早
   return `${date.getMonth() + 1}/${date.getDate()}`;
 }
@@ -138,7 +138,7 @@ function formatTime(timestamp) {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  
+
   .scroll-panel {
     flex: 1;
     padding: 20rpx 0;
@@ -158,7 +158,7 @@ function formatTime(timestamp) {
   margin-bottom: 20rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
-  
+
   &:active {
     transform: scale(0.98);
     background-color: #f9f9f9;
@@ -229,20 +229,20 @@ function formatTime(timestamp) {
   align-items: center;
   padding: 80rpx 0;
   text-align: center;
-  
+
   .empty-image {
     width: 280rpx;
     height: 280rpx;
     opacity: 0.8;
   }
-  
+
   .empty-text {
     font-size: 32rpx;
     color: #999;
     margin-top: 30rpx;
     font-weight: 500;
   }
-  
+
   .empty-tip {
     font-size: 26rpx;
     color: #bbb;
@@ -264,7 +264,7 @@ function formatTime(timestamp) {
   box-shadow: 0 8rpx 30rpx rgba(41, 121, 255, 0.4);
   z-index: 100;
   transition: all 0.3s;
-  
+
   &:active {
     transform: scale(0.95);
     box-shadow: 0 4rpx 15rpx rgba(41, 121, 255, 0.3);

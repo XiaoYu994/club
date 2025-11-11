@@ -143,4 +143,10 @@ public class ClubActivityController {
     public R<String> deleteActivity(@PathVariable Long id) {
         return clubActivityService.removeById(id) ? R.success(MessageConstant.DELETE_SUCCESS) : R.error();
     }
+
+    @ApiOperation("取消活动")
+    @PutMapping("/cancel/{id}")
+    public R<String> cancelActivity(@PathVariable Long id) {
+        return clubActivityService.cancelActivity(id) ? R.success("活动已取消") : R.error();
+    }
 }

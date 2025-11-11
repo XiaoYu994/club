@@ -46,13 +46,14 @@
       <view class="list-container">
         <!-- 使用活动卡片组件 -->
         <activity-card
-          v-for="(item, idx) in activityList" 
+          v-for="(item, idx) in activityList"
           :key="idx"
           :activity="item"
           :isAdmin="isAdmin"
           @detail="goToActivityDetail"
           @edit="editActivity"
           @delete="deleteActivity"
+          @cancel="cancelActivity"
         ></activity-card>
         
         <!-- 加载状态 -->
@@ -88,10 +89,10 @@
           <view class="filter-section">
             <text class="section-title">活动状态</text>
             <view class="filter-options">
-              <view 
-                v-for="(status, idx) in statusOptions" 
+              <view
+                v-for="(status, idx) in statusOptions"
                 :key="idx"
-                :class="['filter-option', filters.status === status.value ? 'active' : '']"
+                :class="['filter-option', tempFilters.status === status.value ? 'active' : '']"
                 @tap="selectStatus(status.value)"
               >
                 {{ status.name }}
@@ -102,10 +103,10 @@
           <view class="filter-section">
             <text class="section-title">排序方式</text>
             <view class="filter-options">
-              <view 
-                v-for="(sort, idx) in sortOptions" 
+              <view
+                v-for="(sort, idx) in sortOptions"
                 :key="idx"
-                :class="['filter-option', filters.sortBy === sort.value ? 'active' : '']"
+                :class="['filter-option', tempFilters.sortBy === sort.value ? 'active' : '']"
                 @tap="selectSort(sort.value)"
               >
                 {{ sort.name }}
@@ -148,17 +149,20 @@ const currentTag = ref(0)
 // 筛选标签
 const filterTags = ref([
   { name: '全部活动', type: 'all' },
-  { name: '进行中', type: 'ongoing' },
   { name: '报名中', type: 'signup' },
-  { name: '已结束', type: 'ended' }
+  { name: '进行中', type: 'ongoing' },
+  { name: '已结束', type: 'ended' },
+  { name: '计划中', type: 'planned' },
+  { name: '已取消', type: 'cancelled' }
 ])
 
 // 状态选项
 const statusOptions = [
   { name: '全部', value: -1 },
-  { name: '报名中', value: 1 },
-  { name: '进行中', value: 2 },
+  { name: '报名中', value: 'signup' },
+  { name: '进行中', value: 'ongoing' },
   { name: '已结束', value: 3 },
+  { name: '计划中', value: 1 },
   { name: '已取消', value: 0 }
 ]
 
@@ -176,8 +180,16 @@ const filters = reactive({
   isAsc: false
 })
 
+// 临时筛选条件（用于抽屉）
+const tempFilters = reactive({
+  status: -1,
+  sortBy: 'create_time',
+  isAsc: false
+})
+
 // 列表数据
 const activityList = ref([])
+const fullActivityList = ref([])  // 存储完整的活动列表，用于前端筛选
 const page = ref(1)
 const pageSize = ref(10)
 const hasMore = ref(true)
@@ -222,12 +234,22 @@ const checkUserRole = async () => {
 }
 
 // 加载活动列表
-const loadActivities = async () => {
+const loadActivities = async (useLocalFilter = false) => {
   if (isLoading.value) return
-  
+
   isLoading.value = true
-  
+
   try {
+    // 如果是"报名中"标签，使用本地筛选
+    const tagType = filterTags.value[currentTag.value]?.type
+    if (useLocalFilter && tagType === 'signup') {
+      // 使用已加载的完整列表进行本地筛选
+      filterActivitiesLocally()
+      isLoading.value = false
+      refreshing.value = false
+      return
+    }
+
     // 构建查询参数
     const params = {
       pageNo: page.value,
@@ -236,36 +258,40 @@ const loadActivities = async () => {
       orderBy: filters.sortBy,
       isAsc: filters.isAsc
     }
-    
+
     // 根据当前选中的标签添加对应的筛选条件
     if (currentTag.value > 0) {
-      const tagType = filterTags.value[currentTag.value].type
       if (tagType === 'ongoing') {
         params.status = 2
-      } else if (tagType === 'signup') {
-        params.status = 1
       } else if (tagType === 'ended') {
         params.status = 3
+      } else if (tagType === 'planned') {
+        params.status = 1
+      } else if (tagType === 'cancelled') {
+        params.status = 0
       }
+      // signup 使用本地筛选，不添加 status 参数
     }
-    
+
     // 添加筛选条件
     if (filters.status !== -1) {
       params.status = filters.status
     }
-    
+
     // 调用API获取数据 - 使用getClubActivities而不是getActivityList
     const res = await proxy.$api.activity.getClubActivities(clubId.value, params)
-    
+
     if (res.code === 200) {
       const activities = res.data.list || []
-      
+
       if (page.value === 1) {
+        fullActivityList.value = activities
         activityList.value = activities
       } else {
+        fullActivityList.value = [...fullActivityList.value, ...activities]
         activityList.value = [...activityList.value, ...activities]
       }
-      
+
       hasMore.value = activities.length === pageSize.value
       page.value++
     } else {
@@ -283,6 +309,29 @@ const loadActivities = async () => {
   } finally {
     isLoading.value = false
     refreshing.value = false
+  }
+}
+
+// 本地筛选活动
+const filterActivitiesLocally = () => {
+  const tagType = filterTags.value[currentTag.value]?.type
+  const now = Date.now()
+
+  if (tagType === 'signup') {
+    // 报名中：status=2 且当前时间 < 开始时间
+    activityList.value = fullActivityList.value.filter(activity => {
+      return activity.status === 2 && now < Number(activity.startTime)
+    })
+  } else if (tagType === 'ongoing') {
+    // 进行中：status=2 且 开始时间 <= 当前时间 < 结束时间
+    activityList.value = fullActivityList.value.filter(activity => {
+      const startTime = Number(activity.startTime)
+      const endTime = Number(activity.endTime)
+      return activity.status === 2 && now >= startTime && now < endTime
+    })
+  } else {
+    // 其他情况显示全部
+    activityList.value = fullActivityList.value
   }
 }
 
@@ -322,12 +371,25 @@ const searchActivities = () => {
 const switchTag = (idx) => {
   if (currentTag.value === idx) return
   currentTag.value = idx
-  page.value = 1
-  loadActivities()
+
+  const tagType = filterTags.value[idx]?.type
+
+  // 如果是"报名中"或"进行中"标签，使用本地筛选
+  if (tagType === 'signup' || tagType === 'ongoing') {
+    filterActivitiesLocally()
+  } else {
+    // 其他标签重新加载数据
+    page.value = 1
+    loadActivities()
+  }
 }
 
 // 显示筛选抽屉
 const showFilterDrawer = () => {
+  // 打开抽屉时，将当前筛选条件复制到临时筛选条件
+  tempFilters.status = filters.status
+  tempFilters.sortBy = filters.sortBy
+  tempFilters.isAsc = filters.isAsc
   filterPopup.value.open()
 }
 
@@ -338,28 +400,51 @@ const closeFilterDrawer = () => {
 
 // 选择活动状态
 const selectStatus = (status) => {
-  filters.status = status
+  tempFilters.status = status
 }
 
 // 选择排序方式
 const selectSort = (sort) => {
-  filters.sortBy = sort
+  tempFilters.sortBy = sort
   // 其他的都按照降序排
-  filters.isAsc = false
+  tempFilters.isAsc = false
 }
 
 // 重置筛选条件
 const resetFilters = () => {
-  filters.status = -1
-  filters.sortBy = 'create_time'
-  filters.isAsc = false
+  tempFilters.status = -1
+  tempFilters.sortBy = 'create_time'
+  tempFilters.isAsc = false
 }
 
 // 应用筛选条件
 const applyFilters = () => {
+  // 将临时筛选条件应用到正式筛选条件
+  filters.status = tempFilters.status
+  filters.sortBy = tempFilters.sortBy
+  filters.isAsc = tempFilters.isAsc
+
+  // 根据筛选条件类型处理
+  const statusValue = filters.status
+
+  // 重置到第一页
   page.value = 1
+
+  // 如果选择了"报名中"或"进行中"，使用本地筛选
+  if (statusValue === 'signup' || statusValue === 'ongoing') {
+    // 先切换到对应的标签
+    const tagIndex = filterTags.value.findIndex(tag => tag.type === statusValue)
+    if (tagIndex !== -1) {
+      currentTag.value = tagIndex
+      filterActivitiesLocally()
+    }
+  } else {
+    // 其他状态重新加载数据
+    currentTag.value = 0 // 重置标签选择
+    loadActivities()
+  }
+
   closeFilterDrawer()
-  loadActivities()
 }
 
 // 跳转到活动详情
@@ -392,20 +477,62 @@ const deleteActivity = (activity) => {
       if (res.confirm) {
         try {
           uni.showLoading({ title: '处理中...' })
-          
+
           const result = await proxy.$api.activity.deleteActivity(activity.id)
-          
+
           if (result.code === 200) {
             uni.showToast({
               title: '删除成功',
               icon: 'success'
             })
-            
+
             // 更新本地数据
             activityList.value = activityList.value.filter(item => item.id !== activity.id)
           } else {
             uni.showToast({
               title: result.message || '删除失败',
+              icon: 'none'
+            })
+          }
+        } catch (error) {
+          uni.showToast({
+            title: '网络异常，请稍后重试',
+            icon: 'none'
+          })
+        } finally {
+          uni.hideLoading()
+        }
+      }
+    }
+  })
+}
+
+// 取消活动
+const cancelActivity = (activity) => {
+  uni.showModal({
+    title: '确认取消',
+    content: `确定要取消活动"${activity.title}"吗？已报名的用户将收到通知。`,
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          uni.showLoading({ title: '处理中...' })
+
+          const result = await proxy.$api.activity.cancelActivity(activity.id)
+
+          if (result.code === 200) {
+            uni.showToast({
+              title: '活动已取消',
+              icon: 'success'
+            })
+
+            // 更新本地活动状态
+            const index = activityList.value.findIndex(item => item.id === activity.id)
+            if (index !== -1) {
+              activityList.value[index].status = 0 // 状态改为已取消
+            }
+          } else {
+            uni.showToast({
+              title: result.message || '取消失败',
               icon: 'none'
             })
           }

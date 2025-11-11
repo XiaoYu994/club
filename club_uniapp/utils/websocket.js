@@ -134,7 +134,9 @@ class WebSocketClient {
     
     this.ws.onMessage((res) => {
       try {
+        console.log('【WebSocket】收到原始消息:', res.data);
         const message = JSON.parse(res.data);
+        console.log('【WebSocket】解析后的消息:', message);
         this.handleMessage(message);
       } catch (error) {
         console.error('解析WebSocket消息失败:', error, '原始数据:', res.data);
@@ -270,17 +272,21 @@ class WebSocketClient {
       console.warn('收到无效消息:', message);
       return;
     }
-    
+
+    console.log('【WebSocket】处理消息，类型:', message.type);
+
     // 根据消息类型调用对应的处理函数
     const handler = this.messageHandlers.get(message.type);
     if (handler) {
+      console.log('【WebSocket】找到消息处理器，准备执行');
       try {
         handler(message);
       } catch (error) {
         console.error(`处理消息类型 ${message.type} 时出错:`, error);
       }
     } else {
-      console.log('未处理的消息类型:', message.type, message);
+      console.log('【WebSocket】未找到消息处理器，已注册的处理器:', Array.from(this.messageHandlers.keys()));
+      console.log('【WebSocket】未处理的消息类型:', message.type, message);
     }
   }
 

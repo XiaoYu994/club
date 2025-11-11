@@ -24,15 +24,18 @@ const _sfc_main = {
     const currentTag = common_vendor.ref(0);
     const filterTags = common_vendor.ref([
       { name: "全部活动", type: "all" },
-      { name: "进行中", type: "ongoing" },
       { name: "报名中", type: "signup" },
-      { name: "已结束", type: "ended" }
+      { name: "进行中", type: "ongoing" },
+      { name: "已结束", type: "ended" },
+      { name: "计划中", type: "planned" },
+      { name: "已取消", type: "cancelled" }
     ]);
     const statusOptions = [
       { name: "全部", value: -1 },
-      { name: "报名中", value: 1 },
-      { name: "进行中", value: 2 },
+      { name: "报名中", value: "signup" },
+      { name: "进行中", value: "ongoing" },
       { name: "已结束", value: 3 },
+      { name: "计划中", value: 1 },
       { name: "已取消", value: 0 }
     ];
     const sortOptions = [
@@ -45,7 +48,13 @@ const _sfc_main = {
       sortBy: "create_time",
       isAsc: false
     });
+    const tempFilters = common_vendor.reactive({
+      status: -1,
+      sortBy: "create_time",
+      isAsc: false
+    });
     const activityList = common_vendor.ref([]);
+    const fullActivityList = common_vendor.ref([]);
     const page = common_vendor.ref(1);
     const pageSize = common_vendor.ref(10);
     const hasMore = common_vendor.ref(true);
@@ -75,11 +84,19 @@ const _sfc_main = {
         isAdmin.value = false;
       }
     };
-    const loadActivities = async () => {
+    const loadActivities = async (useLocalFilter = false) => {
+      var _a;
       if (isLoading.value)
         return;
       isLoading.value = true;
       try {
+        const tagType = (_a = filterTags.value[currentTag.value]) == null ? void 0 : _a.type;
+        if (useLocalFilter && tagType === "signup") {
+          filterActivitiesLocally();
+          isLoading.value = false;
+          refreshing.value = false;
+          return;
+        }
         const params = {
           pageNo: page.value,
           pageSize: pageSize.value,
@@ -88,13 +105,14 @@ const _sfc_main = {
           isAsc: filters.isAsc
         };
         if (currentTag.value > 0) {
-          const tagType = filterTags.value[currentTag.value].type;
           if (tagType === "ongoing") {
             params.status = 2;
-          } else if (tagType === "signup") {
-            params.status = 1;
           } else if (tagType === "ended") {
             params.status = 3;
+          } else if (tagType === "planned") {
+            params.status = 1;
+          } else if (tagType === "cancelled") {
+            params.status = 0;
           }
         }
         if (filters.status !== -1) {
@@ -104,8 +122,10 @@ const _sfc_main = {
         if (res.code === 200) {
           const activities = res.data.list || [];
           if (page.value === 1) {
+            fullActivityList.value = activities;
             activityList.value = activities;
           } else {
+            fullActivityList.value = [...fullActivityList.value, ...activities];
             activityList.value = [...activityList.value, ...activities];
           }
           hasMore.value = activities.length === pageSize.value;
@@ -117,7 +137,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/activities.vue:278", "加载活动列表失败", error);
+        common_vendor.index.__f__("error", "at pages/club/activities.vue:304", "加载活动列表失败", error);
         common_vendor.index.showToast({
           title: "网络异常，请稍后重试",
           icon: "none"
@@ -125,6 +145,24 @@ const _sfc_main = {
       } finally {
         isLoading.value = false;
         refreshing.value = false;
+      }
+    };
+    const filterActivitiesLocally = () => {
+      var _a;
+      const tagType = (_a = filterTags.value[currentTag.value]) == null ? void 0 : _a.type;
+      const now = Date.now();
+      if (tagType === "signup") {
+        activityList.value = fullActivityList.value.filter((activity) => {
+          return activity.status === 2 && now < Number(activity.startTime);
+        });
+      } else if (tagType === "ongoing") {
+        activityList.value = fullActivityList.value.filter((activity) => {
+          const startTime = Number(activity.startTime);
+          const endTime = Number(activity.endTime);
+          return activity.status === 2 && now >= startTime && now < endTime;
+        });
+      } else {
+        activityList.value = fullActivityList.value;
       }
     };
     const refreshActivities = () => {
@@ -146,34 +184,56 @@ const _sfc_main = {
       loadActivities();
     };
     const switchTag = (idx) => {
+      var _a;
       if (currentTag.value === idx)
         return;
       currentTag.value = idx;
-      page.value = 1;
-      loadActivities();
+      const tagType = (_a = filterTags.value[idx]) == null ? void 0 : _a.type;
+      if (tagType === "signup" || tagType === "ongoing") {
+        filterActivitiesLocally();
+      } else {
+        page.value = 1;
+        loadActivities();
+      }
     };
     const showFilterDrawer = () => {
+      tempFilters.status = filters.status;
+      tempFilters.sortBy = filters.sortBy;
+      tempFilters.isAsc = filters.isAsc;
       filterPopup.value.open();
     };
     const closeFilterDrawer = () => {
       filterPopup.value.close();
     };
     const selectStatus = (status) => {
-      filters.status = status;
+      tempFilters.status = status;
     };
     const selectSort = (sort) => {
-      filters.sortBy = sort;
-      filters.isAsc = false;
+      tempFilters.sortBy = sort;
+      tempFilters.isAsc = false;
     };
     const resetFilters = () => {
-      filters.status = -1;
-      filters.sortBy = "create_time";
-      filters.isAsc = false;
+      tempFilters.status = -1;
+      tempFilters.sortBy = "create_time";
+      tempFilters.isAsc = false;
     };
     const applyFilters = () => {
+      filters.status = tempFilters.status;
+      filters.sortBy = tempFilters.sortBy;
+      filters.isAsc = tempFilters.isAsc;
+      const statusValue = filters.status;
       page.value = 1;
+      if (statusValue === "signup" || statusValue === "ongoing") {
+        const tagIndex = filterTags.value.findIndex((tag) => tag.type === statusValue);
+        if (tagIndex !== -1) {
+          currentTag.value = tagIndex;
+          filterActivitiesLocally();
+        }
+      } else {
+        currentTag.value = 0;
+        loadActivities();
+      }
       closeFilterDrawer();
-      loadActivities();
     };
     const goToActivityDetail = (activity) => {
       common_vendor.index.navigateTo({
@@ -208,6 +268,42 @@ const _sfc_main = {
               } else {
                 common_vendor.index.showToast({
                   title: result.message || "删除失败",
+                  icon: "none"
+                });
+              }
+            } catch (error) {
+              common_vendor.index.showToast({
+                title: "网络异常，请稍后重试",
+                icon: "none"
+              });
+            } finally {
+              common_vendor.index.hideLoading();
+            }
+          }
+        }
+      });
+    };
+    const cancelActivity = (activity) => {
+      common_vendor.index.showModal({
+        title: "确认取消",
+        content: `确定要取消活动"${activity.title}"吗？已报名的用户将收到通知。`,
+        success: async (res) => {
+          if (res.confirm) {
+            try {
+              common_vendor.index.showLoading({ title: "处理中..." });
+              const result = await proxy.$api.activity.cancelActivity(activity.id);
+              if (result.code === 200) {
+                common_vendor.index.showToast({
+                  title: "活动已取消",
+                  icon: "success"
+                });
+                const index = activityList.value.findIndex((item) => item.id === activity.id);
+                if (index !== -1) {
+                  activityList.value[index].status = 0;
+                }
+              } else {
+                common_vendor.index.showToast({
+                  title: result.message || "取消失败",
                   icon: "none"
                 });
               }
@@ -264,8 +360,9 @@ const _sfc_main = {
             b: common_vendor.o(goToActivityDetail, idx),
             c: common_vendor.o(editActivity, idx),
             d: common_vendor.o(deleteActivity, idx),
-            e: "eddafd8f-3-" + i0,
-            f: common_vendor.p({
+            e: common_vendor.o(cancelActivity, idx),
+            f: "eddafd8f-3-" + i0,
+            g: common_vendor.p({
               activity: item,
               isAdmin: isAdmin.value
             })
@@ -281,7 +378,7 @@ const _sfc_main = {
       } : {}, {
         n: activityList.value.length === 0 && !isLoading.value
       }, activityList.value.length === 0 && !isLoading.value ? {
-        o: common_assets._imports_0$5
+        o: common_assets._imports_0$6
       } : {}, {
         p: activityList.value.length > 0 && !hasMore.value
       }, activityList.value.length > 0 && !hasMore.value ? {} : {}, {
@@ -298,7 +395,7 @@ const _sfc_main = {
           return {
             a: common_vendor.t(status.name),
             b: idx,
-            c: common_vendor.n(filters.status === status.value ? "active" : ""),
+            c: common_vendor.n(tempFilters.status === status.value ? "active" : ""),
             d: common_vendor.o(($event) => selectStatus(status.value), idx)
           };
         }),
@@ -306,7 +403,7 @@ const _sfc_main = {
           return {
             a: common_vendor.t(sort.name),
             b: idx,
-            c: common_vendor.n(filters.sortBy === sort.value ? "active" : ""),
+            c: common_vendor.n(tempFilters.sortBy === sort.value ? "active" : ""),
             d: common_vendor.o(($event) => selectSort(sort.value), idx)
           };
         }),

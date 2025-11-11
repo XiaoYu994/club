@@ -21,9 +21,11 @@ import com.hngy.entity.vo.*;
 import com.hngy.mapper.*;
 import com.hngy.service.IChatService;
 import com.hngy.service.IClubApplyService;
+import com.hngy.websocket.ChatWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,9 +53,10 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
     private final ClubInfoMapper clubInfoMapper;
     private final ClubActivityMapper clubActivityMapper;
     private final ClubActivityApplyMapper clubActivityApplyMapper;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private final IChatService chatService;
     private final ClubChatGroupMapper chatGroupMapper;
+    private final ChatWebSocketHandler chatWebSocketHandler;
 
     @Override
     public String applyJoinClub(Long clubId, Map<String, Object> formData) {
@@ -490,8 +493,9 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
 
         // 存储到Redis，设置过期时间
         String redisKey = "activity:sign_code:" + checkInCode;
-        redisTemplate.opsForValue().set(redisKey, signCodeInfo, expireMinutes, TimeUnit.MINUTES);
-
+        stringRedisTemplate.opsForValue().set(redisKey, JSON.toJSONString(signCodeInfo), expireMinutes, TimeUnit.MINUTES);
+//        redisTemplate.opsForValue().set(redisKey, signCodeInfo, expireMinutes, TimeUnit.MINUTES);
+//        redisTemplate.opsForSet().add(redisKey, signCodeInfo, expireMinutes, TimeUnit.MINUTES);
         // 生成二维码Base64
         String qrCodeBase64;
         try {
@@ -518,7 +522,7 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
         }
         // 从Redis获取签到码信息
         String redisKey = "activity:sign_code:" + request.getCheckInCode();
-        SignCodeInfo signCodeInfo = (SignCodeInfo) redisTemplate.opsForValue().get(redisKey);
+        SignCodeInfo signCodeInfo = JSON.parseObject(stringRedisTemplate.opsForValue().get(redisKey), SignCodeInfo.class);
         // 验证签到码是否存在
         if (signCodeInfo == null) {
             throw new ServiceException(HttpStatus.HTTP_BAD_REQUEST, "签到码不存在或已过期");
@@ -549,8 +553,22 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
         apply.setCheckInStatus(StatusConstant.ENABLE);
         apply.setCheckInTime(checkInTime);
         clubActivityApplyMapper.updateById(apply);
+
+        // 通过WebSocket发送签到成功通知给用户
+        try {
+            chatWebSocketHandler.sendCheckInNotification(
+                    signCodeInfo.getUserId(),
+                    request.getActivityId(),
+                    StatusConstant.ENABLE
+            );
+        } catch (Exception e) {
+            log.error("发送WebSocket签到通知失败: {}", e.getMessage(), e);
+            // 不影响签到流程，仅记录日志
+        }
+
         // 删除Redis中的签到码
-        redisTemplate.delete(redisKey);
+//        redisTemplate.delete(redisKey);
+        stringRedisTemplate.delete(redisKey);
         // 构建返回结果
         CheckInResultVO result = new CheckInResultVO();
         result.setApplyId(signCodeInfo.getApplyId());

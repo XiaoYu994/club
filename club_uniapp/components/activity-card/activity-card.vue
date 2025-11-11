@@ -14,7 +14,7 @@
         </view>
       </view>
       <view class="activity-stats">
-        <view :class="['activity-status', getStatusClass.value]">
+        <view :class="['activity-status', getStatusClass]">
           {{ statusText }}
         </view>
         <view class="activity-count">
@@ -25,6 +25,10 @@
     
     <!-- 管理員操作按鈕 -->
     <view v-if="isAdmin" class="action-buttons">
+      <!-- 取消活动按钮，仅报名中状态显示 -->
+      <view v-if="canCancel" class="action-btn cancel" @tap.stop="cancelActivity">
+        <uni-icons type="close" size="16" color="#ff9800"></uni-icons>
+      </view>
       <view class="action-btn edit" @tap.stop="editActivity">
         <uni-icons type="compose" size="16" color="#2979ff"></uni-icons>
       </view>
@@ -52,18 +56,32 @@ const props = defineProps({
 })
 
 // 定義組件的事件
-const emit = defineEmits(['detail', 'edit', 'delete'])
+const emit = defineEmits(['detail', 'edit', 'delete', 'cancel'])
 
 // 計算活動狀態文本
 const statusText = computed(() => {
-  if (props.activity.status === 0) {
+  const status = props.activity.status
+
+  // status=0: 已取消
+  if (status === 0) {
     return '已取消'
   }
-  
+
+  // status=1: 计划中（待审核）
+  if (status === 1) {
+    return '计划中'
+  }
+
+  // status=3: 已结束
+  if (status === 3) {
+    return '已结束'
+  }
+
+  // status=2: 根据时间判断
   const now = Date.now()
   const startTime = Number(props.activity.startTime || 0)
   const endTime = Number(props.activity.endTime || 0)
-  
+
   if (now > endTime) {
     return '已结束'
   } else if (now >= startTime && now <= endTime) {
@@ -75,14 +93,28 @@ const statusText = computed(() => {
 
 // 計算活動狀態樣式類
 const getStatusClass = computed(() => {
-  if (props.activity.status === 0) {
+  const status = props.activity.status
+
+  // status=0: 已取消
+  if (status === 0) {
     return 'cancelled'
   }
-  
+
+  // status=1: 计划中
+  if (status === 1) {
+    return 'planned'
+  }
+
+  // status=3: 已结束
+  if (status === 3) {
+    return 'ended'
+  }
+
+  // status=2: 根据时间判断
   const now = Date.now()
   const startTime = Number(props.activity.startTime || 0)
   const endTime = Number(props.activity.endTime || 0)
-  
+
   if (now > endTime) {
     return 'ended'
   } else if (now >= startTime && now <= endTime) {
@@ -90,6 +122,21 @@ const getStatusClass = computed(() => {
   } else {
     return 'signup'
   }
+})
+
+// 計算是否可以取消活動（僅報名中狀態）
+const canCancel = computed(() => {
+  const status = props.activity.status
+
+  // 只有status=2且当前时间<开始时间才能取消（即报名中状态）
+  if (status !== 2) {
+    return false
+  }
+
+  const now = Date.now()
+  const startTime = Number(props.activity.startTime || 0)
+
+  return now < startTime
 })
 
 // 跳轉到活動詳情
@@ -105,6 +152,11 @@ const editActivity = () => {
 // 刪除活動
 const deleteActivity = () => {
   emit('delete', props.activity)
+}
+
+// 取消活动
+const cancelActivity = () => {
+  emit('cancel', props.activity)
 }
 </script>
 
@@ -175,22 +227,27 @@ const deleteActivity = () => {
         padding: 4rpx 16rpx;
         border-radius: 20rpx;
         font-size: 22rpx;
-        
+
         &.signup {
           color: #2979ff;
           background: rgba(41, 121, 255, 0.1);
         }
-        
+
         &.ongoing {
           color: #4caf50;
           background: rgba(76, 175, 80, 0.1);
         }
-        
+
         &.ended {
           color: #999;
           background: rgba(153, 153, 153, 0.1);
         }
-        
+
+        &.planned {
+          color: #ff9800;
+          background: rgba(255, 152, 0, 0.1);
+        }
+
         &.cancelled {
           color: #f44336;
           background: rgba(244, 67, 54, 0.1);
@@ -220,11 +277,15 @@ const deleteActivity = () => {
       justify-content: center;
       margin-left: 20rpx;
       box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
-      
+
+      &.cancel {
+        border: 1rpx solid rgba(255, 152, 0, 0.3);
+      }
+
       &.edit {
         border: 1rpx solid rgba(41, 121, 255, 0.3);
       }
-      
+
       &.delete {
         border: 1rpx solid rgba(244, 67, 54, 0.3);
       }

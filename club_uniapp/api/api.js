@@ -350,7 +350,14 @@ const activity = {
    * @returns {Promise} - 返回删除结果
    */
   deleteActivity: (id) => request.delete(`/user/activity/${id}`),
-  
+
+  /**
+   * 取消活动（状态改为已取消）
+   * @param {number|string} id - 活动ID
+   * @returns {Promise} - 返回取消结果
+   */
+  cancelActivity: (id) => request.put(`/user/activity/cancel/${id}`),
+
   /**
    * 获取活动报名列表
    * @param {number|string} activityId - 活动ID
@@ -421,19 +428,57 @@ const notice = {
 export const chatAPI = {
   // 获取用户的聊天群组
   getGroups: () => request.get('/user/chat-api/groups', null),
-  
+
   // 获取群组详情
   getGroupDetail: (groupId) => request.get(`/user/chat-api/group/${groupId}`, null),
-  
+
   // 获取群组消息历史（显式传递 null 避免自动追加 '?'）
-  getGroupMessages: (groupId, page, pageSize) => 
+  getGroupMessages: (groupId, page, pageSize) =>
     request.get(`/user/chat-api/messages/group/${groupId}?page=${page}&pageSize=${pageSize}`, null),
-  
+
   // 标记消息为已读
   markMessagesRead: (groupId) => request.put(`/user/chat-api/messages/read/${groupId}`, null),
-  
+
   // 创建群组
   createChatGroup: (data) => request.post('/user/chat-api/group', data),
+}
+
+/**
+ * 消息通知相关接口
+ */
+const notification = {
+  /**
+   * 获取消息通知列表
+   * @param {Object} params - 查询参数 {page, size}
+   * @returns {Promise} - 返回消息通知列表
+   */
+  getNotifications: (params) => request.get('/user/notification', params),
+
+  /**
+   * 获取未读消息数量
+   * @returns {Promise} - 返回未读消息数量
+   */
+  getUnreadCount: () => request.get('/user/notification/unread-count'),
+
+  /**
+   * 标记消息为已读
+   * @param {number|string} id - 消息ID
+   * @returns {Promise} - 返回标记结果
+   */
+  markAsRead: (id) => request.put(`/user/notification/read/${id}`),
+
+  /**
+   * 标记所有消息为已读
+   * @returns {Promise} - 返回标记结果
+   */
+  markAllAsRead: () => request.put('/user/notification/read-all'),
+
+  /**
+   * 删除消息通知
+   * @param {number|string} id - 消息ID
+   * @returns {Promise} - 返回删除结果
+   */
+  deleteNotification: (id) => request.delete(`/user/notification/${id}`)
 }
 
 /**
@@ -789,5 +834,6 @@ export default {
   common,
   activity,
   admin,
-  notice // 导出用户端公告API
+  notice, // 导出用户端公告API
+  notification // 导出消息通知API
 }

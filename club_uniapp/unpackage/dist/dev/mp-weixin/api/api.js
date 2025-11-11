@@ -295,6 +295,12 @@ const activity = {
    */
   deleteActivity: (id) => utils_request.request.delete(`/user/activity/${id}`),
   /**
+   * 取消活动（状态改为已取消）
+   * @param {number|string} id - 活动ID
+   * @returns {Promise} - 返回取消结果
+   */
+  cancelActivity: (id) => utils_request.request.put(`/user/activity/cancel/${id}`),
+  /**
    * 获取活动报名列表
    * @param {number|string} activityId - 活动ID
    * @param {Object} params - 查询参数
@@ -362,6 +368,36 @@ const chatAPI = {
   markMessagesRead: (groupId) => utils_request.request.put(`/user/chat-api/messages/read/${groupId}`, null),
   // 创建群组
   createChatGroup: (data) => utils_request.request.post("/user/chat-api/group", data)
+};
+const notification = {
+  /**
+   * 获取消息通知列表
+   * @param {Object} params - 查询参数 {page, size}
+   * @returns {Promise} - 返回消息通知列表
+   */
+  getNotifications: (params) => utils_request.request.get("/user/notification", params),
+  /**
+   * 获取未读消息数量
+   * @returns {Promise} - 返回未读消息数量
+   */
+  getUnreadCount: () => utils_request.request.get("/user/notification/unread-count"),
+  /**
+   * 标记消息为已读
+   * @param {number|string} id - 消息ID
+   * @returns {Promise} - 返回标记结果
+   */
+  markAsRead: (id) => utils_request.request.put(`/user/notification/read/${id}`),
+  /**
+   * 标记所有消息为已读
+   * @returns {Promise} - 返回标记结果
+   */
+  markAllAsRead: () => utils_request.request.put("/user/notification/read-all"),
+  /**
+   * 删除消息通知
+   * @param {number|string} id - 消息ID
+   * @returns {Promise} - 返回删除结果
+   */
+  deleteNotification: (id) => utils_request.request.delete(`/user/notification/${id}`)
 };
 const admin = {
   /**
@@ -664,8 +700,10 @@ const apiModule = {
   common,
   activity,
   admin,
-  notice
+  notice,
   // 导出用户端公告API
+  notification
+  // 导出消息通知API
 };
 exports.apiModule = apiModule;
 exports.chatAPI = chatAPI;

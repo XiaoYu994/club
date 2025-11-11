@@ -21,13 +21,20 @@ const _sfc_main = {
       default: false
     }
   },
-  emits: ["detail", "edit", "delete"],
+  emits: ["detail", "edit", "delete", "cancel"],
   setup(__props, { emit: __emit }) {
     const props = __props;
     const emit = __emit;
     const statusText = common_vendor.computed(() => {
-      if (props.activity.status === 0) {
+      const status = props.activity.status;
+      if (status === 0) {
         return "已取消";
+      }
+      if (status === 1) {
+        return "计划中";
+      }
+      if (status === 3) {
+        return "已结束";
       }
       const now = Date.now();
       const startTime = Number(props.activity.startTime || 0);
@@ -41,8 +48,15 @@ const _sfc_main = {
       }
     });
     const getStatusClass = common_vendor.computed(() => {
-      if (props.activity.status === 0) {
+      const status = props.activity.status;
+      if (status === 0) {
         return "cancelled";
+      }
+      if (status === 1) {
+        return "planned";
+      }
+      if (status === 3) {
+        return "ended";
       }
       const now = Date.now();
       const startTime = Number(props.activity.startTime || 0);
@@ -55,6 +69,15 @@ const _sfc_main = {
         return "signup";
       }
     });
+    const canCancel = common_vendor.computed(() => {
+      const status = props.activity.status;
+      if (status !== 2) {
+        return false;
+      }
+      const now = Date.now();
+      const startTime = Number(props.activity.startTime || 0);
+      return now < startTime;
+    });
     const goToActivityDetail = () => {
       emit("detail", props.activity);
     };
@@ -63,6 +86,9 @@ const _sfc_main = {
     };
     const deleteActivity = () => {
       emit("delete", props.activity);
+    };
+    const cancelActivity = () => {
+      emit("cancel", props.activity);
     };
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -81,24 +107,33 @@ const _sfc_main = {
         }),
         f: common_vendor.t(__props.activity.address || "未设置地点"),
         g: common_vendor.t(statusText.value),
-        h: common_vendor.n(getStatusClass.value.value),
+        h: common_vendor.n(getStatusClass.value),
         i: common_vendor.t(__props.activity.joinCount || 0),
         j: __props.isAdmin
-      }, __props.isAdmin ? {
-        k: common_vendor.p({
+      }, __props.isAdmin ? common_vendor.e({
+        k: canCancel.value
+      }, canCancel.value ? {
+        l: common_vendor.p({
+          type: "close",
+          size: "16",
+          color: "#ff9800"
+        }),
+        m: common_vendor.o(cancelActivity)
+      } : {}, {
+        n: common_vendor.p({
           type: "compose",
           size: "16",
           color: "#2979ff"
         }),
-        l: common_vendor.o(editActivity),
-        m: common_vendor.p({
+        o: common_vendor.o(editActivity),
+        p: common_vendor.p({
           type: "trash",
           size: "16",
           color: "#f44336"
         }),
-        n: common_vendor.o(deleteActivity)
-      } : {}, {
-        o: common_vendor.o(goToActivityDetail)
+        q: common_vendor.o(deleteActivity)
+      }) : {}, {
+        r: common_vendor.o(goToActivityDetail)
       });
     };
   }

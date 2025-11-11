@@ -168,7 +168,7 @@ const _sfc_main = {
       common_vendor.index.navigateTo({ url: "/pages/user/myActivities" });
     }
     function goMyMessages() {
-      common_vendor.index.switchTab({ url: "/pages/message/message" });
+      common_vendor.index.navigateTo({ url: "/pages/notification/notification" });
     }
     function goMyApplies() {
       common_vendor.index.navigateTo({ url: "/pages/user/myApplies" });

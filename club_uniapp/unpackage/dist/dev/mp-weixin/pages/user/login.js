@@ -2,6 +2,8 @@
 const common_vendor = require("../../common/vendor.js");
 const common_assets = require("../../common/assets.js");
 const utils_auth = require("../../utils/auth.js");
+const utils_websocket = require("../../utils/websocket.js");
+const api_api = require("../../api/api.js");
 const _sfc_main = {
   __name: "login",
   setup(__props) {
@@ -32,11 +34,13 @@ const _sfc_main = {
           });
         });
         if (loginResult && loginResult.code) {
-          common_vendor.index.__f__("log", "at pages/user/login.vue:77", "微信登录code:", loginResult.code);
+          common_vendor.index.__f__("log", "at pages/user/login.vue:79", "微信登录code:", loginResult.code);
           const res = await proxy.$api.user.wxLogin(loginResult.code);
           if (res.code === 200) {
             common_vendor.index.setStorageSync("token", res.data.token);
             utils_auth.setUser(res.data);
+            common_vendor.index.__f__("log", "at pages/user/login.vue:89", "【登录】准备建立WebSocket连接");
+            utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "http://localhost:8081");
             common_vendor.index.showToast({
               title: "登录成功",
               icon: "success"
@@ -49,7 +53,7 @@ const _sfc_main = {
           throw new Error("获取登录凭证失败");
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/login.vue:101", "登录失败", error);
+        common_vendor.index.__f__("error", "at pages/user/login.vue:107", "登录失败", error);
         common_vendor.index.showToast({
           title: "登录失败",
           icon: "none"
@@ -62,7 +66,7 @@ const _sfc_main = {
         return;
       }
       const res = await proxy.$api.user.wxLogin("phoneLogin");
-      common_vendor.index.__f__("log", "at pages/user/login.vue:119", res.data);
+      common_vendor.index.__f__("log", "at pages/user/login.vue:125", res.data);
       if (res.code === 200) {
         common_vendor.index.setStorageSync("token", res.data.token);
         utils_auth.setUser(res.data);

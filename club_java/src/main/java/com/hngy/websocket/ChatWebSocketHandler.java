@@ -231,7 +231,42 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             sendMessageToSession(session, message);
         }
     }
-    
+
+    /**
+     * 发送签到通知给指定用户
+     * @param userId 用户ID
+     * @param activityId 活动ID
+     * @param checkInStatus 签到状态
+     */
+    public void sendCheckInNotification(Long userId, Long activityId, Integer checkInStatus) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "check_in_notification");
+        notification.put("activityId", activityId);
+        notification.put("checkInStatus", checkInStatus);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送签到通知给用户{}，活动ID: {}", userId, activityId);
+    }
+
+    /**
+     * 发送活动取消通知给指定用户
+     * @param userId 用户ID
+     * @param activityId 活动ID
+     * @param activityTitle 活动标题
+     */
+    public void sendActivityCancelNotification(Long userId, Long activityId, String activityTitle) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "activity_cancel_notification");
+        notification.put("activityId", activityId);
+        notification.put("activityTitle", activityTitle);
+        notification.put("message", "您报名的活动 \"" + activityTitle + "\" 已被取消");
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送活动取消通知给用户{}，活动ID: {}，活动标题: {}", userId, activityId, activityTitle);
+    }
+
     /**
      * 向WebSocket会话发送消息
      */

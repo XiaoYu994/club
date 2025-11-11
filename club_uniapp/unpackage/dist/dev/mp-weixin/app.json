@@ -12,6 +12,7 @@
     "pages/activity/applies",
     "pages/user/login",
     "pages/message/message",
+    "pages/notification/notification",
     "pages/club/club",
     "pages/club/detail",
     "pages/club/recruitment",

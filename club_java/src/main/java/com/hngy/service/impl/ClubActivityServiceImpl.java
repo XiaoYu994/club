@@ -16,6 +16,8 @@ import com.hngy.entity.vo.ActivityStatsVO;
 import com.hngy.entity.vo.ClubActivityVO;
 import com.hngy.mapper.*;
 import com.hngy.service.IClubActivityService;
+import com.hngy.service.IUserNotificationService;
+import com.hngy.websocket.ChatWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -30,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -58,6 +61,8 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
     private final ClubInfoMapper clubInfoMapper;
     private final FileStorageService fileStorageService;
     private final UserMapper userMapper;
+    private final ChatWebSocketHandler chatWebSocketHandler;
+    private final IUserNotificationService userNotificationService;
 
     @Override
     public PageResult<ClubActivityVO> queryPage(ClubActivityDTO clubActivityDTO) {
@@ -73,9 +78,14 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
         // 使用LambdaQueryWrapper代替QueryWrapper，这样可以使用方法引用
         LambdaQueryWrapper<ClubActivity> wrapper = new LambdaQueryWrapper<>();
 
-        // 只查询status=2(进行中)和status=3(已结束)的活动
-        // 排除status=0(已取消)和status=1(计划中)的活动
-        wrapper.in(ClubActivity::getStatus, Arrays.asList(STATUS_ACTIVE, STATUS_ENDED));
+        // 如果指定了clubId，说明是管理员查询，显示所有状态的活动
+        // 如果没有指定clubId，说明是普通用户查询，只显示status=2和status=3的活动
+        if (clubActivityDTO.getClubId() == null) {
+            // 普通用户只查询status=2(进行中)和status=3(已结束)的活动
+            // 排除status=0(已取消)和status=1(计划中)的活动
+            wrapper.in(ClubActivity::getStatus, Arrays.asList(STATUS_ACTIVE, STATUS_ENDED));
+        }
+        // 如果有clubId，不添加状态限制，管理员可以看到所有状态的活动
 
         // 1. 分组关键词搜索（标题、描述、地点），确保与其他条件正确组合
         if (StringUtils.hasText(clubActivityDTO.getKeyword())) {
@@ -500,8 +510,22 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
 
     @Override
     public boolean updateById(ClubActivity activity) {
+        // 检查活动是否存在
+        ClubActivity existingActivity = clubActivityMapper.selectById(activity.getId());
+        if (existingActivity == null) {
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(), ActivityConstant.ERROR_ACTIVITY_NOT_FOUND);
+        }
+
         // 获取当前时间的毫秒数
         Long currentTime = System.currentTimeMillis();
+
+        // 如果活动状态为2（进行中），检查活动是否已经开始
+        if (STATUS_ACTIVE.equals(existingActivity.getStatus())) {
+            // 如果当前时间已经超过或等于开始时间，说明活动已经开始或正在进行中
+            if (currentTime >= existingActivity.getStartTime()) {
+                throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "活动已开始或正在进行中，无法修改");
+            }
+        }
 
         // 当社团管理员修改活动后，将状态重置为"计划中"，需要管理员重新审批
         // status = 1 (计划中)
@@ -512,6 +536,91 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
 
         // 返回更新是否成功
         return clubActivityMapper.updateById(activity) > 0;
+    }
+
+    @Override
+    public boolean removeById(Long activityId) {
+        // 将 Serializable 转换为 Long
+        // 检查活动是否存在
+        ClubActivity activity = clubActivityMapper.selectById(activityId);
+        if (activity == null) {
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(), ActivityConstant.ERROR_ACTIVITY_NOT_FOUND);
+        }
+
+        // 检查是否有报名记录
+        LambdaQueryWrapper<ClubActivityApply> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ClubActivityApply::getActivityId, activityId);
+        long applicantCount = clubActivityApplyMapper.selectCount(wrapper);
+
+        if (applicantCount > 0) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "当前活动有人报名，无法删除");
+        }
+
+        // 没有报名记录，可以删除
+        return clubActivityMapper.deleteById(activityId) > 0;
+    }
+
+    @Override
+    public boolean cancelActivity(Long activityId) {
+        // 检查活动是否存在
+        ClubActivity activity = clubActivityMapper.selectById(activityId);
+        if (activity == null) {
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(), ActivityConstant.ERROR_ACTIVITY_NOT_FOUND);
+        }
+
+        // 只有status=2的活动才能取消
+        if (!STATUS_ACTIVE.equals(activity.getStatus())) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "只有进行中状态的活动才能取消");
+        }
+
+        // 检查活动是否在报名中（当前时间 < 开始时间）
+        Long currentTime = System.currentTimeMillis();
+        if (currentTime >= activity.getStartTime()) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "活动已开始或正在进行中，无法取消");
+        }
+
+        // 修改活动状态为已取消
+        activity.setStatus(STATUS_DISABLED);
+        activity.setUpdateTime(currentTime);
+        boolean updated = clubActivityMapper.updateById(activity) > 0;
+
+        if (updated) {
+            // 查询所有报名用户
+            LambdaQueryWrapper<ClubActivityApply> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(ClubActivityApply::getActivityId, activityId);
+            List<ClubActivityApply> applies = clubActivityApplyMapper.selectList(wrapper);
+
+            // 如果有报名用户，发送通知
+            if (applies != null && !applies.isEmpty()) {
+                log.info("活动{}已取消，准备通知{}位报名用户", activityId, applies.size());
+                String notificationTitle = "活动取消通知";
+                String notificationMessage = "您报名的活动 \"" + activity.getTitle() + "\" 已被取消";
+
+                for (ClubActivityApply apply : applies) {
+                    try {
+                        // 1. 保存通知到数据库
+                        userNotificationService.createNotification(
+                            apply.getUserId(),
+                            "activity_cancel",
+                            notificationTitle,
+                            notificationMessage,
+                            activityId
+                        );
+
+                        // 2. 发送WebSocket实时通知（用户在线时立即收到）
+                        chatWebSocketHandler.sendActivityCancelNotification(
+                            apply.getUserId(),
+                            activityId,
+                            activity.getTitle()
+                        );
+                    } catch (Exception e) {
+                        log.error("发送取消活动通知失败，用户ID: {}, 活动ID: {}", apply.getUserId(), activityId, e);
+                    }
+                }
+            }
+        }
+
+        return updated;
     }
 
     private String getClubName(Integer clubId) {

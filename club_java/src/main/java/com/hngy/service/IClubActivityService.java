@@ -9,6 +9,7 @@ import com.hngy.entity.vo.ActivityDetailVO;
 import com.hngy.entity.vo.ActivityStatsVO;
 import com.hngy.entity.vo.ClubActivityVO;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -50,6 +51,13 @@ public interface IClubActivityService extends IService<ClubActivity> {
     Map<String, Object> exportApplyList(Long activityId);
 
     /**
+     * @desc: 删除活动 有人报名活动就无法删除
+     * @Author:  XiaoYu
+     * @date:  2025/11/11 20:23
+    */
+    boolean removeById(Long activityId);
+
+    /**
      * @desc: 系统管理员分页查询
      * @Author:  XiaoYu
      * @date:  2025/7/24 下午2:44
@@ -69,4 +77,11 @@ public interface IClubActivityService extends IService<ClubActivity> {
      * @date:  2025/11/10 20:06
     */
     boolean updateById(ClubActivity activity);
+
+    /**
+     * 取消活动（状态改为已取消）
+     * @param activityId 活动ID
+     * @return 是否成功
+     */
+    boolean cancelActivity(Long activityId);
 }

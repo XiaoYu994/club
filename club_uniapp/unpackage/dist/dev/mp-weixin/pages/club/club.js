@@ -280,7 +280,7 @@ const _sfc_main = {
       } : {}, {
         o: clubList.value.length === 0 && !isLoading.value
       }, clubList.value.length === 0 && !isLoading.value ? {
-        p: common_assets._imports_0$5
+        p: common_assets._imports_0$6
       } : {}, {
         q: clubList.value.length > 0 && !hasMore.value
       }, clubList.value.length > 0 && !hasMore.value ? {} : {}, {

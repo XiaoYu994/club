@@ -76,15 +76,23 @@
 	},
 	{
 		"path" : "pages/message/message",
-		"style" : 
+		"style" :
 		{
-			"navigationBarTitleText" : "通知",
+			"navigationBarTitleText" : "群聊",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/notification/notification",
+		"style" :
+		{
+			"navigationBarTitleText" : "消息通知",
 			"navigationStyle": "custom"
 		}
 	},
 	{
 		"path" : "pages/club/club",
-		"style" : 
+		"style" :
 		{
 			"navigationBarTitleText" : "社团",
 			"navigationStyle": "custom"

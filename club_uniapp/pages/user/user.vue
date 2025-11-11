@@ -367,7 +367,7 @@ function goMyActivities() {
 }
 
 function goMyMessages() {
-  uni.switchTab({ url: '/pages/message/message' })
+  uni.navigateTo({ url: '/pages/notification/notification' })
 }
 
 function goMyApplies() {

@@ -7337,9 +7337,9 @@ function isConsoleWritable() {
   return isWritable;
 }
 function initRuntimeSocketService() {
-  const hosts = "172.28.64.1,192.168.234.200,127.0.0.1";
+  const hosts = "192.168.234.200,127.0.0.1,172.28.64.1";
   const port = "8090";
-  const id = "mp-weixin_-O3_ZM";
+  const id = "mp-weixin_x3Lk54";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8389,7 +8389,14 @@ const pages = [
   {
     path: "pages/message/message",
     style: {
-      navigationBarTitleText: "通知",
+      navigationBarTitleText: "群聊",
+      navigationStyle: "custom"
+    }
+  },
+  {
+    path: "pages/notification/notification",
+    style: {
+      navigationBarTitleText: "消息通知",
       navigationStyle: "custom"
     }
   },

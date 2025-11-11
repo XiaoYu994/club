@@ -186,7 +186,7 @@ const _sfc_main = {
       } : {}, {
         m: clubList.value.length === 0 && !isLoading.value
       }, clubList.value.length === 0 && !isLoading.value ? {
-        n: common_assets._imports_0$5
+        n: common_assets._imports_0$6
       } : {}, {
         o: clubList.value.length > 0 && !hasMore.value
       }, clubList.value.length > 0 && !hasMore.value ? {} : {}, {

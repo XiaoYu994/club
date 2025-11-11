@@ -37,6 +37,8 @@
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
 import { setUser } from '@/utils/auth.js'
+import wsClient from '@/utils/websocket'
+import apiModule from '@/api/api.js'
 
 const { proxy } = getCurrentInstance()
 const agreeProtocol = ref(false)
@@ -82,13 +84,17 @@ async function confirmLogin() {
         uni.setStorageSync('token', res.data.token)
         // 保存用户信息到本地缓存
         setUser(res.data)
-        
+
+        // 建立WebSocket连接
+        console.log('【登录】准备建立WebSocket连接')
+        wsClient.connect(apiModule.baseURL || 'http://localhost:8081')
+
         // 显示登录成功提示
         uni.showToast({
           title: '登录成功',
           icon: 'success'
         })
-        
+
         // 登录成功后重新加载用户页面，确保状态更新
         setTimeout(() => {
           uni.reLaunch({ url: '/pages/user/user' })
