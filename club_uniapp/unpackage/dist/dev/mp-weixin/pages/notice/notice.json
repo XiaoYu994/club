@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "公告",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "custom-nav-bar": "../../components/custom-nav-bar/custom-nav-bar"
+  }
+}

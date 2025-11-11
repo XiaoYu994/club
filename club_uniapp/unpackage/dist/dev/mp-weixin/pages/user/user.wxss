@@ -1,0 +1,262 @@
+/* 水平间距 */
+/* 水平间距 */
+.user-center.data-v-0f7520f0 {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+  position: relative;
+}
+.not-login.data-v-0f7520f0 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100rpx;
+}
+.not-login .logo.data-v-0f7520f0 {
+  width: 140rpx;
+  height: 140rpx;
+  margin-bottom: 20rpx;
+}
+.not-login .app-name.data-v-0f7520f0 {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+.not-login .login-tip.data-v-0f7520f0 {
+  font-size: 28rpx;
+  color: #888;
+  margin-bottom: 60rpx;
+}
+.not-login .login-btn.data-v-0f7520f0 {
+  width: 80%;
+  background: #07c160;
+  color: #fff;
+  height: 88rpx;
+  border-radius: 44rpx;
+  line-height: 88rpx;
+}
+.user-info.data-v-0f7520f0 {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 24rpx;
+  margin: 32rpx 24rpx 0 24rpx;
+  padding: 32rpx 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+.user-info .avatar.data-v-0f7520f0 {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  background: #f5f5f5;
+}
+.user-info .info.data-v-0f7520f0 {
+  flex: 1;
+}
+.user-info .info .nickname.data-v-0f7520f0 {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 8rpx;
+}
+.user-info .info .desc.data-v-0f7520f0 {
+  font-size: 24rpx;
+  color: #888;
+}
+.user-info .edit-btn.data-v-0f7520f0 {
+  font-size: 24rpx;
+  color: #2a5fff;
+  background: #f0f4ff;
+  border-radius: 32rpx;
+  padding: 8rpx 24rpx;
+  border: none;
+  position: absolute;
+  right: 24rpx;
+  top: 32rpx;
+}
+.quick-entry.data-v-0f7520f0 {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 32rpx 24rpx 0 24rpx;
+}
+.quick-entry .entry-item.data-v-0f7520f0 {
+  width: 48%;
+  background: #fff;
+  border-radius: 20rpx;
+  margin-bottom: 16rpx;
+  padding: 32rpx 0 24rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  font-size: 26rpx;
+  color: #333;
+}
+.quick-entry .entry-item .uni-icons.data-v-0f7520f0 {
+  margin-bottom: 12rpx;
+}
+.menu-list.data-v-0f7520f0 {
+  margin: 32rpx 24rpx 0 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+.menu-list .menu-item.data-v-0f7520f0 {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0 28rpx 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.menu-list .menu-item .uni-icons.data-v-0f7520f0 {
+  margin-right: 18rpx;
+}
+.menu-list .menu-item text.data-v-0f7520f0 {
+  flex: 1;
+}
+.menu-list .menu-item .contact-service-btn.data-v-0f7520f0 {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 28rpx;
+  color: #333;
+  line-height: normal;
+}
+.menu-list .menu-item .contact-service-btn.data-v-0f7520f0::after {
+  border: none;
+}
+.menu-list .menu-item.data-v-0f7520f0:last-child {
+  border-bottom: none;
+}
+.menu-list .logout.data-v-0f7520f0 {
+  color: #f56c6c;
+  text-align: center;
+}
+.edit-popup.data-v-0f7520f0 {
+  width: 650rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.edit-popup .popup-header.data-v-0f7520f0 {
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.edit-popup .popup-header .popup-title.data-v-0f7520f0 {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+.edit-popup .popup-header .close-btn.data-v-0f7520f0 {
+  padding: 10rpx;
+}
+.edit-popup .popup-content.data-v-0f7520f0 {
+  padding: 30rpx;
+  max-height: 750rpx;
+}
+.edit-popup .popup-content .form-item.data-v-0f7520f0 {
+  margin-bottom: 30rpx;
+}
+.edit-popup .popup-content .form-item .form-label.data-v-0f7520f0 {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+.edit-popup .popup-content .form-item .form-input.data-v-0f7520f0 {
+  width: 100%;
+  height: 80rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.edit-popup .popup-content .form-item .form-picker.data-v-0f7520f0 {
+  width: 100%;
+  height: 80rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+}
+.edit-popup .popup-content .form-item .form-picker .picker-value.data-v-0f7520f0 {
+  color: #333;
+}
+.edit-popup .popup-content .form-item .radio-group.data-v-0f7520f0 {
+  display: flex;
+}
+.edit-popup .popup-content .form-item .radio-group .radio-label.data-v-0f7520f0 {
+  display: flex;
+  align-items: center;
+  margin-right: 40rpx;
+}
+.edit-popup .popup-content .form-item .radio-group .radio-label text.data-v-0f7520f0 {
+  font-size: 28rpx;
+  color: #333;
+  margin-left: 8rpx;
+}
+.edit-popup .popup-content .form-item.avatar-upload.data-v-0f7520f0 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.edit-popup .popup-content .form-item.avatar-upload .avatar-wrapper.data-v-0f7520f0 {
+  position: relative;
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-top: 20rpx;
+}
+.edit-popup .popup-content .form-item.avatar-upload .avatar-wrapper .edit-avatar.data-v-0f7520f0 {
+  width: 100%;
+  height: 100%;
+}
+.edit-popup .popup-content .form-item.avatar-upload .avatar-wrapper .avatar-edit-icon.data-v-0f7520f0 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50rpx;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.edit-popup .popup-footer.data-v-0f7520f0 {
+  display: flex;
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.edit-popup .popup-footer button.data-v-0f7520f0 {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+}
+.edit-popup .popup-footer .cancel-btn.data-v-0f7520f0 {
+  background: #f5f5f5;
+  color: #666;
+}
+.edit-popup .popup-footer .confirm-btn.data-v-0f7520f0 {
+  background: #b13b7a;
+  color: #fff;
+}

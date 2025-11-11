@@ -1,0 +1,35 @@
+/* 水平间距 */
+/* 水平间距 */
+.club-card.data-v-4da26f5c {
+  display: flex;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 12rpx;
+  background: #fff;
+}
+.club-logo.data-v-4da26f5c {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  margin-right: 20rpx;
+  background: #fff;
+}
+.club-name.data-v-4da26f5c {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 80rpx;
+}
+.member-status.data-v-4da26f5c, .status-tag.data-v-4da26f5c {
+  display: inline-block;
+  margin-left: 10rpx;
+  padding: 4rpx 10rpx;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  color: #fff;
+  background: #409EFF;
+}
+.loading-more.data-v-4da26f5c,
+.empty-data.data-v-4da26f5c {
+  text-align: center;
+  padding: 30rpx;
+}

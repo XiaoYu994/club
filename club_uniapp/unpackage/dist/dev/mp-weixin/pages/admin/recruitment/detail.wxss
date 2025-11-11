@@ -1,0 +1,187 @@
+/* 水平间距 */
+/* 水平间距 */
+.admin-recruitment-detail.data-v-f235c747 {
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+.loading-container.data-v-f235c747, .empty-container.data-v-f235c747 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 40rpx;
+  color: #999;
+  font-size: 28rpx;
+}
+.loading-container .uni-icons.data-v-f235c747, .empty-container .uni-icons.data-v-f235c747 {
+  margin-bottom: 20rpx;
+}
+.loading-container .back-btn.data-v-f235c747, .empty-container .back-btn.data-v-f235c747 {
+  margin-top: 40rpx;
+  padding: 0 40rpx;
+  height: 64rpx;
+  background: #2979ff;
+  color: #fff;
+  border-radius: 32rpx;
+  font-size: 28rpx;
+  border: none;
+}
+.loading-container .back-btn.data-v-f235c747::after, .empty-container .back-btn.data-v-f235c747::after {
+  border: none;
+}
+.detail-content.data-v-f235c747 {
+  padding: 24rpx 32rpx;
+}
+.detail-card.data-v-f235c747 {
+  background: #fff;
+  border-radius: 24rpx;
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.detail-card .card-header.data-v-f235c747 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 32rpx 0;
+}
+.detail-card .card-header .card-title.data-v-f235c747 {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+.detail-card .card-header .status-badge.data-v-f235c747 {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+.detail-card .card-header .status-badge.status-pending.data-v-f235c747 {
+  background: rgba(255, 152, 0, 0.1);
+  color: #ff9800;
+}
+.detail-card .card-header .status-badge.status-approved.data-v-f235c747 {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+}
+.detail-card .card-header .status-badge.status-ended.data-v-f235c747 {
+  background: rgba(158, 158, 158, 0.1);
+  color: #9e9e9e;
+}
+.detail-card .card-header .status-badge.status-rejected.data-v-f235c747 {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+.detail-card .card-content.data-v-f235c747 {
+  padding: 24rpx 32rpx 32rpx;
+}
+.info-row.data-v-f235c747 {
+  display: flex;
+  margin-bottom: 20rpx;
+}
+.info-row .label.data-v-f235c747 {
+  min-width: 180rpx;
+  font-size: 28rpx;
+  color: #666;
+  flex-shrink: 0;
+}
+.info-row .value.data-v-f235c747 {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+  word-break: break-all;
+}
+.info-row .value.desc.data-v-f235c747 {
+  line-height: 1.6;
+}
+.info-row .value.review-comment.data-v-f235c747 {
+  background: #f8f9fa;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  border-left: 4rpx solid #2979ff;
+  line-height: 1.6;
+}
+.stats-grid.data-v-f235c747 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+}
+.stats-grid .stats-item.data-v-f235c747 {
+  text-align: center;
+  padding: 24rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx;
+}
+.stats-grid .stats-item .stats-number.data-v-f235c747 {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #2979ff;
+  margin-bottom: 8rpx;
+}
+.stats-grid .stats-item .stats-label.data-v-f235c747 {
+  font-size: 24rpx;
+  color: #666;
+}
+.poster-image.data-v-f235c747 {
+  width: 100%;
+  max-height: 600rpx;
+  border-radius: 12rpx;
+}
+.form-field.data-v-f235c747 {
+  border: 2rpx solid #f0f0f0;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+.form-field .field-header.data-v-f235c747 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.form-field .field-header .field-name.data-v-f235c747 {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+}
+.form-field .field-header .field-tags.data-v-f235c747 {
+  display: flex;
+  gap: 8rpx;
+}
+.form-field .field-header .field-tags .field-tag.data-v-f235c747 {
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+}
+.form-field .field-header .field-tags .field-tag.type-tag.data-v-f235c747 {
+  background: rgba(41, 121, 255, 0.1);
+  color: #2979ff;
+}
+.form-field .field-header .field-tags .field-tag.required-tag.data-v-f235c747 {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+.form-field .field-placeholder.data-v-f235c747 {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+}
+.form-field .field-options .options-label.data-v-f235c747 {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+.form-field .field-options .options-list.data-v-f235c747 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.form-field .field-options .options-list .option-item.data-v-f235c747 {
+  padding: 8rpx 16rpx;
+  background: #f8f9fa;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+  border: 1rpx solid #e0e0e0;
+}

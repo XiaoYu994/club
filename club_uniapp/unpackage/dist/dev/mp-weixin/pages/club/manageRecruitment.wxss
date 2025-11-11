@@ -1,0 +1,183 @@
+/* 水平间距 */
+/* 水平间距 */
+.manage-recruitment-container.data-v-b4c90a47 {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 180rpx;
+  /* 为底部按钮留出空间 */
+}
+.status-bar.data-v-b4c90a47 {
+  width: 100%;
+  background-color: #b13b7a;
+}
+.recruitment-list.data-v-b4c90a47 {
+  flex: 1;
+  padding: 20rpx 30rpx 30rpx;
+  box-sizing: border-box;
+}
+.create-btn.data-v-b4c90a47 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  background: linear-gradient(135deg, #b13b7a, #e9629e);
+  border-radius: 40rpx;
+  color: #fff;
+  font-size: 28rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 10rpx rgba(177, 59, 122, 0.3);
+}
+.create-btn text.data-v-b4c90a47 {
+  margin-left: 10rpx;
+}
+.section.data-v-b4c90a47 {
+  margin-bottom: 40rpx;
+}
+.section .section-title.data-v-b4c90a47 {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+  position: relative;
+  padding-left: 20rpx;
+}
+.section .section-title.data-v-b4c90a47::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6rpx;
+  height: 30rpx;
+  background: #b13b7a;
+  border-radius: 3rpx;
+}
+.recruitment-card.data-v-b4c90a47 {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.recruitment-card .card-header.data-v-b4c90a47 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.recruitment-card .card-header .title.data-v-b4c90a47 {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recruitment-card .card-header .status-tag.data-v-b4c90a47 {
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+}
+.recruitment-card .card-header .status-tag.pending.data-v-b4c90a47 {
+  color: #ff9800;
+  background: rgba(255, 152, 0, 0.1);
+}
+.recruitment-card .card-header .status-tag.active.data-v-b4c90a47 {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+.recruitment-card .card-header .status-tag.ended.data-v-b4c90a47 {
+  color: #999;
+  background: rgba(0, 0, 0, 0.05);
+}
+.recruitment-card .card-content.data-v-b4c90a47 {
+  margin-bottom: 20rpx;
+}
+.recruitment-card .card-content .info-item.data-v-b4c90a47 {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+.recruitment-card .card-content .info-item text.data-v-b4c90a47 {
+  margin-left: 10rpx;
+}
+.recruitment-card .card-footer.data-v-b4c90a47 {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+.recruitment-card .card-footer .action-btn.data-v-b4c90a47 {
+  margin-left: 16rpx;
+  padding: 0 20rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 24rpx;
+  border-radius: 28rpx;
+  background: #f8f8f8;
+  color: #666;
+}
+.recruitment-card .card-footer .action-btn.edit.data-v-b4c90a47, .recruitment-card .card-footer .action-btn.view.data-v-b4c90a47 {
+  background: rgba(177, 59, 122, 0.1);
+  color: #b13b7a;
+}
+.recruitment-card .card-footer .action-btn.view-applies.data-v-b4c90a47 {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+}
+.recruitment-card .card-footer .action-btn.end.data-v-b4c90a47 {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+.recruitment-card .card-footer .action-btn.copy.data-v-b4c90a47 {
+  background: rgba(255, 152, 0, 0.1);
+  color: #ff9800;
+}
+.empty-tip.data-v-b4c90a47, .loading-tip.data-v-b4c90a47, .no-more-tip.data-v-b4c90a47 {
+  padding: 30rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.empty-tip image.data-v-b4c90a47, .loading-tip image.data-v-b4c90a47, .no-more-tip image.data-v-b4c90a47 {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.7;
+}
+.empty-tip text.data-v-b4c90a47, .loading-tip text.data-v-b4c90a47, .no-more-tip text.data-v-b4c90a47 {
+  font-size: 26rpx;
+  color: #999;
+}
+.loading-tip.data-v-b4c90a47 {
+  flex-direction: row;
+}
+.loading-tip text.data-v-b4c90a47 {
+  margin-left: 10rpx;
+}
+.bottom-create-btn.data-v-b4c90a47 {
+  position: fixed;
+  bottom: 50rpx;
+  /* 调整位置 */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  height: 90rpx;
+  background: linear-gradient(135deg, #b13b7a, #e9629e);
+  border-radius: 45rpx;
+  color: #fff;
+  font-size: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(177, 59, 122, 0.3);
+  z-index: 10;
+}
+.bottom-create-btn text.data-v-b4c90a47 {
+  margin-left: 10rpx;
+}

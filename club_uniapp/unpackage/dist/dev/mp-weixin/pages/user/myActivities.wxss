@@ -1,0 +1,38 @@
+/* 水平间距 */
+/* 水平间距 */
+.activity-card.data-v-dc2080c9 {
+  display: flex;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 12rpx;
+  background: #fff;
+}
+.activity-cover.data-v-dc2080c9 {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  background: #fff;
+}
+.activity-name.data-v-dc2080c9 {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 80rpx;
+}
+.loading-more.data-v-dc2080c9,
+.empty-data.data-v-dc2080c9 {
+  text-align: center;
+  padding: 30rpx;
+}
+.status-tags.data-v-dc2080c9 {
+  margin-top: 10rpx;
+  display: flex;
+  gap: 10rpx;
+}
+.status-tag.data-v-dc2080c9 {
+  padding: 4rpx 10rpx;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  color: #fff;
+  background: #409EFF;
+}

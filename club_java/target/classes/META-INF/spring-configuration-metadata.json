@@ -1,0 +1,59 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.hngy.common.properties.JwtProperties",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "wechat",
+      "type": "com.hngy.common.properties.WeChatProperties",
+      "sourceType": "com.hngy.common.properties.WeChatProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.admin-secret-key",
+      "type": "java.lang.String",
+      "description": "管理端生成jwt令牌相关配置",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "jwt.admin-token-name",
+      "type": "java.lang.String",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "jwt.admin-ttl",
+      "type": "java.lang.Long",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "jwt.user-secret-key",
+      "type": "java.lang.String",
+      "description": "用户端微信用户生成jwt令牌相关配置",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "jwt.user-token-name",
+      "type": "java.lang.String",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "jwt.user-ttl",
+      "type": "java.lang.Long",
+      "sourceType": "com.hngy.common.properties.JwtProperties"
+    },
+    {
+      "name": "wechat.appid",
+      "type": "java.lang.String",
+      "sourceType": "com.hngy.common.properties.WeChatProperties"
+    },
+    {
+      "name": "wechat.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.hngy.common.properties.WeChatProperties"
+    }
+  ],
+  "hints": []
+}

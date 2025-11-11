@@ -1,0 +1,81 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: club-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_club?serverTimezone=UTC
+    username: root
+    password: root
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 10MB #  文件大小
+      max-request-size: 10MB
+  redis:
+    host: 172.28.64.14
+    port: 6379
+    password: xhy_redis
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler # 分页插件
+    map-underscore-to-camel-case: true # 驼峰映射 默认自动开启
+  global-config:
+    db-config:
+      update-strategy: not_null #仅更新实体类中的非空字段
+      id-type: auto # 数据库主键策略 自增长 默认雪花算法
+
+
+# 日志
+logging:
+  level:
+    com:
+      hngy:
+        mapper: debug
+        service: info
+        controller: info
+# 文件上传
+dromara:
+  x-file-storage: #文件存储配置
+    default-platform: aliyun-oss-1 #默认使用的存储平台
+    thumbnail-suffix: ".min.jpg" #缩略图后缀，例如【.min.jpg】【.png】
+    #对应平台的配置写在这里，注意缩进要对齐
+    aliyun-oss:
+      - platform: aliyun-oss-1 # 存储平台标识
+        enable-storage: true  # 启用存储
+        access-key: LTAI5tEFW7p52FcJhYKGLPJG
+        secret-key: AIgCVIRfeYKYnNZh2M57xIv49g1qMj
+        end-point: https://oss-cn-hangzhou.aliyuncs.com
+        bucket-name: web-cangqio
+        domain: https://web-cangqio.oss-cn-hangzhou.aliyuncs.com/ # 访问域名，注意"/"结尾，例如：https://abc.oss-cn-shanghai.aliyuncs.com/
+        base-path: club-images/ # 基础路径
+
+# API文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: 社团管理接口文档测试
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          -  com.hngy.controller
+
+jwt:
+   admin-secret-key: a8f7d6c5b4e3f2a1a8f7d6c5b4e3f2a1 # 32位
+   admin-ttl: 7200000000000000
+   admin-token-name: token
+
+   user-secret-key: a8f7d6c5b4etr5a1a8f7d6c5b4e3op9o # 32位
+   user-ttl: 7200000000000000
+   user-token-name: authentication
+
+wechat:
+  appid: wx868574fed1d9b3b0
+  secret: be96588a9ebddc7c151199102a67eca4

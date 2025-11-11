@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "招新活动审核",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "custom-nav-bar": "../../../components/custom-nav-bar/custom-nav-bar",
+    "uni-icons": "../../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "uni-popup": "../../../uni_modules/uni-popup/components/uni-popup/uni-popup"
+  }
+}

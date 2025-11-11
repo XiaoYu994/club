@@ -1,0 +1,231 @@
+/* 水平间距 */
+/* 水平间距 */
+.activity-form.data-v-6672200b {
+  padding-bottom: 120rpx;
+}
+.activity-form .form-container.data-v-6672200b {
+  padding: 20rpx;
+}
+.activity-form .form-section.data-v-6672200b {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+.activity-form .form-section .section-title.data-v-6672200b {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.activity-form .form-item.data-v-6672200b {
+  margin-bottom: 30rpx;
+}
+.activity-form .form-item.data-v-6672200b:last-child {
+  margin-bottom: 0;
+}
+.activity-form .form-item .form-label.data-v-6672200b {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+.activity-form .form-item .form-input.data-v-6672200b, .activity-form .form-item .form-textarea.data-v-6672200b {
+  width: 100%;
+  background: #f8f8f8;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.activity-form .form-item .form-input.data-v-6672200b {
+  height: 80rpx;
+  padding: 0 20rpx;
+}
+.activity-form .form-item .form-textarea.data-v-6672200b {
+  height: 200rpx;
+  padding: 20rpx;
+}
+.activity-form .form-item .datetime-picker-row.data-v-6672200b {
+  display: flex;
+  align-items: center;
+}
+.activity-form .form-item .form-picker.data-v-6672200b {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 20rpx;
+  background: #f8f8f8;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.activity-form .form-item .form-picker.datetime-picker.data-v-6672200b {
+  width: 48%;
+  margin-right: 4%;
+}
+.activity-form .form-item .form-picker.datetime-picker.data-v-6672200b:last-child {
+  margin-right: 0;
+}
+.activity-form .form-item .poster-upload.data-v-6672200b {
+  width: 100%;
+  height: 360rpx;
+  background: #f8f8f8;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.activity-form .form-item .poster-upload .poster-preview.data-v-6672200b {
+  width: 100%;
+  height: 100%;
+}
+.activity-form .form-item .poster-upload .upload-placeholder.data-v-6672200b {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.activity-form .form-item .poster-upload .upload-placeholder text.data-v-6672200b {
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 20rpx;
+}
+.activity-form .form-fields.data-v-6672200b {
+  margin-top: 30rpx;
+}
+.activity-form .form-fields .form-field-item.data-v-6672200b {
+  background: #f8f8f8;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+.activity-form .form-fields .form-field-item .field-header.data-v-6672200b {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.activity-form .form-fields .form-field-item .field-header .field-name.data-v-6672200b {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+.activity-form .form-fields .form-field-item .field-header .field-actions.data-v-6672200b {
+  display: flex;
+  align-items: center;
+}
+.activity-form .form-fields .form-field-item .field-header .field-actions .required-switch.data-v-6672200b {
+  display: flex;
+  align-items: center;
+  margin-right: 20rpx;
+}
+.activity-form .form-fields .form-field-item .field-header .field-actions .required-switch text.data-v-6672200b {
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+.activity-form .form-fields .form-field-item .field-header .field-actions .delete-btn.data-v-6672200b {
+  padding: 10rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-type.data-v-6672200b {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-type text.data-v-6672200b {
+  font-size: 26rpx;
+  color: #666;
+}
+.activity-form .form-fields .form-field-item .field-content .field-type .type-picker.data-v-6672200b {
+  flex: 1;
+  height: 60rpx;
+  line-height: 60rpx;
+  padding: 0 20rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  margin-left: 10rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options.data-v-6672200b {
+  margin-top: 20rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options .options-label.data-v-6672200b {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 10rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options .option-item.data-v-6672200b {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options .option-item .option-input.data-v-6672200b {
+  flex: 1;
+  height: 60rpx;
+  padding: 0 20rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options .option-item .delete-option.data-v-6672200b {
+  padding: 10rpx;
+  margin-left: 10rpx;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options .add-option.data-v-6672200b {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0;
+}
+.activity-form .form-fields .form-field-item .field-content .field-options .add-option text.data-v-6672200b {
+  font-size: 26rpx;
+  color: #b13b7a;
+  margin-left: 10rpx;
+}
+.activity-form .form-fields .add-field.data-v-6672200b {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+}
+.activity-form .form-fields .add-field text.data-v-6672200b {
+  font-size: 28rpx;
+  color: #b13b7a;
+  margin-left: 10rpx;
+}
+.activity-form .form-actions.data-v-6672200b {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  z-index: 999;
+}
+.activity-form .form-actions button.data-v-6672200b {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+  border: 1rpx solid transparent;
+  z-index: 1000;
+}
+.activity-form .form-actions .cancel-btn.data-v-6672200b {
+  background-color: #f5f5f5 !important;
+  color: #666 !important;
+  border: 1rpx solid #ddd !important;
+}
+.activity-form .form-actions .submit-btn.data-v-6672200b {
+  background-color: #b13b7a !important;
+  color: #fff !important;
+  border: 1rpx solid #b13b7a !important;
+}

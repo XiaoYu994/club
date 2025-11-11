@@ -1,0 +1,117 @@
+/* 水平间距 */
+/* 水平间距 */
+.login-page.data-v-6163e5ce {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100rpx;
+  background: #f5f6fa;
+}
+.login-page .logo.data-v-6163e5ce {
+  width: 140rpx;
+  height: 140rpx;
+  margin-bottom: 20rpx;
+}
+.login-page .title.data-v-6163e5ce {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+.login-page .login-tip.data-v-6163e5ce {
+  font-size: 28rpx;
+  color: #888;
+  margin-bottom: 60rpx;
+}
+.login-page .login-btns.data-v-6163e5ce {
+  width: 80%;
+  margin-bottom: 30rpx;
+}
+.login-page .login-btns .wechat-login-btn.data-v-6163e5ce {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #07c160;
+  color: #fff;
+  height: 88rpx;
+  border-radius: 44rpx;
+  margin-bottom: 20rpx;
+}
+.login-page .login-btns .wechat-login-btn image.data-v-6163e5ce {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+.login-page .login-btns .phone-login-btn.data-v-6163e5ce {
+  background: #f5f5f5;
+  color: #333;
+  height: 88rpx;
+  border-radius: 44rpx;
+  line-height: 88rpx;
+}
+.login-page .agreement.data-v-6163e5ce {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #888;
+}
+.login-page .agreement checkbox.data-v-6163e5ce {
+  transform: scale(0.7);
+  margin-right: 4rpx;
+}
+.login-modal.data-v-6163e5ce {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.login-modal .modal-content.data-v-6163e5ce {
+  width: 80%;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 40rpx 30rpx;
+}
+.login-modal .modal-content .modal-title.data-v-6163e5ce {
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 30rpx;
+}
+.login-modal .modal-content .modal-links.data-v-6163e5ce {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40rpx;
+}
+.login-modal .modal-content .modal-links .link.data-v-6163e5ce {
+  color: #2a5fff;
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+.login-modal .modal-content .modal-buttons.data-v-6163e5ce {
+  display: flex;
+  justify-content: space-between;
+}
+.login-modal .modal-content .modal-buttons button.data-v-6163e5ce {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+}
+.login-modal .modal-content .modal-buttons .cancel-btn.data-v-6163e5ce {
+  background: #f5f5f5;
+  color: #666;
+  margin-right: 20rpx;
+}
+.login-modal .modal-content .modal-buttons .confirm-btn.data-v-6163e5ce {
+  background: #07c160;
+  color: #fff;
+}

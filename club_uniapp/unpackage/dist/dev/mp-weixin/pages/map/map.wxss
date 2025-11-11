@@ -1,0 +1,9 @@
+
+.map-container.data-v-e06b858f {
+  margin: 20rpx;
+}
+.map-image.data-v-e06b858f {
+  width: 100%;
+  border-radius: 12rpx;
+  display: block;
+}

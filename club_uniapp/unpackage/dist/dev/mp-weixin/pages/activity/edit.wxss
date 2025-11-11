@@ -1,0 +1,9 @@
+/* 水平间距 */
+/* 水平间距 */
+.edit-activity-container.data-v-8333b4c7 {
+  min-height: 100vh;
+}
+.status-bar.data-v-8333b4c7 {
+  width: 100%;
+  background-color: #ffffff;
+}

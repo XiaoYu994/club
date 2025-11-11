@@ -1,0 +1,1 @@
+<view class="pageBg data-v-e06b858f"><custom-nav-bar wx:if="{{a}}" class="data-v-e06b858f" u-i="e06b858f-0" bind:__l="__l" u-p="{{a}}"></custom-nav-bar><view class="map-container data-v-e06b858f"><image src="{{b}}" mode="widthFix" class="map-image data-v-e06b858f" bindtap="{{c}}"/></view></view>

@@ -1,0 +1,351 @@
+{
+	"pages": [{
+		"path": "pages/index/index",
+		"style": {
+			"navigationBarTitleText": "uni-app",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/user/user",
+		"style" : 
+		{
+			"navigationBarTitleText" : "用户",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+	  "path": "pages/user/myClubs",
+	  "style": { "navigationBarTitleText": "我的社团","navigationStyle": "custom" }
+	},
+	{
+	  "path": "pages/user/myActivities",
+	  "style": { "navigationBarTitleText": "我的活动","navigationStyle": "custom" }
+	},
+	{
+	  "path": "pages/user/myApplies",
+	  "style": { "navigationBarTitleText": "我的申请","navigationStyle": "custom" }
+	},
+	{
+		"path" : "pages/activity/activity",
+		"style" : 
+		{
+			"navigationBarTitleText" : "活动",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/activity/activityDeatil",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/activity/edit",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/map/map",
+		"style" : 
+		{
+			"navigationBarTitleText" : "校园导览",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/activity/applies",
+		"style" : 
+		{
+			"navigationBarTitleText" : "报名管理",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/user/login",
+		"style" : 
+		{
+			"navigationBarTitleText" : "登录",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/message/message",
+		"style" : 
+		{
+			"navigationBarTitleText" : "通知",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/club",
+		"style" : 
+		{
+			"navigationBarTitleText" : "社团",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/detail",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/recruitment",
+		"style" : 
+		{
+			"navigationBarTitleText" : "社团招新",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/club/createRecruitment",
+		"style": {
+			"navigationBarTitleText": "创建招新",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/club/editRecruitment",
+		"style": {
+			"navigationBarTitleText": "编辑招新",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/apply",
+		"style" : 
+		{
+			"navigationBarTitleText" : "申请加入",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/applies",
+		"style" : 
+		{
+			"navigationBarTitleText" : "申请管理",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/members",
+		"style" : 
+		{
+			"navigationBarTitleText" : "成员管理",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/club/activities",
+		"style" : 
+		{
+			"navigationBarTitleText" : "活动管理",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/club/editClub",
+		"style": {
+			"navigationBarTitleText": "编辑社团",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/club/topTen",
+		"style": {
+			"navigationBarTitleText": "十佳社团",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/club/manageRecruitment",
+		"style": {
+			"navigationBarTitleText": "招新管理",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/chat/room",
+		"style": {
+			"navigationBarTitleText": "聊天室",
+			"enablePullDownRefresh": true,
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/chat/create",
+		"style": {
+			"navigationBarTitleText": "创建群聊",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/notice/notice",
+		"style": {
+			"navigationBarTitleText": "公告",
+			"navigationStyle": "custom"
+		}
+	},
+	{
+		"path": "pages/notice/detail",
+		"style": {
+			"navigationBarTitleText": "公告详情",
+			"navigationStyle": "custom"
+		}
+	}
+],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"app-plus": {
+			"background": "#efeff4"
+		}
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@/uni_modules/uni-$1/components/uni-$1/uni-$1.vue"
+		}
+	},
+	  "tabBar": {
+	    "color": "#999999",
+	    "selectedColor": "#b13b7a",
+	    "backgroundColor": "#ffffff",
+	    "borderStyle": "black",
+	    "list": [
+	      {
+	        "pagePath": "pages/index/index",
+	        "iconPath": "/static/images/tabBar/home.png",
+	        "selectedIconPath": "/static/images/tabBar/home-h.png",
+	        "text": "首页"
+	      },
+		  {
+		    "pagePath": "pages/message/message",
+		    "iconPath": "/static/images/tabBar/message.png",
+		    "selectedIconPath": "/static/images/tabBar/message-h.png",
+		    "text": "消息"
+		  },
+	      {
+	        "pagePath": "pages/activity/activity",
+	        "iconPath": "/static/images/tabBar/activity.png",
+	        "selectedIconPath": "/static/images/tabBar/activity-h.png",
+	        "text": "活动"
+	      },
+	      {
+	        "pagePath": "pages/user/user",
+	        "iconPath": "/static/images/tabBar/user.png",
+	        "selectedIconPath": "/static/images/tabBar/user-h.png",
+	        "text": "我的"
+	      }
+	    ]
+	  },
+	  "subPackages": [
+	    {
+	      "root": "pages/admin",
+	      "pages": [
+	        {
+	          "path": "login",
+	          "style": {
+	            "navigationBarTitleText": "管理员登录",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "index",
+	          "style": {
+	            "navigationBarTitleText": "管理控制台",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "admins",
+	          "style": {
+	            "navigationBarTitleText": "管理员管理",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "users",
+	          "style": {
+	            "navigationBarTitleText": "用户管理",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "notices",
+	          "style": {
+	            "navigationBarTitleText": "公告管理",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "notices/edit",
+	          "style": {
+	            "navigationBarTitleText": "编辑公告",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "password",
+	          "style": {
+	            "navigationBarTitleText": "修改密码",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "clubs",
+	          "style": {
+	            "navigationBarTitleText": "社团管理",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "activities",
+	          "style": {
+	            "navigationBarTitleText": "活动管理",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	        {
+	          "path": "recruitment/configs",
+	          "style": {
+	            "navigationBarTitleText": "招新配置管理",
+	            "navigationStyle": "custom"
+	          }
+	        },
+	                {
+          "path": "recruitment/edit",
+          "style": {
+            "navigationBarTitleText": "招新配置编辑",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "recruitment/audit",
+          "style": {
+            "navigationBarTitleText": "招新活动审核",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "recruitment/detail",
+          "style": {
+            "navigationBarTitleText": "招新详情",
+            "navigationStyle": "custom"
+          }
+        }
+	      ]
+	    }
+	  ]
+}

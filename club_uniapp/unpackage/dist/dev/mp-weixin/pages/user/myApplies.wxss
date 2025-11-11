@@ -1,0 +1,88 @@
+/* 水平间距 */
+/* 水平间距 */
+.apply-card.data-v-668d7b04 {
+  padding: 20rpx;
+  margin: 20rpx;
+  border-radius: 12rpx;
+  background: #fff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+.apply-header.data-v-668d7b04 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+.club-info.data-v-668d7b04 {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.club-logo.data-v-668d7b04 {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+}
+.club-text.data-v-668d7b04 {
+  flex: 1;
+}
+.club-name.data-v-668d7b04 {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+.recruitment-title.data-v-668d7b04 {
+  font-size: 26rpx;
+  color: #666;
+}
+.apply-status.data-v-668d7b04 {
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+.status-0.data-v-668d7b04 {
+  background-color: #909399;
+}
+.status-1.data-v-668d7b04 {
+  background-color: #67C23A;
+}
+.status-2.data-v-668d7b04 {
+  background-color: #F56C6C;
+}
+.status-3.data-v-668d7b04 {
+  background-color: #E6A23C;
+}
+.status-4.data-v-668d7b04 {
+  background-color: #409EFF;
+}
+.apply-details.data-v-668d7b04 {
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 16rpx;
+}
+.detail-item.data-v-668d7b04 {
+  display: flex;
+  margin-bottom: 8rpx;
+  font-size: 26rpx;
+}
+.detail-item.data-v-668d7b04:last-child {
+  margin-bottom: 0;
+}
+.label.data-v-668d7b04 {
+  color: #666;
+  min-width: 140rpx;
+}
+.value.data-v-668d7b04 {
+  color: #333;
+  flex: 1;
+}
+.loading-more.data-v-668d7b04,
+.empty-data.data-v-668d7b04 {
+  text-align: center;
+  padding: 30rpx;
+  color: #999;
+  font-size: 28rpx;
+}

@@ -1,0 +1,162 @@
+/* 水平间距 */
+/* 水平间距 */
+.admin-index.data-v-9a704506 {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+  position: relative;
+}
+.admin-avatar-btn.data-v-9a704506 {
+  display: flex;
+  align-items: center;
+  margin-right: 8rpx;
+}
+.admin-avatar-btn .admin-avatar.data-v-9a704506 {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  box-shadow: 0 2rpx 8rpx rgba(41, 121, 255, 0.08);
+  border: 2rpx solid #fff;
+}
+.data-overview.data-v-9a704506 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 40rpx 24rpx 0 24rpx;
+  gap: 32rpx 0;
+}
+.data-overview .data-card.data-v-9a704506 {
+  width: 48%;
+  background: #fff;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 24rpx rgba(41, 121, 255, 0.08);
+  padding: 38rpx 0 32rpx 0;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+.data-overview .data-card.data-v-9a704506:active {
+  box-shadow: 0 8rpx 32rpx rgba(41, 121, 255, 0.18);
+}
+.data-overview .data-card .card-value.data-v-9a704506 {
+  font-size: 54rpx;
+  font-weight: 700;
+  color: #2979ff;
+  margin-bottom: 12rpx;
+}
+.data-overview .data-card .card-title.data-v-9a704506 {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 28rpx;
+}
+.data-overview .data-card .card-title text.data-v-9a704506 {
+  margin-left: 10rpx;
+}
+.module-section.data-v-9a704506 {
+  margin: 48rpx 24rpx 0 24rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 36rpx 0 24rpx 0;
+  box-shadow: 0 4rpx 24rpx rgba(41, 121, 255, 0.08);
+}
+.module-section .section-title.data-v-9a704506 {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #2979ff;
+  margin-bottom: 32rpx;
+  padding-left: 32rpx;
+  border-left: 6rpx solid #2979ff;
+}
+.module-section .module-grid.data-v-9a704506 {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.module-section .module-grid .module-item.data-v-9a704506 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.module-section .module-grid .module-item .module-icon.data-v-9a704506 {
+  width: 104rpx;
+  height: 104rpx;
+  background: linear-gradient(135deg, #e3f0ff 0%, #f5faff 100%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12rpx;
+  box-shadow: 0 2rpx 12rpx rgba(41, 121, 255, 0.08);
+}
+.module-section .module-grid .module-item .module-name.data-v-9a704506 {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 600;
+}
+.notice-section.data-v-9a704506 {
+  margin: 48rpx 24rpx 0 24rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 36rpx 24rpx 24rpx 24rpx;
+  box-shadow: 0 4rpx 24rpx rgba(41, 121, 255, 0.08);
+}
+.notice-section .section-title.data-v-9a704506 {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #2979ff;
+  margin-bottom: 32rpx;
+  padding-left: 32rpx;
+  border-left: 6rpx solid #2979ff;
+}
+.notice-section .notice-list .notice-card.data-v-9a704506 {
+  background: #f8faff;
+  border-radius: 16rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 18rpx;
+  box-shadow: 0 2rpx 8rpx rgba(41, 121, 255, 0.04);
+}
+.notice-section .notice-list .notice-card .notice-title.data-v-9a704506 {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+.notice-section .notice-list .notice-card .notice-date.data-v-9a704506 {
+  font-size: 22rpx;
+  color: #aaa;
+}
+.notice-section .empty-tip.data-v-9a704506 {
+  padding: 40rpx 0;
+  text-align: center;
+  color: #bbb;
+  font-size: 26rpx;
+}
+.admin-menu.data-v-9a704506 {
+  background-color: #fff;
+  border-radius: 16rpx 16rpx 0 0;
+  overflow: hidden;
+}
+.admin-menu .menu-item.data-v-9a704506 {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #eee;
+}
+.admin-menu .menu-item text.data-v-9a704506 {
+  margin-left: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.admin-menu .menu-item.logout text.data-v-9a704506 {
+  color: #dd524d;
+}
+.admin-menu .menu-cancel.data-v-9a704506 {
+  padding: 30rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #333;
+  background-color: #f5f5f5;
+}

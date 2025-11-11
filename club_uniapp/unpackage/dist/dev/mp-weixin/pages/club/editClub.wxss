@@ -1,0 +1,104 @@
+/* 水平间距 */
+/* 水平间距 */
+.edit-club-container.data-v-83fcc81d {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+}
+.activity-form.data-v-83fcc81d {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.form-container.data-v-83fcc81d {
+  flex: 1;
+  padding: 20rpx 30rpx;
+}
+.form-section.data-v-83fcc81d {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+.section-title.data-v-83fcc81d {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+.form-item.data-v-83fcc81d {
+  margin-bottom: 30rpx;
+}
+.form-label.data-v-83fcc81d {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+.form-input.data-v-83fcc81d {
+  width: 100%;
+  height: 80rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+}
+.form-textarea.data-v-83fcc81d {
+  width: 100%;
+  height: 240rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+}
+.form-actions.data-v-83fcc81d {
+  display: flex;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.poster-upload.data-v-83fcc81d {
+  width: 100%;
+  height: 320rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.poster-preview.data-v-83fcc81d {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.upload-placeholder.data-v-83fcc81d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #999;
+}
+.upload-placeholder text.data-v-83fcc81d {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+}
+.cancel-btn.data-v-83fcc81d, .submit-btn.data-v-83fcc81d {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+}
+.cancel-btn.data-v-83fcc81d {
+  background-color: #f0f0f0;
+  color: #666;
+  margin-right: 20rpx;
+}
+.submit-btn.data-v-83fcc81d {
+  background-color: #b13b7a;
+  color: #fff;
+}

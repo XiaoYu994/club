@@ -1,0 +1,252 @@
+/* 水平间距 */
+/* 水平间距 */
+.chat-room-container.data-v-bc4afd2d {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  box-sizing: border-box;
+  padding-bottom: 120rpx;
+  /* 为底部输入区域留出空间 */
+}
+
+/* 面板展开时，为消息列表额外预留空间（输入区+面板高度） */
+.chat-room-container.panel-open.data-v-bc4afd2d {
+  padding-bottom: 420rpx;
+  /* 120rpx 输入区 + 300rpx 面板 */
+}
+.chat-list.data-v-bc4afd2d {
+  flex: 1;
+  padding: 20rpx;
+  box-sizing: border-box;
+  background-color: #F6F6F6;
+  height: calc(100vh - 120rpx - var(--status-bar-height) - 44px);
+  /* 优化滚动性能 */
+  -webkit-overflow-scrolling: touch;
+  /* 确保滚动视图从顶部开始 */
+  display: flex;
+  flex-direction: column;
+}
+.chat-list .load-more.data-v-bc4afd2d {
+  padding: 20rpx 0;
+  text-align: center;
+}
+.chat-list .load-more text.data-v-bc4afd2d {
+  font-size: 24rpx;
+  color: #999;
+}
+.chat-list .load-more .loading-icon.data-v-bc4afd2d {
+  display: inline-block;
+  width: 30rpx;
+  height: 30rpx;
+  border: 2rpx solid #999;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: loading-bc4afd2d 0.8s linear infinite;
+  margin-right: 10rpx;
+  vertical-align: middle;
+}
+@keyframes loading-bc4afd2d {
+from {
+    transform: rotate(0deg);
+}
+to {
+    transform: rotate(360deg);
+}
+}
+.chat-list .messages-container.data-v-bc4afd2d {
+  /* 使用flex布局，消息从上到下正常排列 */
+  display: flex;
+  flex-direction: column;
+  /* 让容器根据内容自适应高度，不强制占满 */
+  flex: 1;
+  justify-content: flex-start;
+}
+.chat-list .messages-container .message-item.data-v-bc4afd2d {
+  /* 每个消息项 */
+  width: 100%;
+  margin-bottom: 10rpx;
+}
+.chat-list .time-divider.data-v-bc4afd2d {
+  text-align: center;
+  padding: 10rpx 0;
+  margin: 20rpx 0;
+}
+.chat-list .time-divider text.data-v-bc4afd2d {
+  font-size: 24rpx;
+  color: #999;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10rpx;
+  padding: 4rpx 16rpx;
+}
+.chat-list .message-row.data-v-bc4afd2d {
+  display: flex;
+  margin-bottom: 30rpx;
+  align-items: flex-start;
+  will-change: transform;
+  /* 提示浏览器这个元素会变化，优化渲染 */
+}
+.chat-list .message-row .avatar-container.data-v-bc4afd2d {
+  width: 80rpx;
+  height: 80rpx;
+  flex-shrink: 0;
+}
+.chat-list .message-row .avatar.data-v-bc4afd2d {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+}
+.chat-list .message-row .message-content.data-v-bc4afd2d {
+  max-width: 70%;
+  padding: 0 20rpx;
+}
+.chat-list .message-row .message-content .sender-name.data-v-bc4afd2d {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 6rpx;
+}
+.chat-list .message-row .message-content .bubble.data-v-bc4afd2d {
+  padding: 20rpx;
+  background: #FFFFFF;
+  border-radius: 4rpx 16rpx 16rpx 16rpx;
+  /* 支持中英文自动换行 */
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  display: inline-block;
+  min-width: 40rpx;
+  max-width: 100%;
+  box-sizing: border-box;
+  will-change: transform;
+  /* 优化渲染性能 */
+}
+.chat-list .message-row .message-content .time.data-v-bc4afd2d {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+  text-align: left;
+}
+.chat-list .message-row .message-content.self.data-v-bc4afd2d {
+  text-align: right;
+}
+.chat-list .message-row .message-content.self .bubble.data-v-bc4afd2d {
+  background: #95EC69;
+  border-radius: 16rpx 4rpx 16rpx 16rpx;
+}
+.chat-list .message-row .message-content.self .time.data-v-bc4afd2d {
+  text-align: right;
+}
+.chat-list .message-row.self.data-v-bc4afd2d {
+  justify-content: flex-end;
+}
+.chat-list .message-row .text.data-v-bc4afd2d {
+  font-size: 28rpx;
+  line-height: 40rpx;
+  color: #333;
+  /* 文本支持中英文折行 */
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  white-space: pre-line;
+  max-width: 100%;
+  display: inline-block;
+}
+.chat-list .message-row .image.data-v-bc4afd2d {
+  max-width: 400rpx;
+  border-radius: 8rpx;
+}
+.chat-list .message-row .file-box.data-v-bc4afd2d, .chat-list .message-row .location-box.data-v-bc4afd2d {
+  display: flex;
+  align-items: center;
+}
+.chat-list .message-row .file-name.data-v-bc4afd2d, .chat-list .message-row .location-name.data-v-bc4afd2d {
+  font-size: 28rpx;
+  color: #333;
+  margin-left: 10rpx;
+}
+.input-area.data-v-bc4afd2d {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #fff;
+  border-top: 1px solid #eee;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.input-area .more-btn.data-v-bc4afd2d, .input-area .send-btn.data-v-bc4afd2d {
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.input-area .input-wrapper.data-v-bc4afd2d {
+  flex: 1;
+  margin: 0 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 16rpx;
+}
+.input-area .input-wrapper .message-input.data-v-bc4afd2d {
+  width: 100%;
+  min-height: 40rpx;
+  max-height: 180rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+.input-area .send-btn.data-v-bc4afd2d {
+  background: #ddd;
+  border-radius: 35rpx;
+}
+.input-area .send-btn.active.data-v-bc4afd2d {
+  background: #2979ff;
+}
+
+/* 面板展开時，輸入區上移到面板上方 */
+.input-area.with-panel.data-v-bc4afd2d {
+  bottom: 300rpx;
+  /* 與面板高度一致 */
+}
+.more-panel.data-v-bc4afd2d {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30rpx 20rpx;
+  background: #fff;
+  border-top: 1px solid #eee;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* 固定在最底部，位於輸入區下方 */
+  height: 300rpx;
+  /* 固定面板高度 */
+  overflow: auto;
+  z-index: 99;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.more-panel .panel-item.data-v-bc4afd2d {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+.more-panel .panel-item .panel-icon.data-v-bc4afd2d {
+  width: 100rpx;
+  height: 100rpx;
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10rpx;
+}
+.more-panel .panel-item text.data-v-bc4afd2d {
+  font-size: 24rpx;
+  color: #666;
+}

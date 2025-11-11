@@ -1,0 +1,251 @@
+/* 水平间距 */
+/* 水平间距 */
+.apply-container.data-v-3b42bf0a {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+.status-bar.data-v-3b42bf0a {
+  width: 100%;
+  background-color: #b13b7a;
+}
+.apply-content.data-v-3b42bf0a {
+  flex: 1;
+  overflow: hidden;
+  padding: 30rpx;
+}
+.club-info.data-v-3b42bf0a {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.club-info .club-logo.data-v-3b42bf0a {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+.club-info .club-name.data-v-3b42bf0a {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+.recruitment-info.data-v-3b42bf0a {
+  margin-bottom: 30rpx;
+}
+.recruitment-info .section-title.data-v-3b42bf0a {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+.recruitment-info .recruitment-poster.data-v-3b42bf0a {
+  width: 100%;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.recruitment-info .recruitment-card.data-v-3b42bf0a {
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+.recruitment-info .recruitment-card .recruitment-title.data-v-3b42bf0a {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  margin-right: 120rpx;
+}
+.recruitment-info .recruitment-card .status-tag.data-v-3b42bf0a {
+  position: absolute;
+  right: 20rpx;
+  top: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  color: #fff;
+}
+.recruitment-info .recruitment-card .status-tag.status-pending.data-v-3b42bf0a {
+  background-color: #909399;
+}
+.recruitment-info .recruitment-card .status-tag.status-active.data-v-3b42bf0a {
+  background-color: #67C23A;
+}
+.recruitment-info .recruitment-card .status-tag.status-ended.data-v-3b42bf0a {
+  background-color: #909399;
+}
+.recruitment-info .recruitment-card .recruitment-period.data-v-3b42bf0a, .recruitment-info .recruitment-card .recruitment-place.data-v-3b42bf0a {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+.recruitment-info .recruitment-card .recruitment-period uni-icons.data-v-3b42bf0a, .recruitment-info .recruitment-card .recruitment-place uni-icons.data-v-3b42bf0a {
+  margin-right: 8rpx;
+}
+.recruitment-info .recruitment-card .recruitment-stats.data-v-3b42bf0a {
+  display: flex;
+  justify-content: space-around;
+  margin: 20rpx 0;
+  padding: 10rpx 0;
+  border-top: 1rpx dashed #eee;
+  border-bottom: 1rpx dashed #eee;
+}
+.recruitment-info .recruitment-card .recruitment-stats .stat-item.data-v-3b42bf0a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.recruitment-info .recruitment-card .recruitment-stats .stat-item .stat-value.data-v-3b42bf0a {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #b13b7a;
+  margin-bottom: 4rpx;
+}
+.recruitment-info .recruitment-card .recruitment-stats .stat-item .stat-label.data-v-3b42bf0a {
+  font-size: 22rpx;
+  color: #999;
+}
+.recruitment-info .recruitment-card .recruitment-desc.data-v-3b42bf0a {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-top: 10rpx;
+}
+.apply-form .section-title.data-v-3b42bf0a {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+.apply-form .form-content.data-v-3b42bf0a {
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.apply-form .form-content .form-item.data-v-3b42bf0a {
+  margin-bottom: 30rpx;
+}
+.apply-form .form-content .form-item .form-label.data-v-3b42bf0a {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+.apply-form .form-content .form-item .form-input.data-v-3b42bf0a {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 20rpx;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+.apply-form .form-content .form-item .form-textarea.data-v-3b42bf0a {
+  width: 100%;
+  height: 200rpx;
+  padding: 20rpx;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+.apply-form .form-content .form-item .form-picker.data-v-3b42bf0a {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 20rpx;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.apply-form .form-content .form-item .checkbox-group.data-v-3b42bf0a {
+  display: flex;
+  flex-direction: column;
+}
+.apply-form .form-content .form-item .checkbox-group .checkbox-item.data-v-3b42bf0a {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.apply-form .form-content .form-item .checkbox-group .checkbox-item .checkbox-label.data-v-3b42bf0a {
+  font-size: 28rpx;
+  margin-left: 10rpx;
+}
+.apply-form .empty-form.data-v-3b42bf0a {
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.apply-form .empty-form text.data-v-3b42bf0a {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+.apply-form .empty-form .form-textarea.data-v-3b42bf0a {
+  width: 100%;
+  height: 200rpx;
+  padding: 20rpx;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+.recruitment-ended.data-v-3b42bf0a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.recruitment-ended uni-icons.data-v-3b42bf0a {
+  margin-bottom: 20rpx;
+}
+.recruitment-ended text.data-v-3b42bf0a {
+  font-size: 28rpx;
+  color: #999;
+}
+.action-bar.data-v-3b42bf0a {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+.action-bar button.data-v-3b42bf0a {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+}
+.action-bar .cancel-btn.data-v-3b42bf0a {
+  margin-right: 20rpx;
+  background-color: #f5f5f5;
+  color: #666;
+}
+.action-bar .submit-btn.data-v-3b42bf0a {
+  background-color: #b13b7a;
+  color: #fff;
+}
+.action-bar .submit-btn.data-v-3b42bf0a:disabled {
+  background-color: #d3a3b9;
+}

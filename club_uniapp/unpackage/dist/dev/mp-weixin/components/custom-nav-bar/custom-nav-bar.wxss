@@ -1,0 +1,31 @@
+/* 水平间距 */
+/* 水平间距 */
+.layout .navbar.data-v-412fc155 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background: linear-gradient(to bottom, transparent, #fff 400rpx), linear-gradient(to right, #beecd8 20%, #F4E2D8);
+}
+.layout .navbar .titleBar.data-v-412fc155 {
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  position: relative;
+}
+.layout .navbar .titleBar .title.data-v-412fc155 {
+  flex: 1;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #334155;
+}
+.layout .navbar .titleBar .right-slot.data-v-412fc155 {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}

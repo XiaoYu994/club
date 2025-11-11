@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hngy.mapper.ClubApplyMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, club_id, recruitment_id, status, interview_time, interview_place, interview_note, interview_result, forms, feedback, ext_json, create_time, update_time
+    </sql>
+
+</mapper>

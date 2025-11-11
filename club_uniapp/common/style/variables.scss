@@ -1,0 +1,71 @@
+
+// 主色调
+$primary-color: #94a3b8; // 主色调-灰蓝色
+$primary-light: #cbd5e1; // 主色调-浅色
+$primary-dark: #64748b; // 主色调-深色
+
+// 辅助色
+$secondary-color: #a78bfa; // 辅助色-淡紫色
+$success-color: #86efac; // 成功色-薄荷绿
+$warning-color: #fcd34d; // 警告色-淡黄色
+$error-color: #fda4af; // 错误色-淡粉色
+$info-color: #93c5fd; // 信息色-淡蓝色
+
+// 背景色
+$bg-color: #f8fafc; // 背景色-浅灰白
+$bg-color-light: #ffffff; // 背景色-白色
+$bg-color-dark: #e2e8f0; // 背景色-深灰
+
+// 文字颜色
+$text-color-primary: #334155; // 主要文字颜色
+$text-color-secondary: #64748b; // 次要文字颜色
+$text-color-disabled: #94a3b8; // 禁用文字颜色
+$text-color-placeholder: #cbd5e1; // 占位符文字颜色
+$text-color-inverse: #ffffff; // 反色文字颜色
+
+// 边框颜色
+$border-color: #e2e8f0; // 边框颜色
+$border-color-light: #f1f5f9; // 浅色边框
+
+// 阴影
+$box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$box-shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// 圆角
+$border-radius-small: 4rpx;
+$border-radius-base: 8rpx;
+$border-radius-large: 16rpx;
+$border-radius-circle: 50%;
+
+// 间距
+$spacing-mini: 4rpx;
+$spacing-small: 8rpx;
+$spacing-base: 16rpx;
+$spacing-medium: 24rpx;
+$spacing-large: 32rpx;
+$spacing-xl: 48rpx;
+$spacing-xxl: 64rpx;
+
+// 字体大小
+$font-size-mini: 24rpx;
+$font-size-small: 28rpx;
+$font-size-base: 32rpx;
+$font-size-medium: 36rpx;
+$font-size-large: 40rpx;
+$font-size-xl: 48rpx;
+$font-size-xxl: 56rpx;
+
+// 字体粗细
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 600;
+
+// 行高
+$line-height-tight: 1.25;
+$line-height-base: 1.5;
+$line-height-loose: 1.75;
+
+// 动画
+$transition-duration: 0.3s;
+$transition-timing-function: ease; 

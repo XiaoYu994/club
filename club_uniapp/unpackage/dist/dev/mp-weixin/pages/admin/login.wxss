@@ -1,0 +1,67 @@
+/* 水平间距 */
+/* 水平间距 */
+.login-container.data-v-3190821f {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+.login-header.data-v-3190821f {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+}
+.login-header .login-logo.data-v-3190821f {
+  width: 150rpx;
+  height: 150rpx;
+  margin-bottom: 30rpx;
+}
+.login-header .login-title.data-v-3190821f {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+.login-form.data-v-3190821f {
+  padding: 0 50rpx;
+}
+.login-form .input-group.data-v-3190821f {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8rpx;
+  padding: 24rpx 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+.login-form .input-group .input.data-v-3190821f {
+  flex: 1;
+  height: 40rpx;
+  margin-left: 20rpx;
+  font-size: 28rpx;
+}
+.login-form .login-button.data-v-3190821f {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  background-color: #2979ff;
+  color: #fff;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  margin-top: 50rpx;
+  box-shadow: 0 2rpx 10rpx rgba(41, 121, 255, 0.2);
+}
+.login-form .login-button.button-disabled.data-v-3190821f {
+  background-color: #cccccc;
+  box-shadow: none;
+}
+.login-footer.data-v-3190821f {
+  margin-top: auto;
+  padding: 40rpx 0;
+  display: flex;
+  justify-content: center;
+}
+.login-footer text.data-v-3190821f {
+  font-size: 24rpx;
+  color: #999;
+}

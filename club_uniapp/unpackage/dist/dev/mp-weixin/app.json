@@ -1,0 +1,95 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/user/user",
+    "pages/user/myClubs",
+    "pages/user/myActivities",
+    "pages/user/myApplies",
+    "pages/activity/activity",
+    "pages/activity/activityDeatil",
+    "pages/activity/edit",
+    "pages/map/map",
+    "pages/activity/applies",
+    "pages/user/login",
+    "pages/message/message",
+    "pages/club/club",
+    "pages/club/detail",
+    "pages/club/recruitment",
+    "pages/club/createRecruitment",
+    "pages/club/editRecruitment",
+    "pages/club/apply",
+    "pages/club/applies",
+    "pages/club/members",
+    "pages/club/activities",
+    "pages/club/editClub",
+    "pages/club/topTen",
+    "pages/club/manageRecruitment",
+    "pages/chat/room",
+    "pages/chat/create",
+    "pages/notice/notice",
+    "pages/notice/detail"
+  ],
+  "subPackages": [
+    {
+      "root": "pages/admin",
+      "pages": [
+        "login",
+        "index",
+        "admins",
+        "users",
+        "notices",
+        "notices/edit",
+        "password",
+        "clubs",
+        "activities",
+        "recruitment/configs",
+        "recruitment/edit",
+        "recruitment/audit",
+        "recruitment/detail"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#b13b7a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "/static/images/tabBar/home.png",
+        "selectedIconPath": "/static/images/tabBar/home-h.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "iconPath": "/static/images/tabBar/message.png",
+        "selectedIconPath": "/static/images/tabBar/message-h.png",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/activity/activity",
+        "iconPath": "/static/images/tabBar/activity.png",
+        "selectedIconPath": "/static/images/tabBar/activity-h.png",
+        "text": "活动"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "iconPath": "/static/images/tabBar/user.png",
+        "selectedIconPath": "/static/images/tabBar/user-h.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "requiredPrivateInfos": [
+    "chooseLocation",
+    "getLocation"
+  ],
+  "usingComponents": {}
+}

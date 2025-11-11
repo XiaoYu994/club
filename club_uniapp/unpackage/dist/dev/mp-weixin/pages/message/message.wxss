@@ -1,0 +1,121 @@
+/* 水平间距 */
+/* 水平间距 */
+.message-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.message-container .scroll-panel {
+  flex: 1;
+  padding: 20rpx 0;
+}
+.chat-list {
+  padding: 0 30rpx;
+}
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 25rpx 20rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+}
+.chat-item:active {
+  transform: scale(0.98);
+  background-color: #f9f9f9;
+}
+.chat-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 16rpx;
+  background-color: #f0f2f5;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+.chat-info {
+  flex: 1;
+  margin-left: 25rpx;
+  overflow: hidden;
+}
+.chat-name {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-last-msg {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 12rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 120rpx;
+}
+.chat-time {
+  font-size: 24rpx;
+  color: #bbb;
+  margin-bottom: 15rpx;
+}
+.unread-badge {
+  background-color: #ff3b30;
+  color: #fff;
+  font-size: 22rpx;
+  min-width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  border-radius: 18rpx;
+  text-align: center;
+  padding: 0 8rpx;
+  box-shadow: 0 4rpx 8rpx rgba(255, 59, 48, 0.2);
+}
+.empty-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+  text-align: center;
+}
+.empty-data .empty-image {
+  width: 280rpx;
+  height: 280rpx;
+  opacity: 0.8;
+}
+.empty-data .empty-text {
+  font-size: 32rpx;
+  color: #999;
+  margin-top: 30rpx;
+  font-weight: 500;
+}
+.empty-data .empty-tip {
+  font-size: 26rpx;
+  color: #bbb;
+  margin-top: 15rpx;
+}
+.float-btn {
+  position: fixed;
+  bottom: 60rpx;
+  right: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #2979ff, #4dabf7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 30rpx rgba(41, 121, 255, 0.4);
+  z-index: 100;
+  transition: all 0.3s;
+}
+.float-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 15rpx rgba(41, 121, 255, 0.3);
+}
