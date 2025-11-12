@@ -166,7 +166,6 @@ class WebSocketClient {
 
     this.ws.onMessage((res) => {
       try {
-        console.log('【WebSocket】收到原始消息:', res.data);
         const message = JSON.parse(res.data);
         console.log('【WebSocket】解析后的消息:', message);
         this.handleMessage(message);
@@ -306,6 +305,12 @@ class WebSocketClient {
   handleMessage(message) {
     if (!message || !message.type) {
       console.warn('收到无效消息:', message);
+      return;
+    }
+
+    // 心跳响应消息静默处理，不需要输出日志
+    if (message.type === 'pong' || message.type === 'heartbeat_response') {
+      console.log('【WebSocket】收到心跳响应');
       return;
     }
 

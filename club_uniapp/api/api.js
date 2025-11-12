@@ -6,7 +6,7 @@ import request from '@/utils/request.js'
 
 // 设置基础配置
 // const baseURL = 'http://192.168.234.200:8081'; // 后端服务地址
-const baseURL = 'https://cecille-insertional-keva.ngrok-free.dev';
+const baseURL = 'https://cecille-insertional-keva.ngrok-free.dev'; // 内网穿透后的地址
 request.setConfig({
   baseURL: baseURL
 })

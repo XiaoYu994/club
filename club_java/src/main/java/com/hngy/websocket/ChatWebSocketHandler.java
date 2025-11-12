@@ -91,9 +91,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         } else if ("private_message".equals(type)) {
             // 私聊消息
             handlePrivateMessage(senderId, jsonObject);
-        } else if ("heartbeat".equals(type)) {
-            // 心跳消息，直接响应
-            session.sendMessage(new TextMessage("{\"type\":\"heartbeat_response\"}"));
+        } else if ("heartbeat".equals(type) || "ping".equals(type)) {
+            // 心跳消息，直接响应（支持 heartbeat 和 ping 两种类型）
+            session.sendMessage(new TextMessage("{\"type\":\"pong\"}"));
+            log.info("【WebSocket】收到用户 {} 的心跳消息，已响应", senderId);
         } else {
             log.warn("未知消息类型: {}", type);
         }

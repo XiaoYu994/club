@@ -127,12 +127,11 @@ class WebSocketClient {
     });
     this.ws.onMessage((res) => {
       try {
-        common_vendor.index.__f__("log", "at utils/websocket.js:169", "【WebSocket】收到原始消息:", res.data);
         const message = JSON.parse(res.data);
-        common_vendor.index.__f__("log", "at utils/websocket.js:171", "【WebSocket】解析后的消息:", message);
+        common_vendor.index.__f__("log", "at utils/websocket.js:170", "【WebSocket】解析后的消息:", message);
         this.handleMessage(message);
       } catch (error) {
-        common_vendor.index.__f__("error", "at utils/websocket.js:174", "【WebSocket】解析消息失败:", error, "原始数据:", res.data);
+        common_vendor.index.__f__("error", "at utils/websocket.js:173", "【WebSocket】解析消息失败:", error, "原始数据:", res.data);
       }
     });
   }
@@ -143,12 +142,12 @@ class WebSocketClient {
     if (utils_auth.getToken()) {
       this.attemptReconnect();
     } else {
-      common_vendor.index.__f__("log", "at utils/websocket.js:190", "用户已登出，取消重连");
+      common_vendor.index.__f__("log", "at utils/websocket.js:189", "用户已登出，取消重连");
     }
   }
   flushMessageBuffer() {
     if (this.messageBuffer.length > 0) {
-      common_vendor.index.__f__("log", "at utils/websocket.js:196", `发送${this.messageBuffer.length}条缓冲消息`);
+      common_vendor.index.__f__("log", "at utils/websocket.js:195", `发送${this.messageBuffer.length}条缓冲消息`);
       const sendNext = () => {
         if (this.messageBuffer.length === 0)
           return;
@@ -184,7 +183,7 @@ class WebSocketClient {
    */
   attemptReconnect() {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      common_vendor.index.__f__("log", "at utils/websocket.js:240", "已达到最大重连次数，不再尝试重连");
+      common_vendor.index.__f__("log", "at utils/websocket.js:239", "已达到最大重连次数，不再尝试重连");
       return;
     }
     this.clearReconnectTimer();
@@ -194,11 +193,11 @@ class WebSocketClient {
       // 最大延迟30秒
     );
     this.reconnectAttempts++;
-    common_vendor.index.__f__("log", "at utils/websocket.js:254", `${Math.round(delay / 1e3)}秒后尝试第${this.reconnectAttempts}次重连...`);
+    common_vendor.index.__f__("log", "at utils/websocket.js:253", `${Math.round(delay / 1e3)}秒后尝试第${this.reconnectAttempts}次重连...`);
     this.reconnectTimer = setTimeout(() => {
-      common_vendor.index.__f__("log", "at utils/websocket.js:257", "尝试重新连接WebSocket...");
+      common_vendor.index.__f__("log", "at utils/websocket.js:256", "尝试重新连接WebSocket...");
       this.connect(this.baseUrl).catch((error) => {
-        common_vendor.index.__f__("error", "at utils/websocket.js:260", "重新连接失败:", error);
+        common_vendor.index.__f__("error", "at utils/websocket.js:259", "重新连接失败:", error);
       });
     }, delay);
   }
@@ -208,11 +207,11 @@ class WebSocketClient {
    */
   sendMessage(message) {
     if (this.messageBuffer.length > 50) {
-      common_vendor.index.__f__("warn", "at utils/websocket.js:272", "消息缓冲区已满，丢弃旧消息");
+      common_vendor.index.__f__("warn", "at utils/websocket.js:271", "消息缓冲区已满，丢弃旧消息");
       this.messageBuffer.shift();
     }
     if (!this.isConnected) {
-      common_vendor.index.__f__("log", "at utils/websocket.js:277", "WebSocket未连接，消息将加入缓冲区");
+      common_vendor.index.__f__("log", "at utils/websocket.js:276", "WebSocket未连接，消息将加入缓冲区");
       this.messageBuffer.push(message);
       return;
     }
@@ -221,7 +220,7 @@ class WebSocketClient {
       this.ws.send({
         data: messageStr,
         fail: (error) => {
-          common_vendor.index.__f__("error", "at utils/websocket.js:287", "发送消息失败:", error);
+          common_vendor.index.__f__("error", "at utils/websocket.js:286", "发送消息失败:", error);
           this.messageBuffer.push(message);
           if (!this.isConnected) {
             this.attemptReconnect();
@@ -229,7 +228,7 @@ class WebSocketClient {
         }
       });
     } catch (error) {
-      common_vendor.index.__f__("error", "at utils/websocket.js:298", "序列化消息失败:", error);
+      common_vendor.index.__f__("error", "at utils/websocket.js:297", "序列化消息失败:", error);
     }
   }
   /**
@@ -238,21 +237,25 @@ class WebSocketClient {
    */
   handleMessage(message) {
     if (!message || !message.type) {
-      common_vendor.index.__f__("warn", "at utils/websocket.js:308", "收到无效消息:", message);
+      common_vendor.index.__f__("warn", "at utils/websocket.js:307", "收到无效消息:", message);
       return;
     }
-    common_vendor.index.__f__("log", "at utils/websocket.js:312", "【WebSocket】处理消息，类型:", message.type);
+    if (message.type === "pong" || message.type === "heartbeat_response") {
+      common_vendor.index.__f__("log", "at utils/websocket.js:313", "【WebSocket】收到心跳响应");
+      return;
+    }
+    common_vendor.index.__f__("log", "at utils/websocket.js:317", "【WebSocket】处理消息，类型:", message.type);
     const handler = this.messageHandlers.get(message.type);
     if (handler) {
-      common_vendor.index.__f__("log", "at utils/websocket.js:317", "【WebSocket】找到消息处理器，准备执行");
+      common_vendor.index.__f__("log", "at utils/websocket.js:322", "【WebSocket】找到消息处理器，准备执行");
       try {
         handler(message);
       } catch (error) {
-        common_vendor.index.__f__("error", "at utils/websocket.js:321", `处理消息类型 ${message.type} 时出错:`, error);
+        common_vendor.index.__f__("error", "at utils/websocket.js:326", `处理消息类型 ${message.type} 时出错:`, error);
       }
     } else {
-      common_vendor.index.__f__("log", "at utils/websocket.js:324", "【WebSocket】未找到消息处理器，已注册的处理器:", Array.from(this.messageHandlers.keys()));
-      common_vendor.index.__f__("log", "at utils/websocket.js:325", "【WebSocket】未处理的消息类型:", message.type, message);
+      common_vendor.index.__f__("log", "at utils/websocket.js:329", "【WebSocket】未找到消息处理器，已注册的处理器:", Array.from(this.messageHandlers.keys()));
+      common_vendor.index.__f__("log", "at utils/websocket.js:330", "【WebSocket】未处理的消息类型:", message.type, message);
     }
   }
   /**
@@ -280,11 +283,11 @@ class WebSocketClient {
           this.ws.send({
             data: JSON.stringify({ type: "ping" }),
             fail: (error) => {
-              common_vendor.index.__f__("warn", "at utils/websocket.js:358", "【WebSocket】心跳发送失败:", error);
+              common_vendor.index.__f__("warn", "at utils/websocket.js:363", "【WebSocket】心跳发送失败:", error);
             }
           });
         } catch (error) {
-          common_vendor.index.__f__("error", "at utils/websocket.js:362", "【WebSocket】心跳异常:", error);
+          common_vendor.index.__f__("error", "at utils/websocket.js:367", "【WebSocket】心跳异常:", error);
         }
       }
     }, this.heartbeatInterval);
