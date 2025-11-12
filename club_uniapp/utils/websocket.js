@@ -21,6 +21,8 @@ class WebSocketClient {
     this.messageHandlers = new Map();
     this.messageBuffer = [];
     this.connectionStateListeners = new Set();
+    this.heartbeatTimer = null; // 心跳定时器
+    this.heartbeatInterval = 30000; // 30秒发送一次心跳
     
     // 监听网络变化
     this.setupNetworkListener();
@@ -60,12 +62,21 @@ class WebSocketClient {
   /**
    * 连接WebSocket服务器
    * @param {string} serverUrl - 服务器地址
+   * @param {boolean} forceReconnect - 是否强制重新连接（默认false）
    * @returns {Promise} 连接成功或失败的Promise
    */
-  connect(serverUrl) {
+  connect(serverUrl, forceReconnect = false) {
     return new Promise((resolve, reject) => {
-      // 清除现有连接
-      if (this.ws) {
+      // 如果已经连接且不强制重连，直接返回成功
+      if (this.isConnected && !forceReconnect) {
+        console.log('【WebSocket】已连接，复用现有连接');
+        resolve();
+        return;
+      }
+
+      // 如果强制重连或者有未完成的连接，先清除
+      if (this.ws && forceReconnect) {
+        console.log('【WebSocket】强制重连，断开现有连接');
         this.disconnect();
       }
       
@@ -93,11 +104,23 @@ class WebSocketClient {
       console.log('连接WebSocket:', fullUrl);
       
       try {
+        // 微信小程序需要特殊处理
+        const header = {}
+
+        // 添加 ngrok 跳过浏览器警告头（仅在非微信环境）
+        // #ifndef MP-WEIXIN
+        header['ngrok-skip-browser-warning'] = 'true'
+        // #endif
+
+        console.log('【WebSocket】创建连接，URL:', fullUrl)
+        console.log('【WebSocket】Headers:', header)
+
         this.ws = uni.connectSocket({
           url: fullUrl,
+          header: header,  // 添加自定义请求头
           complete: () => {}
         });
-        
+
         // 监听WebSocket事件
         this.setupSocketHandlers(resolve, reject);
         
@@ -110,28 +133,37 @@ class WebSocketClient {
 
   setupSocketHandlers(resolve, reject) {
     this.ws.onOpen(() => {
-      console.log('WebSocket连接已建立');
+      console.log('【WebSocket】连接已建立');
       this.isConnected = true;
       this.reconnectAttempts = 0;
       this.notifyStateChange();
-      
+
       // 发送缓存的消息
       this.flushMessageBuffer();
       
+      // 启动心跳保活
+      this.startHeartbeat();
+
       resolve();
     });
-    
+
     this.ws.onError((error) => {
-      console.error('WebSocket连接错误:', error);
+      console.error('【WebSocket】连接错误:', error);
+      console.error('【WebSocket】错误代码:', error.errCode);
+      console.error('【WebSocket】错误信息:', error.errMsg);
+      console.error('【WebSocket】完整错误:', JSON.stringify(error));
       this.handleConnectionLoss();
       reject(error);
     });
-    
+
     this.ws.onClose((event) => {
-      console.log('WebSocket连接已关闭:', event);
+      console.log('【WebSocket】连接已关闭');
+      console.log('【WebSocket】关闭代码:', event.code);
+      console.log('【WebSocket】关闭原因:', event.reason);
+      console.log('【WebSocket】完整事件:', JSON.stringify(event));
       this.handleConnectionLoss();
     });
-    
+
     this.ws.onMessage((res) => {
       try {
         console.log('【WebSocket】收到原始消息:', res.data);
@@ -139,7 +171,7 @@ class WebSocketClient {
         console.log('【WebSocket】解析后的消息:', message);
         this.handleMessage(message);
       } catch (error) {
-        console.error('解析WebSocket消息失败:', error, '原始数据:', res.data);
+        console.error('【WebSocket】解析消息失败:', error, '原始数据:', res.data);
       }
     });
   }
@@ -147,6 +179,9 @@ class WebSocketClient {
   handleConnectionLoss() {
     this.isConnected = false;
     this.notifyStateChange();
+    
+    // 停止心跳
+    this.stopHeartbeat();
     
     // 检查token是否仍然有效
     if (getToken()) {
@@ -186,6 +221,7 @@ class WebSocketClient {
       this.isConnected = false;
       this.notifyStateChange();
       this.clearReconnectTimer();
+      this.stopHeartbeat();
     }
   }
 
@@ -304,6 +340,39 @@ class WebSocketClient {
    */
   clearHandlers() {
     this.messageHandlers.clear();
+  }
+  
+  /**
+   * 启动心跳保活
+   */
+  startHeartbeat() {
+    this.stopHeartbeat(); // 先清除旧的
+    
+    this.heartbeatTimer = setInterval(() => {
+      if (this.isConnected && this.ws) {
+        try {
+          // 发送心跳 ping 消息
+          this.ws.send({
+            data: JSON.stringify({ type: 'ping' }),
+            fail: (error) => {
+              console.warn('【WebSocket】心跳发送失败:', error);
+            }
+          });
+        } catch (error) {
+          console.error('【WebSocket】心跳异常:', error);
+        }
+      }
+    }, this.heartbeatInterval);
+  }
+  
+  /**
+   * 停止心跳保活
+   */
+  stopHeartbeat() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
   }
 }
 

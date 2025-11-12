@@ -25,7 +25,7 @@
     
     <!-- 管理員操作按鈕 -->
     <view v-if="isAdmin" class="action-buttons">
-      <!-- 取消活动按钮，仅报名中状态显示 -->
+      <!-- 取消活动按钮，计划中和报名中状态显示 -->
       <view v-if="canCancel" class="action-btn cancel" @tap.stop="cancelActivity">
         <uni-icons type="close" size="16" color="#ff9800"></uni-icons>
       </view>
@@ -124,19 +124,24 @@ const getStatusClass = computed(() => {
   }
 })
 
-// 計算是否可以取消活動（僅報名中狀態）
+// 計算是否可以取消活動（计划中和报名中状态）
 const canCancel = computed(() => {
   const status = props.activity.status
 
-  // 只有status=2且当前时间<开始时间才能取消（即报名中状态）
-  if (status !== 2) {
-    return false
+  // status=1: 计划中状态可以取消
+  if (status === 1) {
+    return true
   }
 
-  const now = Date.now()
-  const startTime = Number(props.activity.startTime || 0)
+  // status=2: 只有当前时间<开始时间才能取消（即报名中状态）
+  if (status === 2) {
+    const now = Date.now()
+    const startTime = Number(props.activity.startTime || 0)
+    return now < startTime
+  }
 
-  return now < startTime
+  // 其他状态不能取消
+  return false
 })
 
 // 跳轉到活動詳情

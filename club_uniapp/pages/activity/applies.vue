@@ -1131,13 +1131,27 @@ const safeParseFormData = (formData) => {
 }
 
 .reject-textarea {
-  width: 100%;
-  min-height: 80rpx;
-  padding: 20rpx;
-  background-color: #f5f5f5;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
+  width: 100% !important;
+  min-height: 140rpx !important;
+  padding: 24rpx !important;
+  background-color: #ffffff !important;
+  border: 1rpx solid #e5e5e5 !important;
+  border-radius: 8rpx !important;
+  font-size: 28rpx !important;
+  line-height: 1.6 !important;
+  color: #333 !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+.reject-textarea:focus {
+  border-color: #e5e5e5 !important;
+  background-color: #ffffff !important;
+}
+
+.reject-textarea::placeholder {
+  color: #999 !important;
+  font-size: 28rpx !important;
 }
 
 .count-container {

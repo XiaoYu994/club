@@ -8,13 +8,23 @@ function getActualStatus(activity) {
   const endTime = Number(activity.endTime || 0);
   if (activity.status === 0) {
     return 0;
-  } else if (now > endTime) {
-    return 3;
-  } else if (now >= startTime && now <= endTime) {
-    return 2;
-  } else {
+  }
+  if (activity.status === 1) {
     return 1;
   }
+  if (activity.status === 2) {
+    if (now > endTime) {
+      return 4;
+    } else if (now >= startTime && now <= endTime) {
+      return 3;
+    } else {
+      return 2;
+    }
+  }
+  if (activity.status === 3) {
+    return 4;
+  }
+  return -1;
 }
 function getStatusText(activity) {
   const actualStatus = getActualStatus(activity);
@@ -22,10 +32,12 @@ function getStatusText(activity) {
     case 0:
       return "已取消";
     case 1:
-      return "报名中";
+      return "计划中";
     case 2:
-      return "进行中";
+      return "报名中";
     case 3:
+      return "进行中";
+    case 4:
       return "已结束";
     default:
       return "未知";
@@ -39,8 +51,10 @@ function getStatusClass(activity) {
     case 1:
       return "planned";
     case 2:
-      return "ongoing";
+      return "signup";
     case 3:
+      return "ongoing";
+    case 4:
       return "ended";
     default:
       return "";
@@ -126,7 +140,7 @@ function parseFormFields(formConfig) {
       };
     });
   } catch (e) {
-    common_vendor.index.__f__("error", "at utils/activity.js:172", "解析表单字段失败:", e);
+    common_vendor.index.__f__("error", "at utils/activity.js:192", "解析表单字段失败:", e);
     return [{
       key: "reason",
       label: "参加原因",
@@ -148,7 +162,7 @@ function parseFormData(forms) {
     }
     return {};
   } catch (e) {
-    common_vendor.index.__f__("error", "at utils/activity.js:203", "解析表单数据失败:", e);
+    common_vendor.index.__f__("error", "at utils/activity.js:223", "解析表单数据失败:", e);
     return {};
   }
 }

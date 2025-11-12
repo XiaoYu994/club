@@ -130,7 +130,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, getCurrentInstance } from 'vue'
+import { ref, reactive, computed, onMounted, getCurrentInstance } from 'vue'
 import { formatDate } from '@/utils/common.js'
 import ActivityCard from '@/components/activity-card/activity-card.vue'
 
@@ -146,25 +146,45 @@ const searchKeyword = ref('')
 // 当前选中的标签
 const currentTag = ref(0)
 
-// 筛选标签
-const filterTags = ref([
-  { name: '全部活动', type: 'all' },
-  { name: '报名中', type: 'signup' },
-  { name: '进行中', type: 'ongoing' },
-  { name: '已结束', type: 'ended' },
-  { name: '计划中', type: 'planned' },
-  { name: '已取消', type: 'cancelled' }
-])
+// 筛选标签 - 根据用户角色动态生成
+const filterTags = computed(() => {
+  const baseTags = [
+    { name: '全部活动', type: 'all' },
+    { name: '报名中', type: 'signup' },
+    { name: '进行中', type: 'ongoing' },
+    { name: '已结束', type: 'ended' }
+  ]
 
-// 状态选项
-const statusOptions = [
-  { name: '全部', value: -1 },
-  { name: '报名中', value: 'signup' },
-  { name: '进行中', value: 'ongoing' },
-  { name: '已结束', value: 3 },
-  { name: '计划中', value: 1 },
-  { name: '已取消', value: 0 }
-]
+  // 只有管理员才能看到"计划中"和"已取消"标签
+  if (isAdmin.value) {
+    baseTags.push(
+      { name: '计划中', type: 'planned' },
+      { name: '已取消', type: 'cancelled' }
+    )
+  }
+
+  return baseTags
+})
+
+// 状态选项 - 根据用户角色动态生成
+const statusOptions = computed(() => {
+  const baseOptions = [
+    { name: '全部', value: -1 },
+    { name: '报名中', value: 'signup' },
+    { name: '进行中', value: 'ongoing' },
+    { name: '已结束', value: 3 }
+  ]
+
+  // 只有管理员才能看到"计划中"和"已取消"选项
+  if (isAdmin.value) {
+    baseOptions.push(
+      { name: '计划中', value: 1 },
+      { name: '已取消', value: 0 }
+    )
+  }
+
+  return baseOptions
+})
 
 // 排序选项
 const sortOptions = [
@@ -282,7 +302,12 @@ const loadActivities = async (useLocalFilter = false) => {
     const res = await proxy.$api.activity.getClubActivities(clubId.value, params)
 
     if (res.code === 200) {
-      const activities = res.data.list || []
+      let activities = res.data.list || []
+
+      // 如果不是管理员，过滤掉计划中（status=1）和已取消（status=0）的活动
+      if (!isAdmin.value) {
+        activities = activities.filter(activity => activity.status === 2 || activity.status === 3)
+      }
 
       if (page.value === 1) {
         fullActivityList.value = activities

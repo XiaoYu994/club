@@ -60,8 +60,11 @@
 .status-tag.planned.data-v-85b70b9c {
   background: rgba(255, 152, 0, 0.9);
 }
-.status-tag.ongoing.data-v-85b70b9c {
+.status-tag.signup.data-v-85b70b9c {
   background: rgba(41, 121, 255, 0.9);
+}
+.status-tag.ongoing.data-v-85b70b9c {
+  background: rgba(76, 175, 80, 0.9);
 }
 .status-tag.ended.data-v-85b70b9c {
   background: rgba(153, 153, 153, 0.9);

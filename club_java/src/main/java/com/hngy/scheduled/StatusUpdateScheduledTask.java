@@ -1,16 +1,27 @@
 package com.hngy.scheduled;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.hngy.common.constant.ActivityConstant;
+import com.hngy.common.constant.NotificationConstant;
 import com.hngy.common.constant.RecruitmentConstant;
+import com.hngy.common.constant.StatusConstant;
 import com.hngy.entity.po.ClubActivity;
+import com.hngy.entity.po.ClubActivityApply;
 import com.hngy.entity.po.ClubRecruitment;
+import com.hngy.mapper.ClubActivityApplyMapper;
 import com.hngy.mapper.ClubActivityMapper;
 import com.hngy.mapper.ClubRecruitmentMapper;
+import com.hngy.service.IUserNotificationService;
+import com.hngy.websocket.ChatWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 状态更新定时任务
@@ -25,6 +36,9 @@ public class StatusUpdateScheduledTask {
 
     private final ClubRecruitmentMapper clubRecruitmentMapper;
     private final ClubActivityMapper clubActivityMapper;
+    private final ClubActivityApplyMapper clubActivityApplyMapper;
+    private final IUserNotificationService userNotificationService;
+    private final ChatWebSocketHandler chatWebSocketHandler;
 
     /**
      * 更新社团招新活动状态定时任务
@@ -79,6 +93,92 @@ public class StatusUpdateScheduledTask {
 
         } catch (Exception e) {
             log.error("活动状态更新定时任务执行失败", e);
+        }
+    }
+
+    /**
+     * 活动开始提醒定时任务
+     * 每天早上9点执行，检查明天开始的活动，给所有报名且审核通过的用户发送提醒
+     */
+    @Scheduled(cron = "0 0 9 * * ?")
+    public void sendActivityReminder() {
+        log.info("开始执行活动开始提醒定时任务");
+
+        try {
+            long currentTime = System.currentTimeMillis();
+            // 计算明天0点的时间戳
+            long tomorrowStart = currentTime + 24 * 60 * 60 * 1000 - (currentTime % (24 * 60 * 60 * 1000));
+            // 计算后天0点的时间戳
+            long dayAfterTomorrowStart = tomorrowStart + 24 * 60 * 60 * 1000;
+
+            log.info("查找明天开始的活动，时间范围：{} - {}",
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(tomorrowStart)),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(dayAfterTomorrowStart)));
+
+            // 查询明天开始的活动（状态为进行中）
+            LambdaQueryWrapper<ClubActivity> activityWrapper = new LambdaQueryWrapper<>();
+            activityWrapper.eq(ClubActivity::getStatus, ActivityConstant.STATUS_ACTIVE)
+                          .ge(ClubActivity::getStartTime, tomorrowStart)
+                          .lt(ClubActivity::getStartTime, dayAfterTomorrowStart);
+
+            List<ClubActivity> upcomingActivities = clubActivityMapper.selectList(activityWrapper);
+            log.info("找到 {} 个明天开始的活动", upcomingActivities.size());
+
+            int totalNotificationsSent = 0;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            // 遍历每个活动
+            for (ClubActivity activity : upcomingActivities) {
+                try {
+                    // 查找该活动所有审核通过的报名记录
+                    LambdaQueryWrapper<ClubActivityApply> applyWrapper = new LambdaQueryWrapper<>();
+                    applyWrapper.eq(ClubActivityApply::getActivityId, activity.getId())
+                               .eq(ClubActivityApply::getStatus, StatusConstant.ENABLE);
+
+                    List<ClubActivityApply> approvedApplies = clubActivityApplyMapper.selectList(applyWrapper);
+                    log.info("活动 {} 共有 {} 个审核通过的报名", activity.getTitle(), approvedApplies.size());
+
+                    String activityTime = dateFormat.format(new Date(activity.getStartTime()));
+
+                    // 给每个报名用户发送提醒
+                    for (ClubActivityApply apply : approvedApplies) {
+                        try {
+                            String notificationTitle = NotificationConstant.TITLE_ACTIVITY_REMINDER;
+                            String notificationMessage = "您报名的活动 \"" + activity.getTitle() + "\" 即将在明天开始";
+
+                            // 1. 保存通知到数据库
+                            userNotificationService.createNotification(
+                                apply.getUserId(),
+                                NotificationConstant.TYPE_ACTIVITY_REMINDER,
+                                notificationTitle,
+                                notificationMessage,
+                                activity.getId(),
+                                null
+                            );
+
+                            // 2. 发送WebSocket实时通知
+                            chatWebSocketHandler.sendActivityReminderNotification(
+                                apply.getUserId(),
+                                activity.getId(),
+                                activity.getTitle(),
+                                activityTime
+                            );
+
+                            totalNotificationsSent++;
+                        } catch (Exception e) {
+                            log.error("发送活动提醒失败，用户ID: {}, 活动ID: {}",
+                                apply.getUserId(), activity.getId(), e);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("处理活动提醒失败，活动ID: {}", activity.getId(), e);
+                }
+            }
+
+            log.info("活动开始提醒定时任务执行完成，共发送 {} 条提醒通知", totalNotificationsSent);
+
+        } catch (Exception e) {
+            log.error("活动开始提醒定时任务执行失败", e);
         }
     }
 } 

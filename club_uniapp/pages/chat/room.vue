@@ -254,33 +254,34 @@
 	 * @description 更新消息处理函数（群组切换时调用）
 	 */
 	function updateMessageHandler() {
-	  // 清除旧的消息处理器
-	  wsClient.clearHandlers();
-	  // 注册新的消息处理器
+	  // 注册聊天室消息处理器（不清除全局处理器，避免影响通知功能）
 	  wsClient.onMessageType('group_message', handleReceivedMessage);
 	  wsClient.onMessageType('error', handleError);
+	  console.log('【聊天室】消息处理器已注册');
 	}
 	
 	/**
-	 * @description 连接WebSocket服务，首次失败时不弹出错误提示，等待自动重连
+	 * @description 确保WebSocket连接，不会重复建立连接
 	 */
 	const connectWebSocket = async () => {
 	  // 获取后端服务器地址，从api.js中引入baseURL
 	  const serverUrl = apiModule.baseURL || 'localhost:8081';
 
-	  if (!wsClient.isConnected) {
-	    console.log('WebSocket未连接，尝试连接...');
-	    try {
-	      await wsClient.connect(serverUrl);
-	      console.log('WebSocket连接成功');
-	      updateMessageHandler();
-	    } catch (error) {
-	      console.warn('WebSocket初次连接失败，正在重试...', error);
-	      // 不主动提示用户，等待自动重连
-	    }
-	  } else {
-	    console.log('WebSocket已连接，更新消息处理函数');
+	  if (wsClient.isConnected) {
+	    console.log('【聊天室】WebSocket已连接，直接使用现有连接');
 	    updateMessageHandler();
+	    return;
+	  }
+
+	  console.log('【聊天室】WebSocket未连接，尝试连接...');
+	  try {
+	    // 传入 false 表示不强制重连，如果已连接则复用
+	    await wsClient.connect(serverUrl, false);
+	    console.log('【聊天室】WebSocket连接成功');
+	    updateMessageHandler();
+	  } catch (error) {
+	    console.warn('【聊天室】WebSocket初次连接失败，正在重试...', error);
+	    // 不主动提示用户，等待自动重连
 	  }
 	};
 	
@@ -839,14 +840,14 @@
 	        // 尝试重新连接
 	        try {
 	          uni.showLoading({ title: '正在连接聊天服务...' });
-	          // 使用api.js中的baseURL，而不是硬编码的URL
-	          await wsClient.connect(apiModule.baseURL || 'localhost:8081');
+	          // 使用api.js中的baseURL，传入false避免断开现有连接
+	          await wsClient.connect(apiModule.baseURL || 'localhost:8081', false);
 	          uni.hideLoading();
 	        } catch (error) {
 	          uni.hideLoading();
-	          uni.showToast({ 
-	            title: '聊天服务连接失败，请稍后重试', 
-	            icon: 'none' 
+	          uni.showToast({
+	            title: '聊天服务连接失败，请稍后重试',
+	            icon: 'none'
 	          });
 	          console.error('聊天服务连接失败:', error);
 	          return;
@@ -1041,14 +1042,14 @@
 	      // 尝试重新连接
 	      try {
 	        uni.showLoading({ title: '正在连接聊天服务...' });
-	        // 使用api.js中的baseURL，而不是硬编码的URL
-	        await wsClient.connect(apiModule.baseURL || 'localhost:8081');
+	        // 使用api.js中的baseURL，传入false避免断开现有连接
+	        await wsClient.connect(apiModule.baseURL || 'localhost:8081', false);
 	        uni.hideLoading();
 	      } catch (error) {
 	        uni.hideLoading();
-	        uni.showToast({ 
-	          title: '聊天服务连接失败，请稍后重试', 
-	          icon: 'none' 
+	        uni.showToast({
+	          title: '聊天服务连接失败，请稍后重试',
+	          icon: 'none'
 	        });
 	        console.error('聊天服务连接失败:', error);
 	        return;

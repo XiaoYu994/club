@@ -3,6 +3,7 @@ Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const common_vendor = require("./common/vendor.js");
 const utils_websocket = require("./utils/websocket.js");
 const api_api = require("./api/api.js");
+const utils_notification = require("./utils/notification.js");
 if (!Math) {
   "./pages/index/index.js";
   "./pages/user/user.js";
@@ -49,38 +50,94 @@ if (!Math) {
 }
 const _sfc_main = {
   onLaunch: function() {
-    common_vendor.index.__f__("warn", "at App.vue:7", "当前组件仅支持 uni_modules 目录结构 ，请升级 HBuilderX 到 3.1.0 版本以上！");
-    common_vendor.index.__f__("log", "at App.vue:8", "App Launch");
+    common_vendor.index.__f__("warn", "at App.vue:8", "当前组件仅支持 uni_modules 目录结构 ,请升级 HBuilderX 到 3.1.0 版本以上！");
+    common_vendor.index.__f__("log", "at App.vue:9", "【App】应用启动");
     const token = common_vendor.index.getStorageSync("token");
     if (token) {
-      common_vendor.index.__f__("log", "at App.vue:13", "【App】检测到用户已登录，建立WebSocket连接");
-      utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "http://localhost:8081");
+      common_vendor.index.__f__("log", "at App.vue:14", "【App】检测到用户已登录，Token:", token.substring(0, 20) + "...");
+      common_vendor.index.__f__("log", "at App.vue:15", "【App】服务器地址:", api_api.apiModule.baseURL);
+      common_vendor.index.__f__("log", "at App.vue:16", "【App】开始建立WebSocket连接");
+      utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "http://localhost:8081").then(() => {
+        common_vendor.index.__f__("log", "at App.vue:20", "【App】WebSocket连接成功");
+      }).catch((error) => {
+        common_vendor.index.__f__("error", "at App.vue:23", "【App】WebSocket连接失败:", error);
+        common_vendor.index.__f__("error", "at App.vue:24", "【App】错误详情:", JSON.stringify(error));
+      });
     } else {
-      common_vendor.index.__f__("log", "at App.vue:16", "【App】用户未登录，跳过WebSocket连接");
+      common_vendor.index.__f__("log", "at App.vue:27", "【App】用户未登录，跳过WebSocket连接");
     }
-    utils_websocket.wsClient.onMessageType("activity_cancel_notification", (message) => {
-      common_vendor.index.__f__("log", "at App.vue:21", "【全局】收到活动取消通知:", message);
-      common_vendor.index.showModal({
-        title: "活动取消通知",
-        content: message.message || `您报名的活动"${message.activityTitle}"已被取消`,
-        showCancel: false,
-        confirmText: "知道了"
-      });
-      common_vendor.index.$emit("activityCancelled", {
-        activityId: message.activityId,
-        activityTitle: message.activityTitle
-      });
-    });
+    this.registerGlobalNotificationHandlers();
   },
   onShow: function() {
+    common_vendor.index.__f__("log", "at App.vue:34", "【App】应用显示");
+    const token = common_vendor.index.getStorageSync("token");
+    if (token && utils_websocket.wsClient.isConnected) {
+      this.registerGlobalNotificationHandlers();
+    }
   },
   onHide: function() {
-    common_vendor.index.__f__("log", "at App.vue:49", "App Hide");
+    common_vendor.index.__f__("log", "at App.vue:44", "App Hide");
+  },
+  methods: {
+    /**
+     * 注册全局消息通知处理器
+     */
+    registerGlobalNotificationHandlers() {
+      common_vendor.index.__f__("log", "at App.vue:51", "【App】开始注册全局通知处理器");
+      const handleNotification = (message) => {
+        common_vendor.index.__f__("log", "at App.vue:55", "【通知】收到通知消息:", message);
+        if (!message.type || !message.title || !message.message) {
+          common_vendor.index.__f__("error", "at App.vue:59", "【通知】消息格式不正确，缺少必需字段:", message);
+          return;
+        }
+        utils_notification.showNotification({
+          type: message.type.replace("_notification", ""),
+          // 移除后缀得到纯类型
+          title: message.title,
+          message: message.message,
+          extraInfo: message.extraInfo || message.feedback || null
+        });
+        this.emitNotificationEvent(message);
+      };
+      const notificationTypes = [
+        "activity_cancel_notification",
+        "apply_approved_notification",
+        "apply_rejected_notification",
+        "activity_reminder_notification"
+      ];
+      notificationTypes.forEach((type) => {
+        utils_websocket.wsClient.onMessageType(type, handleNotification);
+        common_vendor.index.__f__("log", "at App.vue:85", `【App】已注册通知类型: ${type}`);
+      });
+      common_vendor.index.__f__("log", "at App.vue:88", "【App】全局通知处理器注册完成");
+    },
+    // 触发全局事件（供其他页面监听状态变化）
+    emitNotificationEvent(message) {
+      const type = message.type;
+      if (type === "activity_cancel_notification") {
+        common_vendor.index.$emit("activityCancelled", {
+          activityId: message.activityId,
+          activityTitle: message.activityTitle
+        });
+      } else if (type === "apply_approved_notification" || type === "apply_rejected_notification") {
+        common_vendor.index.$emit("applyStatusChanged", {
+          activityId: message.activityId,
+          applyId: message.applyId,
+          status: type === "apply_approved_notification" ? "approved" : "rejected"
+        });
+      } else if (type === "activity_reminder_notification") {
+        common_vendor.index.$emit("activityReminder", {
+          activityId: message.activityId,
+          activityTitle: message.activityTitle
+        });
+      }
+    }
   }
 };
 function createApp() {
   const app = common_vendor.createSSRApp(_sfc_main);
   app.config.globalProperties.$api = api_api.apiModule;
+  app.use(utils_notification.notificationPlugin);
   return {
     app
   };

@@ -42,14 +42,14 @@ const _sfc_main = {
     const extJsonData = common_vendor.ref({});
     const joinPopup = common_vendor.ref(null);
     const actionSheet = common_vendor.ref(null);
-    common_vendor.onMounted(() => {
+    common_vendor.onMounted(async () => {
       const systemInfo = common_vendor.index.getSystemInfoSync();
       statusBarHeight.value = systemInfo.statusBarHeight || 20;
       const pages = getCurrentPages();
       const currentPage = pages[pages.length - 1];
       id.value = currentPage.options.id || currentPage.options.clubId;
       loadClubDetail();
-      getUserInfo();
+      await getUserInfo();
       loadClubActivities();
       loadClubMembers();
       checkApplyStatus();
@@ -60,7 +60,7 @@ const _sfc_main = {
         const res = await proxy.$api.user.getUserInfo();
         if (res.code === 200) {
           userInfo.value = res.data;
-          checkUserRole();
+          await checkUserRole();
         }
       } catch (error) {
       }
@@ -118,15 +118,19 @@ const _sfc_main = {
         };
         const res = await proxy.$api.activity.getClubActivities(id.value, params);
         if (res.code === 200) {
-          clubActivities.value = res.data.list || [];
+          let activities = res.data.list || [];
+          if (!isAdmin.value) {
+            activities = activities.filter((activity) => activity.status === 2 || activity.status === 3);
+          }
+          clubActivities.value = activities;
           hasMoreActivities.value = res.data.total > clubActivities.value.length;
         } else {
-          common_vendor.index.__f__("error", "at pages/club/detail.vue:470", "加载社团活动失败:", res.message);
+          common_vendor.index.__f__("error", "at pages/club/detail.vue:478", "加载社团活动失败:", res.message);
           clubActivities.value = [];
           hasMoreActivities.value = false;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/detail.vue:475", "加载社团活动失败:", error);
+        common_vendor.index.__f__("error", "at pages/club/detail.vue:483", "加载社团活动失败:", error);
         clubActivities.value = [];
         hasMoreActivities.value = false;
       }
@@ -139,7 +143,7 @@ const _sfc_main = {
           hasMoreMembers.value = res.data.total > clubMembers.value.length;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/detail.vue:491", "加载社团成员失败", error);
+        common_vendor.index.__f__("error", "at pages/club/detail.vue:499", "加载社团成员失败", error);
       }
     };
     const checkUserRole = async () => {
@@ -184,7 +188,7 @@ const _sfc_main = {
                 parsedForms.value = {};
               }
             } catch (e) {
-              common_vendor.index.__f__("error", "at pages/club/detail.vue:550", "解析表单数据失败:", e);
+              common_vendor.index.__f__("error", "at pages/club/detail.vue:558", "解析表单数据失败:", e);
               parsedForms.value = {};
             }
           } else {
@@ -287,12 +291,20 @@ const _sfc_main = {
       }
     };
     const getActivityStatusText = (activity) => {
+      const status = activity.status;
+      if (status === 0) {
+        return "已取消";
+      }
+      if (status === 1) {
+        return "计划中";
+      }
+      if (status === 3) {
+        return "已结束";
+      }
       const now = Date.now();
       const startTime = Number(activity.startTime || 0);
       const endTime = Number(activity.endTime || 0);
-      if (activity.status === 0) {
-        return "已取消";
-      } else if (now > endTime) {
+      if (now > endTime) {
         return "已结束";
       } else if (now >= startTime && now <= endTime) {
         return "进行中";
@@ -301,17 +313,25 @@ const _sfc_main = {
       }
     };
     const getActivityStatusClass = (activity) => {
+      const status = activity.status;
+      if (status === 0) {
+        return "cancelled";
+      }
+      if (status === 1) {
+        return "planned";
+      }
+      if (status === 3) {
+        return "ended";
+      }
       const now = Date.now();
       const startTime = Number(activity.startTime || 0);
       const endTime = Number(activity.endTime || 0);
-      if (activity.status === 0) {
-        return "cancelled";
-      } else if (now > endTime) {
+      if (now > endTime) {
         return "ended";
       } else if (now >= startTime && now <= endTime) {
         return "ongoing";
       } else {
-        return "planned";
+        return "signup";
       }
     };
     const goBack = () => {

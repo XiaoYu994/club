@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hngy.common.constant.ActivityConstant;
 import com.hngy.common.constant.ApplyStatusConstant;
+import com.hngy.common.constant.NotificationConstant;
 import com.hngy.common.constant.StatusConstant;
 import com.hngy.common.exception.ServiceException;
 import com.hngy.common.result.PageResult;
@@ -593,7 +594,7 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
             // 如果有报名用户，发送通知
             if (applies != null && !applies.isEmpty()) {
                 log.info("活动{}已取消，准备通知{}位报名用户", activityId, applies.size());
-                String notificationTitle = "活动取消通知";
+                String notificationTitle = NotificationConstant.TITLE_ACTIVITY_CANCEL;
                 String notificationMessage = "您报名的活动 \"" + activity.getTitle() + "\" 已被取消";
 
                 for (ClubActivityApply apply : applies) {
@@ -601,7 +602,7 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
                         // 1. 保存通知到数据库
                         userNotificationService.createNotification(
                             apply.getUserId(),
-                            "activity_cancel",
+                            NotificationConstant.TYPE_ACTIVITY_CANCEL,
                             notificationTitle,
                             notificationMessage,
                             activityId

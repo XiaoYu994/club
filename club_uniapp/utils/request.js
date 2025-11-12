@@ -3,10 +3,12 @@ import { removeUser } from '@/utils/auth.js'
 
 class Request {
   constructor() {
-    this.baseURL = 'http://localhost:8081' 
+    // this.baseURL = 'http://localhost:8081'
+	this.baseURL = 'https://cecille-insertional-keva.ngrok-free.dev'
     this.timeout = 30000 // 增加超时时间到30秒
     this.header = {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'  // 跳过 ngrok 的浏览器警告页面
     }
   }
 
@@ -65,6 +67,29 @@ class Request {
         header: this.header,
         timeout: this.timeout,
         success: (res) => {
+          // 打印请求详情（调试用）
+          console.log('【请求】URL:', this.getUrl(options.url))
+          console.log('【请求】Method:', options.method || 'GET')
+          console.log('【请求】Headers:', this.header)
+          console.log('【响应】Status:', res.statusCode)
+          console.log('【响应】Data类型:', typeof res.data)
+
+          // 检查是否返回了 HTML（ngrok 确认页面）
+          if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE html>')) {
+            console.error('【错误】收到 HTML 响应，可能是 ngrok 确认页面')
+            console.error('【错误】响应内容:', res.data.substring(0, 200))
+            uni.showToast({
+              title: '网络配置错误，请检查 ngrok 设置',
+              icon: 'none',
+              duration: 3000
+            })
+            reject({
+              code: -1,
+              message: '收到 HTML 响应而不是 JSON，请检查请求头配置'
+            })
+            return
+          }
+
           // 根据HTTP状态码处理
           if (res.statusCode >= 200 && res.statusCode < 300) {
             // HTTP请求成功，但需要检查业务状态码

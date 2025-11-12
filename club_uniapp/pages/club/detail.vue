@@ -348,34 +348,34 @@ const joinPopup = ref(null)
 const actionSheet = ref(null)
 
 // 初始化
-onMounted(() => {
+onMounted(async () => {
 	// 获取状态栏高度
 	const systemInfo = uni.getSystemInfoSync()
 	statusBarHeight.value = systemInfo.statusBarHeight || 20
-	
+
 	// 获取路由参数
 	const pages = getCurrentPages()
 	const currentPage = pages[pages.length - 1]
 	id.value = currentPage.options.id || currentPage.options.clubId
-	
+
 	// 加载社团详情
 	loadClubDetail()
-	
-	// 获取用户信息
-	getUserInfo()
-	
-	// 加载社团活动
+
+	// 先获取用户信息和角色
+	await getUserInfo()
+
+	// 加载社团活动（需要等待用户角色确定后再过滤）
 	loadClubActivities()
-	
+
 	// 加载社团成员
 	loadClubMembers()
-	
+
 	// 检查申请状态
 	checkApplyStatus()
-	
+
 	// 检查招新状态
 	checkRecruitmentStatus()
-	
+
 	// 加载扩展信息
 	// loadExtJsonData() // 删除下方加载扩展信息的代码，因为现在直接从clubDetail中获取
 })
@@ -386,9 +386,9 @@ const getUserInfo = async () => {
 		const res = await proxy.$api.user.getUserInfo()
 		if (res.code === 200) {
 			userInfo.value = res.data
-			
+
 			// 检查用户是否是社团管理员或成员
-			checkUserRole()
+			await checkUserRole()
 		}
 	} catch (error) {
 		// 错误已处理
@@ -455,16 +455,24 @@ const parseExtJson = () => {
 const loadClubActivities = async () => {
 	try {
 		// 添加明確的clubId參數，確保後端能正確識別
-		const params = { 
-			pageNo: 1, 
+		const params = {
+			pageNo: 1,
 			pageSize: 3,
 			clubId: id.value // 明確添加clubId參數
 		}
-		
+
 		const res = await proxy.$api.activity.getClubActivities(id.value, params)
-		
+
 		if (res.code === 200) {
-			clubActivities.value = res.data.list || []
+			let activities = res.data.list || []
+
+			// 如果不是管理员，过滤掉计划中（status=1）和已取消（status=0）的活动
+			// 只显示已发布的活动（status=2或3）
+			if (!isAdmin.value) {
+				activities = activities.filter(activity => activity.status === 2 || activity.status === 3)
+			}
+
+			clubActivities.value = activities
 			hasMoreActivities.value = res.data.total > clubActivities.value.length
 		} else {
 			console.error('加载社团活动失败:', res.message)
@@ -496,9 +504,9 @@ const loadClubMembers = async () => {
 const checkUserRole = async () => {
 	try {
 		if (!id.value) return
-		
+
 		const res = await proxy.$api.club.getUserRole(id.value)
-		
+
 		if (res.code === 200 && res.data) {
 			// 检查是否是管理员
 			isAdmin.value = res.data.type > 0 && res.data.status === 1
@@ -704,36 +712,68 @@ const getMemberRoleText = (type) => {
 
 // 获取活动状态文本
 const getActivityStatusText = (activity) => {
-	const now = Date.now();
-	const startTime = Number(activity.startTime || 0);
-	const endTime = Number(activity.endTime || 0);
-	
-	if (activity.status === 0) {
-		return '已取消';
-	} else if (now > endTime) {
-		return '已结束';
-	} else if (now >= startTime && now <= endTime) {
-		return '进行中';
-	} else {
-		return '报名中';
-	}
+  const status = activity.status;
+
+  // status=0: 已取消
+  if (status === 0) {
+    return '已取消';
+  }
+
+  // status=1: 计划中
+  if (status === 1) {
+    return '计划中';
+  }
+
+  // status=3: 已结束
+  if (status === 3) {
+    return '已结束';
+  }
+
+  // status=2: 已发布，根据时间判断
+  const now = Date.now();
+  const startTime = Number(activity.startTime || 0);
+  const endTime = Number(activity.endTime || 0);
+
+  if (now > endTime) {
+    return '已结束';
+  } else if (now >= startTime && now <= endTime) {
+    return '进行中';
+  } else {
+    return '报名中';
+  }
 }
 
 // 获取活动状态类名
 const getActivityStatusClass = (activity) => {
-	const now = Date.now();
-	const startTime = Number(activity.startTime || 0);
-	const endTime = Number(activity.endTime || 0);
-	
-	if (activity.status === 0) {
-		return 'cancelled';
-	} else if (now > endTime) {
-		return 'ended';
-	} else if (now >= startTime && now <= endTime) {
-		return 'ongoing';
-	} else {
-		return 'planned';
-	}
+  const status = activity.status;
+
+  // status=0: 已取消
+  if (status === 0) {
+    return 'cancelled';
+  }
+
+  // status=1: 计划中
+  if (status === 1) {
+    return 'planned';
+  }
+
+  // status=3: 已结束
+  if (status === 3) {
+    return 'ended';
+  }
+
+  // status=2: 已发布，根据时间判断
+  const now = Date.now();
+  const startTime = Number(activity.startTime || 0);
+  const endTime = Number(activity.endTime || 0);
+
+  if (now > endTime) {
+    return 'ended';
+  } else if (now >= startTime && now <= endTime) {
+    return 'ongoing';
+  } else {
+    return 'signup';
+  }
 }
 
 // 获取申请状态文本
@@ -1463,22 +1503,27 @@ const goToEditRecruitment = () => {
 				font-size: 22rpx;
 				padding: 2rpx 12rpx;
 				border-radius: 20rpx;
-				
+
 				&.planned {
+					background-color: #fff3e0;
+					color: #ff9800;
+				}
+
+				&.signup {
 					background-color: #e3f2fd;
 					color: #2196f3;
 				}
-				
+
 				&.ongoing {
 					background-color: #e8f5e9;
 					color: #4caf50;
 				}
-				
+
 				&.ended {
 					background-color: #f5f5f5;
 					color: #9e9e9e;
 				}
-				
+
 				&.cancelled {
 					background-color: #ffebee;
 					color: #f44336;

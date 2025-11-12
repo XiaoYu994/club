@@ -234,6 +234,10 @@
   border-radius: 20rpx;
 }
 .activities-section .activity-item .activity-info .activity-status.planned.data-v-425dc59c {
+  background-color: #fff3e0;
+  color: #ff9800;
+}
+.activities-section .activity-item .activity-info .activity-status.signup.data-v-425dc59c {
   background-color: #e3f2fd;
   color: #2196f3;
 }

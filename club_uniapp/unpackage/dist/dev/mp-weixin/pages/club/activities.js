@@ -22,22 +22,36 @@ const _sfc_main = {
     const clubName = common_vendor.ref("");
     const searchKeyword = common_vendor.ref("");
     const currentTag = common_vendor.ref(0);
-    const filterTags = common_vendor.ref([
-      { name: "全部活动", type: "all" },
-      { name: "报名中", type: "signup" },
-      { name: "进行中", type: "ongoing" },
-      { name: "已结束", type: "ended" },
-      { name: "计划中", type: "planned" },
-      { name: "已取消", type: "cancelled" }
-    ]);
-    const statusOptions = [
-      { name: "全部", value: -1 },
-      { name: "报名中", value: "signup" },
-      { name: "进行中", value: "ongoing" },
-      { name: "已结束", value: 3 },
-      { name: "计划中", value: 1 },
-      { name: "已取消", value: 0 }
-    ];
+    const filterTags = common_vendor.computed(() => {
+      const baseTags = [
+        { name: "全部活动", type: "all" },
+        { name: "报名中", type: "signup" },
+        { name: "进行中", type: "ongoing" },
+        { name: "已结束", type: "ended" }
+      ];
+      if (isAdmin.value) {
+        baseTags.push(
+          { name: "计划中", type: "planned" },
+          { name: "已取消", type: "cancelled" }
+        );
+      }
+      return baseTags;
+    });
+    const statusOptions = common_vendor.computed(() => {
+      const baseOptions = [
+        { name: "全部", value: -1 },
+        { name: "报名中", value: "signup" },
+        { name: "进行中", value: "ongoing" },
+        { name: "已结束", value: 3 }
+      ];
+      if (isAdmin.value) {
+        baseOptions.push(
+          { name: "计划中", value: 1 },
+          { name: "已取消", value: 0 }
+        );
+      }
+      return baseOptions;
+    });
     const sortOptions = [
       { name: "创建时间", value: "create_time" },
       { name: "开始时间", value: "start_time" },
@@ -120,7 +134,10 @@ const _sfc_main = {
         }
         const res = await proxy.$api.activity.getClubActivities(clubId.value, params);
         if (res.code === 200) {
-          const activities = res.data.list || [];
+          let activities = res.data.list || [];
+          if (!isAdmin.value) {
+            activities = activities.filter((activity) => activity.status === 2 || activity.status === 3);
+          }
           if (page.value === 1) {
             fullActivityList.value = activities;
             activityList.value = activities;
@@ -137,7 +154,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/activities.vue:304", "加载活动列表失败", error);
+        common_vendor.index.__f__("error", "at pages/club/activities.vue:329", "加载活动列表失败", error);
         common_vendor.index.showToast({
           title: "网络异常，请稍后重试",
           icon: "none"
@@ -391,7 +408,7 @@ const _sfc_main = {
           color: "#999"
         }),
         v: common_vendor.o(closeFilterDrawer),
-        w: common_vendor.f(statusOptions, (status, idx, i0) => {
+        w: common_vendor.f(statusOptions.value, (status, idx, i0) => {
           return {
             a: common_vendor.t(status.name),
             b: idx,

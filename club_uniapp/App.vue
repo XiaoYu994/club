@@ -1,52 +1,115 @@
 <script>
 import wsClient from '@/utils/websocket'
 import apiModule from '@/api/api.js'
+import { showNotification } from '@/utils/notification.js'
 
 export default {
   onLaunch: function() {
-    console.warn('当前组件仅支持 uni_modules 目录结构 ，请升级 HBuilderX 到 3.1.0 版本以上！')
-    console.log('App Launch')
+    console.warn('当前组件仅支持 uni_modules 目录结构 ,请升级 HBuilderX 到 3.1.0 版本以上！')
+    console.log('【App】应用启动')
 
     // 检查是否已登录，如果已登录则建立WebSocket连接
     const token = uni.getStorageSync('token')
     if (token) {
-      console.log('【App】检测到用户已登录，建立WebSocket连接')
+      console.log('【App】检测到用户已登录，Token:', token.substring(0, 20) + '...')
+      console.log('【App】服务器地址:', apiModule.baseURL)
+      console.log('【App】开始建立WebSocket连接')
+
       wsClient.connect(apiModule.baseURL || 'http://localhost:8081')
+        .then(() => {
+          console.log('【App】WebSocket连接成功')
+        })
+        .catch((error) => {
+          console.error('【App】WebSocket连接失败:', error)
+          console.error('【App】错误详情:', JSON.stringify(error))
+        })
     } else {
       console.log('【App】用户未登录，跳过WebSocket连接')
     }
 
-    // 注册全局活动取消通知处理器
-    wsClient.onMessageType('activity_cancel_notification', (message) => {
-      console.log('【全局】收到活动取消通知:', message)
-
-      // 显示通知提示
-      uni.showModal({
-        title: '活动取消通知',
-        content: message.message || `您报名的活动"${message.activityTitle}"已被取消`,
-        showCancel: false,
-        confirmText: '知道了'
-      })
-
-      // 触发全局事件，让活动详情页可以监听并更新
-      uni.$emit('activityCancelled', {
-        activityId: message.activityId,
-        activityTitle: message.activityTitle
-      })
-    })
+    // 注册全局消息通知处理器
+    this.registerGlobalNotificationHandlers()
   },
   onShow: function() {
-    // const token = uni.getStorageSync('token')
-    // const pages = getCurrentPages()
-    // const currentPage = pages.length ? pages[pages.length - 1] : null
-    // // 请根据你的实际登录页路径调整
-    // if (!token && (!currentPage || currentPage.route !== 'pages/user/login')) {
-    //   uni.reLaunch({ url: '/pages/user/login' })
-    // }
+    console.log('【App】应用显示')
 
+    // 检查是否已登录，确保全局通知处理器始终注册
+    const token = uni.getStorageSync('token')
+    if (token && wsClient.isConnected) {
+      // 重新注册全局处理器（防御性措施，避免被其他页面清除）
+      this.registerGlobalNotificationHandlers()
+    }
   },
   onHide: function() {
     console.log('App Hide')
+  },
+  methods: {
+    /**
+     * 注册全局消息通知处理器
+     */
+    registerGlobalNotificationHandlers() {
+      console.log('【App】开始注册全局通知处理器')
+
+      // 统一的通知处理函数
+      const handleNotification = (message) => {
+        console.log('【通知】收到通知消息:', message)
+
+        // 验证必需字段
+        if (!message.type || !message.title || !message.message) {
+          console.error('【通知】消息格式不正确，缺少必需字段:', message)
+          return
+        }
+
+        // 直接使用后端传来的数据显示通知
+        showNotification({
+          type: message.type.replace('_notification', ''), // 移除后缀得到纯类型
+          title: message.title,
+          message: message.message,
+          extraInfo: message.extraInfo || message.feedback || null
+        })
+
+        // 触发对应的全局事件（供其他页面监听）
+        this.emitNotificationEvent(message)
+      }
+
+      // 注册所有通知类型到统一处理函数
+      const notificationTypes = [
+        'activity_cancel_notification',
+        'apply_approved_notification',
+        'apply_rejected_notification',
+        'activity_reminder_notification'
+      ]
+
+      notificationTypes.forEach(type => {
+        wsClient.onMessageType(type, handleNotification)
+        console.log(`【App】已注册通知类型: ${type}`)
+      })
+
+      console.log('【App】全局通知处理器注册完成')
+    },
+
+    // 触发全局事件（供其他页面监听状态变化）
+    emitNotificationEvent(message) {
+      const type = message.type
+
+      if (type === 'activity_cancel_notification') {
+        uni.$emit('activityCancelled', {
+          activityId: message.activityId,
+          activityTitle: message.activityTitle
+        })
+      } else if (type === 'apply_approved_notification' || type === 'apply_rejected_notification') {
+        uni.$emit('applyStatusChanged', {
+          activityId: message.activityId,
+          applyId: message.applyId,
+          status: type === 'apply_approved_notification' ? 'approved' : 'rejected'
+        })
+      } else if (type === 'activity_reminder_notification') {
+        uni.$emit('activityReminder', {
+          activityId: message.activityId,
+          activityTitle: message.activityTitle
+        })
+      }
+    }
   }
 }
 </script>

@@ -3,10 +3,12 @@ const common_vendor = require("../common/vendor.js");
 const utils_auth = require("./auth.js");
 class Request {
   constructor() {
-    this.baseURL = "http://localhost:8081";
+    this.baseURL = "https://cecille-insertional-keva.ngrok-free.dev";
     this.timeout = 3e4;
     this.header = {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "ngrok-skip-browser-warning": "true"
+      // 跳过 ngrok 的浏览器警告页面
     };
   }
   // 设置请求头
@@ -57,6 +59,25 @@ class Request {
         timeout: this.timeout,
         success: (res) => {
           var _a;
+          common_vendor.index.__f__("log", "at utils/request.js:71", "【请求】URL:", this.getUrl(options.url));
+          common_vendor.index.__f__("log", "at utils/request.js:72", "【请求】Method:", options.method || "GET");
+          common_vendor.index.__f__("log", "at utils/request.js:73", "【请求】Headers:", this.header);
+          common_vendor.index.__f__("log", "at utils/request.js:74", "【响应】Status:", res.statusCode);
+          common_vendor.index.__f__("log", "at utils/request.js:75", "【响应】Data类型:", typeof res.data);
+          if (typeof res.data === "string" && res.data.includes("<!DOCTYPE html>")) {
+            common_vendor.index.__f__("error", "at utils/request.js:79", "【错误】收到 HTML 响应，可能是 ngrok 确认页面");
+            common_vendor.index.__f__("error", "at utils/request.js:80", "【错误】响应内容:", res.data.substring(0, 200));
+            common_vendor.index.showToast({
+              title: "网络配置错误，请检查 ngrok 设置",
+              icon: "none",
+              duration: 3e3
+            });
+            reject({
+              code: -1,
+              message: "收到 HTML 响应而不是 JSON，请检查请求头配置"
+            });
+            return;
+          }
           if (res.statusCode >= 200 && res.statusCode < 300) {
             if (res.data && res.data.code !== void 0) {
               if (res.data.code === 200) {
@@ -117,7 +138,7 @@ class Request {
             title: "网络异常",
             icon: "none"
           });
-          common_vendor.index.__f__("error", "at utils/request.js:142", "请求失败:", err);
+          common_vendor.index.__f__("error", "at utils/request.js:167", "请求失败:", err);
           reject(err);
         }
       });
@@ -196,7 +217,7 @@ class Request {
               try {
                 data = JSON.parse(data);
               } catch (e) {
-                common_vendor.index.__f__("error", "at utils/request.js:235", "上传响应数据解析失败", e);
+                common_vendor.index.__f__("error", "at utils/request.js:260", "上传响应数据解析失败", e);
               }
             }
             resolve(data);
@@ -213,7 +234,7 @@ class Request {
             title: "上传失败",
             icon: "none"
           });
-          common_vendor.index.__f__("error", "at utils/request.js:252", "上传失败:", err);
+          common_vendor.index.__f__("error", "at utils/request.js:277", "上传失败:", err);
           reject(err);
         }
       });

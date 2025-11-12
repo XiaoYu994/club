@@ -5,24 +5,42 @@
 /**
  * 获取活动实际状态
  * @param {Object} activity - 活动对象
- * @returns {number} - 活动状态码：0-已取消，1-报名中，2-进行中，3-已结束，-1-未知
+ * @returns {number} - 活动状态码：0-已取消，1-计划中，2-报名中，3-进行中，4-已结束，-1-未知
  */
 export function getActualStatus(activity) {
   if (!activity) return -1;
-  
+
   const now = Date.now();
   const startTime = Number(activity.startTime || 0);
   const endTime = Number(activity.endTime || 0);
-  
+
+  // status=0: 已取消
   if (activity.status === 0) {
-    return 0; // 已取消
-  } else if (now > endTime) {
-    return 3; // 已结束
-  } else if (now >= startTime && now <= endTime) {
-    return 2; // 进行中
-  } else {
-    return 1; // 报名中
+    return 0;
   }
+
+  // status=1: 计划中（待审核）
+  if (activity.status === 1) {
+    return 1;
+  }
+
+  // status=2: 已发布，根据时间判断实际状态
+  if (activity.status === 2) {
+    if (now > endTime) {
+      return 4; // 已结束
+    } else if (now >= startTime && now <= endTime) {
+      return 3; // 进行中
+    } else {
+      return 2; // 报名中
+    }
+  }
+
+  // status=3: 已结束
+  if (activity.status === 3) {
+    return 4;
+  }
+
+  return -1; // 未知状态
 }
 
 /**
@@ -34,9 +52,10 @@ export function getStatusText(activity) {
   const actualStatus = getActualStatus(activity);
   switch (actualStatus) {
     case 0: return '已取消';
-    case 1: return '报名中';
-    case 2: return '进行中';
-    case 3: return '已结束';
+    case 1: return '计划中';
+    case 2: return '报名中';
+    case 3: return '进行中';
+    case 4: return '已结束';
     default: return '未知';
   }
 }
@@ -51,8 +70,9 @@ export function getStatusClass(activity) {
   switch (actualStatus) {
     case 0: return 'cancelled';
     case 1: return 'planned';
-    case 2: return 'ongoing';
-    case 3: return 'ended';
+    case 2: return 'signup';
+    case 3: return 'ongoing';
+    case 4: return 'ended';
     default: return '';
   }
 }
@@ -363,10 +383,12 @@ export function hasApplied(applyInfo) {
  */
 export function getApplyButtonText(activity, applyInfo) {
   const actualStatus = getActualStatus(activity);
-  
+
   if (actualStatus === 0) {
     return '活动已取消';
-  } else if (actualStatus === 3) {
+  } else if (actualStatus === 1) {
+    return '计划中';
+  } else if (actualStatus === 4) {
     return '活动已结束';
   } else if (hasApplied(applyInfo)) {
     if (applyInfo.status === 0) {
@@ -389,8 +411,8 @@ export function getApplyButtonText(activity, applyInfo) {
  */
 export function isApplyButtonDisabled(activity, applyInfo) {
   const actualStatus = getActualStatus(activity);
-  
-  if (actualStatus === 0 || actualStatus === 3) {
+
+  if (actualStatus === 0 || actualStatus === 1 || actualStatus === 4) {
     return true;
   } else if (hasApplied(applyInfo)) {
     return true;

@@ -44,9 +44,25 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         Long userId = getUserId(session);
         if (userId != null) {
-            // 存储会话
+            // 移除旧的会话（如果存在）
+            WebSocketSession oldSession = USER_SESSIONS.get(userId);
+            if (oldSession != null && oldSession.isOpen()) {
+                log.warn("【WebSocket】用户 {} 有旧连接存在，关闭旧连接", userId);
+                try {
+                    oldSession.close();
+                } catch (Exception e) {
+                    log.error("【WebSocket】关闭旧连接失败", e);
+                }
+            }
+
+            // 存储新会话
             USER_SESSIONS.put(userId, session);
-            log.info("用户{}建立WebSocket连接，当前在线用户数：{}", userId, USER_SESSIONS.size());
+            log.info("【WebSocket】用户 {} 建立连接，SessionId: {}，当前在线用户数：{}",
+                userId, session.getId(), USER_SESSIONS.size());
+            log.debug("【WebSocket】当前在线用户列表: {}", USER_SESSIONS.keySet());
+        } else {
+            log.error("【WebSocket】无法获取用户ID，拒绝连接");
+            session.close();
         }
     }
 
@@ -226,9 +242,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      * 向特定用户发送消息
      */
     public void sendMessageToUser(Long userId, String message) {
+        log.info("【WebSocket】尝试向用户 {} 发送消息，当前在线用户数: {}", userId, USER_SESSIONS.size());
+        log.debug("【WebSocket】在线用户列表: {}", USER_SESSIONS.keySet());
+
         WebSocketSession session = USER_SESSIONS.get(userId);
         if (session != null && session.isOpen()) {
             sendMessageToSession(session, message);
+            log.info("【WebSocket】成功发送消息给用户 {}", userId);
+        } else {
+            if (session == null) {
+                log.warn("【WebSocket】用户 {} 不在线（session为null），无法发送消息", userId);
+            } else {
+                log.warn("【WebSocket】用户 {} 的连接已关闭，无法发送消息", userId);
+            }
         }
     }
 
@@ -258,13 +284,83 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void sendActivityCancelNotification(Long userId, Long activityId, String activityTitle) {
         JSONObject notification = new JSONObject();
         notification.put("type", "activity_cancel_notification");
+        notification.put("title", "活动取消通知");
+        notification.put("message", "您报名的活动 \"" + activityTitle + "\" 已被取消");
+        notification.put("extraInfo", "如有疑问，请联系社团管理员");
         notification.put("activityId", activityId);
         notification.put("activityTitle", activityTitle);
-        notification.put("message", "您报名的活动 \"" + activityTitle + "\" 已被取消");
         notification.put("timestamp", System.currentTimeMillis());
 
         sendMessageToUser(userId, notification.toJSONString());
         log.info("发送活动取消通知给用户{}，活动ID: {}，活动标题: {}", userId, activityId, activityTitle);
+    }
+
+    /**
+     * 发送报名审核通过通知
+     * @param userId 用户ID
+     * @param activityId 活动ID
+     * @param activityTitle 活动标题
+     * @param applyId 报名ID
+     * @param feedback 反馈信息
+     */
+    public void sendApplyApprovedNotification(Long userId, Long activityId, String activityTitle, Long applyId, String feedback) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "apply_approved_notification");
+        notification.put("title", "报名审核通过");
+        notification.put("message", "您的活动 \"" + activityTitle + "\" 报名申请已通过");
+        notification.put("extraInfo", feedback != null && !feedback.isEmpty() ? feedback : "请按时参加活动");
+        notification.put("activityId", activityId);
+        notification.put("activityTitle", activityTitle);
+        notification.put("applyId", applyId);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送报名审核通过通知给用户{}，活动ID: {}，活动标题: {}", userId, activityId, activityTitle);
+    }
+
+    /**
+     * 发送报名审核拒绝通知
+     * @param userId 用户ID
+     * @param activityId 活动ID
+     * @param activityTitle 活动标题
+     * @param applyId 报名ID
+     * @param feedback 反馈信息
+     */
+    public void sendApplyRejectedNotification(Long userId, Long activityId, String activityTitle, Long applyId, String feedback) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "apply_rejected_notification");
+        notification.put("title", "报名审核未通过");
+        notification.put("message", "您的活动 \"" + activityTitle + "\" 报名申请未通过");
+        notification.put("extraInfo", feedback != null && !feedback.isEmpty() ? feedback : "如有疑问，请联系社团管理员");
+        notification.put("activityId", activityId);
+        notification.put("activityTitle", activityTitle);
+        notification.put("applyId", applyId);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送报名审核拒绝通知给用户{}，活动ID: {}，活动标题: {}", userId, activityId, activityTitle);
+    }
+
+    /**
+     * 发送活动即将开始提醒
+     * @param userId 用户ID
+     * @param activityId 活动ID
+     * @param activityTitle 活动标题
+     * @param activityTime 活动时间
+     */
+    public void sendActivityReminderNotification(Long userId, Long activityId, String activityTitle, String activityTime) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "activity_reminder_notification");
+        notification.put("title", "活动提醒");
+        notification.put("message", "您报名的活动 \"" + activityTitle + "\" 即将在明天开始");
+        notification.put("extraInfo", "活动时间：" + activityTime);
+        notification.put("activityId", activityId);
+        notification.put("activityTitle", activityTitle);
+        notification.put("activityTime", activityTime);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送活动提醒通知给用户{}，活动ID: {}，活动标题: {}", userId, activityId, activityTitle);
     }
 
     /**
@@ -286,7 +382,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         Long userId = getUserId(session);
         if (userId != null) {
             USER_SESSIONS.remove(userId);
-            log.info("用户{}断开WebSocket连接，当前在线用户数：{}", userId, USER_SESSIONS.size());
+            log.info("【WebSocket】用户 {} 断开连接，SessionId: {}，原因: {}，当前在线用户数：{}",
+                userId, session.getId(), status, USER_SESSIONS.size());
+            log.debug("【WebSocket】当前在线用户列表: {}", USER_SESSIONS.keySet());
+        } else {
+            log.warn("【WebSocket】无法识别断开连接的用户，SessionId: {}", session.getId());
         }
     }
 
@@ -295,5 +395,27 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     private Long getUserId(WebSocketSession session) {
         return (Long) session.getAttributes().get("userId");
+    }
+
+    /**
+     * 获取在线用户ID列表（用于调试）
+     */
+    public java.util.Set<Long> getOnlineUserIds() {
+        return USER_SESSIONS.keySet();
+    }
+
+    /**
+     * 获取在线用户数量
+     */
+    public int getOnlineCount() {
+        return USER_SESSIONS.size();
+    }
+
+    /**
+     * 检查用户是否在线
+     */
+    public boolean isUserOnline(Long userId) {
+        WebSocketSession session = USER_SESSIONS.get(userId);
+        return session != null && session.isOpen();
     }
 } 

@@ -79,24 +79,24 @@ const _sfc_main = {
       }
     }
     function updateMessageHandler() {
-      utils_websocket.wsClient.clearHandlers();
       utils_websocket.wsClient.onMessageType("group_message", handleReceivedMessage);
       utils_websocket.wsClient.onMessageType("error", handleError);
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:260", "【聊天室】消息处理器已注册");
     }
     const connectWebSocket = async () => {
       const serverUrl = api_api.apiModule.baseURL || "localhost:8081";
-      if (!utils_websocket.wsClient.isConnected) {
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:272", "WebSocket未连接，尝试连接...");
-        try {
-          await utils_websocket.wsClient.connect(serverUrl);
-          common_vendor.index.__f__("log", "at pages/chat/room.vue:275", "WebSocket连接成功");
-          updateMessageHandler();
-        } catch (error) {
-          common_vendor.index.__f__("warn", "at pages/chat/room.vue:278", "WebSocket初次连接失败，正在重试...", error);
-        }
-      } else {
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:282", "WebSocket已连接，更新消息处理函数");
+      if (utils_websocket.wsClient.isConnected) {
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:271", "【聊天室】WebSocket已连接，直接使用现有连接");
         updateMessageHandler();
+        return;
+      }
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:276", "【聊天室】WebSocket未连接，尝试连接...");
+      try {
+        await utils_websocket.wsClient.connect(serverUrl, false);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:280", "【聊天室】WebSocket连接成功");
+        updateMessageHandler();
+      } catch (error) {
+        common_vendor.index.__f__("warn", "at pages/chat/room.vue:283", "【聊天室】WebSocket初次连接失败，正在重试...", error);
       }
     };
     const loadGroupDetail = async () => {
@@ -111,7 +111,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:302", "获取群组详情失败:", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:303", "获取群组详情失败:", error);
       }
     };
     function formatDividerTime(timestamp) {
@@ -130,7 +130,7 @@ const _sfc_main = {
         dateObj = timestamp;
       }
       if (isNaN(dateObj.getTime())) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:333", "无效的时间格式:", timestamp);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:334", "无效的时间格式:", timestamp);
         return "未知时间";
       }
       const now = /* @__PURE__ */ new Date();
@@ -164,7 +164,7 @@ const _sfc_main = {
         dateObj = timestamp;
       }
       if (isNaN(dateObj.getTime())) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:389", "无效的时间格式:", timestamp);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:390", "无效的时间格式:", timestamp);
         return "未知时间";
       }
       return `${dateObj.getHours().toString().padStart(2, "0")}:${dateObj.getMinutes().toString().padStart(2, "0")}`;
@@ -185,7 +185,7 @@ const _sfc_main = {
         prevTime = typeof prevMsg.createTime === "number" ? prevMsg.createTime : new Date(prevMsg.createTime).getTime();
         return Math.abs(prevTime - currentTime) > 5 * 60 * 1e3;
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:418", "比较消息时间出错:", e);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:419", "比较消息时间出错:", e);
         return false;
       }
     };
@@ -222,7 +222,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: response.msg || "获取消息失败", icon: "none" });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:465", "获取消息历史失败:", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:466", "获取消息历史失败:", error);
       } finally {
         loading.value = false;
       }
@@ -257,7 +257,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: response.msg || "获取消息失败", icon: "none" });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:507", "获取消息历史失败:", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:508", "获取消息历史失败:", error);
       } finally {
         loading.value = false;
       }
@@ -265,7 +265,7 @@ const _sfc_main = {
     const handleReceivedMessage = (message) => {
       if (message.groupId === groupId.value) {
         message.senderId = Number(message.senderId);
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:520", "收到WebSocket消息:", message);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:521", "收到WebSocket消息:", message);
         if (message.contentType === 3) {
           try {
             if (typeof message.content === "string") {
@@ -276,7 +276,7 @@ const _sfc_main = {
               message.content = JSON.stringify(locationData);
             }
           } catch (e) {
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:532", "解析位置消息失败:", e);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:533", "解析位置消息失败:", e);
           }
         }
         if (userId.value && message.senderId === userId.value) {
@@ -369,7 +369,7 @@ const _sfc_main = {
         }
         return content;
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:660", "解析位置信息失败:", e);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:661", "解析位置信息失败:", e);
         return { name: "位置信息", address: "" };
       }
     };
@@ -402,10 +402,10 @@ const _sfc_main = {
               fileType: getFileType(url),
               // 尝试获取文件类型
               success: function() {
-                common_vendor.index.__f__("log", "at pages/chat/room.vue:722", "打开文件成功");
+                common_vendor.index.__f__("log", "at pages/chat/room.vue:723", "打开文件成功");
               },
               fail: function(err) {
-                common_vendor.index.__f__("error", "at pages/chat/room.vue:725", "微信小程序打开文件失败:", err);
+                common_vendor.index.__f__("error", "at pages/chat/room.vue:726", "微信小程序打开文件失败:", err);
                 common_vendor.index.showModal({
                   title: "打开失败",
                   content: "无法打开此类型文件，是否复制链接后手动打开？",
@@ -429,7 +429,7 @@ const _sfc_main = {
         },
         fail: (err) => {
           common_vendor.index.hideLoading();
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:751", "下载文件失败:", err);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:752", "下载文件失败:", err);
           common_vendor.index.showToast({ title: "下载文件失败", icon: "none" });
         }
       });
@@ -459,15 +459,15 @@ const _sfc_main = {
           name: locationData.name || "位置信息",
           address: locationData.address || "",
           success: () => {
-            common_vendor.index.__f__("log", "at pages/chat/room.vue:813", "打开位置成功");
+            common_vendor.index.__f__("log", "at pages/chat/room.vue:814", "打开位置成功");
           },
           fail: (err) => {
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:816", "打开位置失败:", err);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:817", "打开位置失败:", err);
             common_vendor.index.showToast({ title: "打开位置失败", icon: "none" });
           }
         });
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:821", "解析位置信息失败:", e);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:822", "解析位置信息失败:", e);
         common_vendor.index.showToast({ title: "位置信息无效", icon: "none" });
       }
     };
@@ -481,7 +481,7 @@ const _sfc_main = {
           if (!utils_websocket.wsClient.isConnected) {
             try {
               common_vendor.index.showLoading({ title: "正在连接聊天服务..." });
-              await utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "localhost:8081");
+              await utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "localhost:8081", false);
               common_vendor.index.hideLoading();
             } catch (error) {
               common_vendor.index.hideLoading();
@@ -489,7 +489,7 @@ const _sfc_main = {
                 title: "聊天服务连接失败，请稍后重试",
                 icon: "none"
               });
-              common_vendor.index.__f__("error", "at pages/chat/room.vue:851", "聊天服务连接失败:", error);
+              common_vendor.index.__f__("error", "at pages/chat/room.vue:852", "聊天服务连接失败:", error);
               return;
             }
           }
@@ -539,11 +539,11 @@ const _sfc_main = {
                 title: uploadRes.message || "上传失败",
                 icon: "none"
               });
-              common_vendor.index.__f__("error", "at pages/chat/room.vue:910", "图片上传响应异常:", uploadRes);
+              common_vendor.index.__f__("error", "at pages/chat/room.vue:911", "图片上传响应异常:", uploadRes);
             }
           } catch (error) {
             common_vendor.index.hideLoading();
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:914", "上传图片失败", error);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:915", "上传图片失败", error);
             common_vendor.index.showToast({
               title: "图片上传失败，请重试",
               icon: "none"
@@ -598,7 +598,7 @@ const _sfc_main = {
           }
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:980", "选择位置失败:", err);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:981", "选择位置失败:", err);
         }
       });
       showMorePanel.value = false;
@@ -611,12 +611,12 @@ const _sfc_main = {
         success: async (res) => {
           if (res.tempFiles && res.tempFiles.length > 0) {
             const file = res.tempFiles[0];
-            common_vendor.index.__f__("log", "at pages/chat/room.vue:1010", "选择的文件:", file);
+            common_vendor.index.__f__("log", "at pages/chat/room.vue:1011", "选择的文件:", file);
             handleFileUpload(file.path, file.name);
           }
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:1015", "选择文件失败:", err);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1016", "选择文件失败:", err);
           common_vendor.index.showToast({
             title: "选择文件失败",
             icon: "none"
@@ -630,7 +630,7 @@ const _sfc_main = {
         if (!utils_websocket.wsClient.isConnected) {
           try {
             common_vendor.index.showLoading({ title: "正在连接聊天服务..." });
-            await utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "localhost:8081");
+            await utils_websocket.wsClient.connect(api_api.apiModule.baseURL || "localhost:8081", false);
             common_vendor.index.hideLoading();
           } catch (error) {
             common_vendor.index.hideLoading();
@@ -638,7 +638,7 @@ const _sfc_main = {
               title: "聊天服务连接失败，请稍后重试",
               icon: "none"
             });
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:1053", "聊天服务连接失败:", error);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:1054", "聊天服务连接失败:", error);
             return;
           }
         }
@@ -690,11 +690,11 @@ const _sfc_main = {
             title: uploadRes.message || "上传失败",
             icon: "none"
           });
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:1112", "文件上传响应异常:", uploadRes);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1113", "文件上传响应异常:", uploadRes);
         }
       } catch (error) {
         common_vendor.index.hideLoading();
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:1116", "上传文件失败", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:1117", "上传文件失败", error);
         common_vendor.index.showToast({
           title: "文件上传失败，请重试",
           icon: "none"
@@ -709,7 +709,7 @@ const _sfc_main = {
         if (option.name) {
           roomInfo.name = decodeURIComponent(option.name);
         }
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:1135", `进入聊天室，群组ID: ${groupId.value}, 名称: ${roomInfo.name}`);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:1136", `进入聊天室，群组ID: ${groupId.value}, 名称: ${roomInfo.name}`);
         connectWebSocket();
         await loadGroupDetail();
         await loadInitialMessages();
@@ -720,12 +720,12 @@ const _sfc_main = {
       if (chatPageCount === 0) {
         if (utils_websocket.wsClient.isConnected) {
           utils_websocket.wsClient.disconnect();
-          common_vendor.index.__f__("log", "at pages/chat/room.vue:1152", "所有聊天页面已关闭，断开WebSocket连接");
+          common_vendor.index.__f__("log", "at pages/chat/room.vue:1153", "所有聊天页面已关闭，断开WebSocket连接");
         }
       }
     });
     common_vendor.onHide(() => {
-      common_vendor.index.__f__("log", "at pages/chat/room.vue:1159", "页面隐藏，保持WebSocket连接");
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:1160", "页面隐藏，保持WebSocket连接");
     });
     return (_ctx, _cache) => {
       return common_vendor.e({

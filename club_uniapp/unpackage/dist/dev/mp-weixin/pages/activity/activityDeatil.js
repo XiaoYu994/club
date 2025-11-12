@@ -122,20 +122,20 @@ const _sfc_main = {
       try {
         const serverUrl = api_api.apiModule.baseURL || "localhost:8081";
         if (!utils_websocket.wsClient.isConnected) {
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:505", "WebSocket未连接，正在建立连接...");
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:505", "【活动详情】WebSocket未连接，尝试连接...");
           try {
-            await utils_websocket.wsClient.connect(serverUrl);
-            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:508", "WebSocket连接成功");
+            await utils_websocket.wsClient.connect(serverUrl, false);
+            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:509", "【活动详情】WebSocket连接成功");
           } catch (error) {
-            common_vendor.index.__f__("warn", "at pages/activity/activityDeatil.vue:510", "WebSocket连接失败，将在重连后自动注册监听器:", error);
+            common_vendor.index.__f__("warn", "at pages/activity/activityDeatil.vue:511", "【活动详情】WebSocket连接失败，将在重连后自动注册监听器:", error);
           }
         } else {
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:514", "WebSocket已连接，直接注册监听器");
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:515", "【活动详情】WebSocket已连接，直接注册监听器");
         }
         utils_websocket.wsClient.onMessageType("check_in_notification", (message) => {
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:519", "【WebSocket】收到签到通知:", message);
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:520", "【WebSocket】收到签到通知:", message);
           if (message.activityId && message.activityId.toString() === id.value.toString()) {
-            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:523", "【WebSocket】签到通知匹配当前活动，开始刷新");
+            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:524", "【WebSocket】签到通知匹配当前活动，开始刷新");
             handleCheckInSuccess({
               activityId: message.activityId,
               checkInStatus: message.checkInStatus
@@ -146,15 +146,15 @@ const _sfc_main = {
               duration: 2e3
             });
           } else {
-            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:538", "【WebSocket】签到通知不匹配当前活动", {
+            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:539", "【WebSocket】签到通知不匹配当前活动", {
               messageActivityId: message.activityId,
               currentActivityId: id.value
             });
           }
         });
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:545", "WebSocket签到通知监听已设置，当前连接状态:", utils_websocket.wsClient.isConnected);
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:546", "WebSocket签到通知监听已设置，当前连接状态:", utils_websocket.wsClient.isConnected);
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:547", "设置WebSocket监听器失败:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:548", "设置WebSocket监听器失败:", error);
       }
     };
     const refreshActivityData = async () => {
@@ -171,10 +171,10 @@ const _sfc_main = {
             activityDetail.value[key] = newData[key];
           });
           if (oldPoster !== activityDetail.value.poster) {
-            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:573", "海报已更新:", activityDetail.value.poster);
+            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:574", "海报已更新:", activityDetail.value.poster);
           }
           if (oldJoinCount !== activityDetail.value.joinCount || oldViewCount !== activityDetail.value.viewCount) {
-            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:578", "数据已更新:", {
+            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:579", "数据已更新:", {
               joinCount: activityDetail.value.joinCount,
               viewCount: activityDetail.value.viewCount
             });
@@ -182,7 +182,7 @@ const _sfc_main = {
           checkCanApply();
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:588", "刷新活动数据失败:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:589", "刷新活动数据失败:", error);
       }
     };
     const getUserInfo = async () => {
@@ -197,7 +197,7 @@ const _sfc_main = {
     };
     const loadActivityDetail = async () => {
       if (!id.value) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:610", "活动ID不存在");
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:611", "活动ID不存在");
         common_vendor.index.showToast({
           title: "活动ID不存在",
           icon: "none"
@@ -221,7 +221,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:645", "加载活动详情失败:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:646", "加载活动详情失败:", error);
         common_vendor.index.showToast({
           title: "网络异常，请稍后重试",
           icon: "none"
@@ -232,15 +232,15 @@ const _sfc_main = {
     };
     const parseFormFieldsFromData = () => {
       try {
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:658", "解析表单字段，活动详情:", JSON.stringify(activityDetail.value));
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:659", "解析表单字段，活动详情:", JSON.stringify(activityDetail.value));
         if (activityDetail.value && activityDetail.value.forms) {
           formFields.value = utils_activity.parseFormFields(activityDetail.value.forms);
         } else {
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:663", "活动没有自定义表单，使用默认表单");
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:664", "活动没有自定义表单，使用默认表单");
           formFields.value = utils_activity.parseFormFields(null);
         }
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:668", "解析表单字段失败:", e);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:669", "解析表单字段失败:", e);
         formFields.value = utils_activity.parseFormFields(null);
       }
     };
@@ -258,23 +258,23 @@ const _sfc_main = {
         const clubId = activityDetail.value.clubId || (clubInfo.value ? clubInfo.value.id : null);
         if (!clubId) {
           isAdmin.value = false;
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:693", "没有clubId，设置为非管理员");
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:694", "没有clubId，设置为非管理员");
           checkCanApply();
           return;
         }
         const res = await proxy.$api.club.getUserRole(clubId);
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:701", "getUserRole 返回结果:", res);
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:702", "getUserRole 返回结果:", res);
         if (res.code === 200 && res.data && res.data.type > 0 && res.data.status == 1) {
           isAdmin.value = true;
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:706", "确认用户是管理员");
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:707", "确认用户是管理员");
         } else {
           isAdmin.value = false;
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:709", "确认用户不是管理员");
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:710", "确认用户不是管理员");
         }
         checkCanApply();
         refreshActivityData();
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:718", "检查管理员身份失败:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:719", "检查管理员身份失败:", error);
         isAdmin.value = false;
         checkCanApply();
       }
@@ -287,12 +287,12 @@ const _sfc_main = {
           common_vendor.index.showLoading({ title: "加载中..." });
         }
         const res = await proxy.$api.activity.checkApplyStatus(id.value);
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:737", "checkApplyStatus API 返回结果:", res);
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:738", "checkApplyStatus API 返回结果:", res);
         if (res.code === 200) {
           if (res.data) {
             hasApplied.value = true;
             applyInfo.value = { ...res.data };
-            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:746", "applyInfo 已更新:", JSON.stringify(applyInfo.value));
+            common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:747", "applyInfo 已更新:", JSON.stringify(applyInfo.value));
             try {
               if (applyInfo.value.forms) {
                 parsedForms.value = utils_activity.parseFormData(applyInfo.value.forms);
@@ -303,7 +303,7 @@ const _sfc_main = {
                 parsedForms.value = { reason: "用户未填写参加原因" };
               }
             } catch (e) {
-              common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:762", "解析表单数据失败:", e);
+              common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:763", "解析表单数据失败:", e);
               parsedForms.value = { reason: "表单数据解析失败" };
             }
           } else {
@@ -311,7 +311,7 @@ const _sfc_main = {
             applyInfo.value = {};
             parsedForms.value = {};
           }
-          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:776", "报名信息已更新:", {
+          common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:777", "报名信息已更新:", {
             hasApplied: hasApplied.value,
             checkInStatus: applyInfo.value.checkInStatus,
             applyId: applyInfo.value.id
@@ -324,7 +324,7 @@ const _sfc_main = {
           applyInfo.value = {};
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:790", "检查报名状态失败:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:791", "检查报名状态失败:", error);
         hasApplied.value = false;
         applyInfo.value = {};
         parsedForms.value = {};
@@ -340,18 +340,18 @@ const _sfc_main = {
     };
     const checkCanApply = () => {
       const actualStatus = utils_activity.getActualStatus(activityDetail.value);
-      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:810", "checkCanApply 执行:", {
+      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:811", "checkCanApply 执行:", {
         isAdmin: isAdmin.value,
         actualStatus,
         hasApplied: hasApplied.value
       });
       if (isAdmin.value) {
         showApplyBtn.value = false;
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:819", "用户是管理员，隐藏报名按钮");
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:820", "用户是管理员，隐藏报名按钮");
         return;
       }
-      showApplyBtn.value = actualStatus === 1 && !hasApplied.value;
-      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:825", "用户不是管理员，showApplyBtn =", showApplyBtn.value);
+      showApplyBtn.value = actualStatus === 2 && !hasApplied.value;
+      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:826", "用户不是管理员，showApplyBtn =", showApplyBtn.value);
     };
     const getDisabledReason = () => {
       if (hasApplied.value) {
@@ -361,11 +361,14 @@ const _sfc_main = {
       if (actualStatus === 0) {
         return "活动已取消";
       }
-      if (actualStatus === 3) {
-        return "活动已结束";
+      if (actualStatus === 1) {
+        return "计划中";
       }
-      if (actualStatus === 2) {
+      if (actualStatus === 3) {
         return "活动进行中";
+      }
+      if (actualStatus === 4) {
+        return "活动已结束";
       }
       return "报名已截止";
     };
@@ -420,11 +423,11 @@ const _sfc_main = {
         parseFormFieldsFromData();
       }
       if (formFields.value && formFields.value.length > 0) {
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:931", "填充前的表单字段:", JSON.stringify(formFields.value));
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:936", "填充前的表单字段:", JSON.stringify(formFields.value));
         formFields.value = utils_activity.fillUserInfoToForm(formFields.value, userInfo.value);
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:936", "填充后的表单字段:", JSON.stringify(formFields.value));
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:941", "填充后的表单字段:", JSON.stringify(formFields.value));
       } else {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:938", "表单字段为空，无法显示报名表单");
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:943", "表单字段为空，无法显示报名表单");
         common_vendor.index.showToast({
           title: "表单加载失败，请重试",
           icon: "none"
@@ -494,7 +497,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1042", "提交报名失败:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1047", "提交报名失败:", error);
         common_vendor.index.hideLoading();
         await checkApplyStatus();
         if (hasApplied.value) {
@@ -629,7 +632,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1218", "生成签到码错误:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1223", "生成签到码错误:", error);
         common_vendor.index.showToast({
           title: "网络异常，请稍后重试",
           icon: "none"
@@ -645,7 +648,7 @@ const _sfc_main = {
         const date = new Date(Number(timestamp));
         return utils_common.formatDate(date, "yyyy-MM-dd hh:mm:ss");
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1235", "格式化时间错误:", error);
+        common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1240", "格式化时间错误:", error);
         return "时间格式错误";
       }
     };
@@ -698,7 +701,7 @@ const _sfc_main = {
       } else {
         formFields.value[index].value = "";
       }
-      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:1316", `选项变更 - 字段: ${formFields.value[index].label}, 值: ${formFields.value[index].value}`);
+      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:1321", `选项变更 - 字段: ${formFields.value[index].label}, 值: ${formFields.value[index].value}`);
     };
     const isOptionChecked = (value, option) => {
       if (!value)
@@ -710,14 +713,14 @@ const _sfc_main = {
       return utils_common.getImageUrl(url, "/static/images/default-poster.png", false);
     };
     const handleImageError = (e) => {
-      common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1333", "二维码图片加载失败:", e);
+      common_vendor.index.__f__("error", "at pages/activity/activityDeatil.vue:1338", "二维码图片加载失败:", e);
       showBackupQRCode.value = true;
       if (applyInfo.value && applyInfo.value.qrCodeUrl) {
-        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:1339", "尝试使用备用方式显示二维码:", applyInfo.value.qrCodeUrl.substring(0, 50) + "...");
+        common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:1344", "尝试使用备用方式显示二维码:", applyInfo.value.qrCodeUrl.substring(0, 50) + "...");
       }
     };
     const handleImageLoad = () => {
-      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:1345", "二维码图片加载成功");
+      common_vendor.index.__f__("log", "at pages/activity/activityDeatil.vue:1350", "二维码图片加载成功");
       showBackupQRCode.value = false;
     };
     const showBackupQRCode = common_vendor.ref(false);

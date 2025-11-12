@@ -71,12 +71,15 @@ const _sfc_main = {
     });
     const canCancel = common_vendor.computed(() => {
       const status = props.activity.status;
-      if (status !== 2) {
-        return false;
+      if (status === 1) {
+        return true;
       }
-      const now = Date.now();
-      const startTime = Number(props.activity.startTime || 0);
-      return now < startTime;
+      if (status === 2) {
+        const now = Date.now();
+        const startTime = Number(props.activity.startTime || 0);
+        return now < startTime;
+      }
+      return false;
     });
     const goToActivityDetail = () => {
       emit("detail", props.activity);

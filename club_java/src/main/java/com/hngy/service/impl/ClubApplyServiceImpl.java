@@ -10,7 +10,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hngy.common.constant.ApplyStatusConstant;
 import com.hngy.common.constant.MessageConstant;
+import com.hngy.common.constant.NotificationConstant;
 import com.hngy.common.constant.StatusConstant;
 import com.hngy.common.context.BaseContext;
 import com.hngy.common.exception.ServiceException;
@@ -21,6 +23,7 @@ import com.hngy.entity.vo.*;
 import com.hngy.mapper.*;
 import com.hngy.service.IChatService;
 import com.hngy.service.IClubApplyService;
+import com.hngy.service.IUserNotificationService;
 import com.hngy.websocket.ChatWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.hngy.common.constant.ApplyStatusConstant.REJECTED;
 
 /**
  * <p>
@@ -57,6 +62,7 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
     private final IChatService chatService;
     private final ClubChatGroupMapper chatGroupMapper;
     private final ChatWebSocketHandler chatWebSocketHandler;
+    private final IUserNotificationService userNotificationService;
 
     @Override
     public String applyJoinClub(Long clubId, Map<String, Object> formData) {
@@ -439,12 +445,78 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
             throw new ServiceException(HttpStatus.HTTP_CONFLICT, MessageConstant.APPLICATION_ALREADY_REVIEWED);
         }
 
+        // 3. 获取活动信息
+        ClubActivity activity = clubActivityMapper.selectById(apply.getActivityId());
+        if (activity == null) {
+            throw new ServiceException(HttpStatus.HTTP_NOT_FOUND, "活动不存在");
+        }
+
         apply.setStatus(reviewApplyDTO.getStatus());
         apply.setFeedback(reviewApplyDTO.getFeedback());
         apply.setUpdateTime(System.currentTimeMillis());
 
-        // 3. 执行更新
-        return clubActivityApplyMapper.updateById(apply) > 0;
+        // 4. 执行更新
+        boolean updated = clubActivityApplyMapper.updateById(apply) > 0;
+
+        // 5. 发送审核结果通知
+        if (updated) {
+            try {
+                String notificationType;
+                String notificationTitle;
+                String notificationMessage;
+
+                if (reviewApplyDTO.getStatus() == StatusConstant.ENABLE) {
+                    // 审核通过
+                    notificationType = NotificationConstant.TYPE_APPLY_APPROVED;
+                    notificationTitle = NotificationConstant.TITLE_APPLY_APPROVED;
+                    notificationMessage = "您的活动\"" + activity.getTitle() + "\"报名申请已通过";
+
+                    // 发送WebSocket通知
+                    chatWebSocketHandler.sendApplyApprovedNotification(
+                        apply.getUserId(),
+                        activity.getId(),
+                        activity.getTitle(),
+                        applyId,
+                        reviewApplyDTO.getFeedback()
+                    );
+                } else if (Objects.equals(reviewApplyDTO.getStatus(), ApplyStatusConstant.REJECTED)) {
+                    // 审核拒绝
+                    notificationType = NotificationConstant.TYPE_APPLY_REJECTED;
+                    notificationTitle = NotificationConstant.TITLE_APPLY_REJECTED;
+                    notificationMessage = "您的活动\"" + activity.getTitle() + "\"报名申请未通过";
+
+                    // 发送WebSocket通知
+                    chatWebSocketHandler.sendApplyRejectedNotification(
+                        apply.getUserId(),
+                        activity.getId(),
+                        activity.getTitle(),
+                        applyId,
+                        reviewApplyDTO.getFeedback()
+                    );
+                } else {
+                    // 其他状态不发送通知
+                    return updated;
+                }
+
+                // 保存通知到数据库
+                userNotificationService.createNotification(
+                    apply.getUserId(),
+                    notificationType,
+                    notificationTitle,
+                    notificationMessage,
+                    activity.getId(),
+                    null
+                );
+
+                log.info("发送报名审核通知成功，用户ID: {}, 活动ID: {}, 审核状态: {}",
+                    apply.getUserId(), activity.getId(), reviewApplyDTO.getStatus());
+            } catch (Exception e) {
+                log.error("发送报名审核通知失败，报名ID: {}, 活动ID: {}",
+                    applyId, activity.getId(), e);
+            }
+        }
+
+        return updated;
     }
 
     @Override

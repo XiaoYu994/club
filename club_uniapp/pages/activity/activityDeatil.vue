@@ -502,16 +502,17 @@ const setupWebSocketListener = async () => {
 
     // 检查WebSocket是否已连接
     if (!wsClient.isConnected) {
-      console.log('WebSocket未连接，正在建立连接...')
+      console.log('【活动详情】WebSocket未连接，尝试连接...')
       try {
-        await wsClient.connect(serverUrl)
-        console.log('WebSocket连接成功')
+        // 传入 false 避免断开现有连接
+        await wsClient.connect(serverUrl, false)
+        console.log('【活动详情】WebSocket连接成功')
       } catch (error) {
-        console.warn('WebSocket连接失败，将在重连后自动注册监听器:', error)
+        console.warn('【活动详情】WebSocket连接失败，将在重连后自动注册监听器:', error)
         // 不影响页面加载，WebSocket会自动重连
       }
     } else {
-      console.log('WebSocket已连接，直接注册监听器')
+      console.log('【活动详情】WebSocket已连接，直接注册监听器')
     }
 
     // 注册签到通知消息处理器
@@ -820,8 +821,8 @@ const checkCanApply = () => {
     return
   }
 
-  // 只有在实际状态为"报名中"(1)时且未报名才可以报名
-  showApplyBtn.value = actualStatus === 1 && !hasApplied.value
+  // 只有在实际状态为"报名中"(2)时且未报名才可以报名
+  showApplyBtn.value = actualStatus === 2 && !hasApplied.value
   console.log('用户不是管理员，showApplyBtn =', showApplyBtn.value)
 }
 
@@ -831,21 +832,25 @@ const getDisabledReason = () => {
   if (hasApplied.value) {
     return '您已报名此活动';
   }
-  
+
   const actualStatus = getActualStatus(activityDetail.value);
-  
+
   if (actualStatus === 0) {
     return '活动已取消';
-      }
-      
+  }
+
+  if (actualStatus === 1) {
+    return '计划中';
+  }
+
   if (actualStatus === 3) {
-    return '活动已结束';
-      }
-      
-  if (actualStatus === 2) {
     return '活动进行中';
-      }
-      
+  }
+
+  if (actualStatus === 4) {
+    return '活动已结束';
+  }
+
   return '报名已截止';
 }
     
@@ -1451,8 +1456,12 @@ const checkCameraPermission = () => {
   background: rgba(255, 152, 0, 0.9);
 }
 
-.status-tag.ongoing {
+.status-tag.signup {
   background: rgba(41, 121, 255, 0.9);
+}
+
+.status-tag.ongoing {
+  background: rgba(76, 175, 80, 0.9);
 }
 
 .status-tag.ended {
