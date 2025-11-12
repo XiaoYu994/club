@@ -68,6 +68,9 @@
 .notification-icon.type-info.data-v-7956d0c3 {
   background: linear-gradient(135deg, #2979ff, #4dabf7);
 }
+.notification-icon.type-warning.data-v-7956d0c3 {
+  background: linear-gradient(135deg, #ff9800, #ffa726);
+}
 .notification-icon.type-default.data-v-7956d0c3 {
   background: linear-gradient(135deg, #868e96, #adb5bd);
 }

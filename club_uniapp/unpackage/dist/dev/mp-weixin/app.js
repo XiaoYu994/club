@@ -101,15 +101,25 @@ const _sfc_main = {
       };
       const notificationTypes = [
         "activity_cancel_notification",
+        // 活动取消通知
         "apply_approved_notification",
+        // 报名审核通过
         "apply_rejected_notification",
-        "activity_reminder_notification"
+        // 报名审核拒绝
+        "activity_reminder_notification",
+        // 活动提醒
+        "check_in_notification",
+        // 签到成功通知
+        "system_broadcast_notification",
+        // 系统广播通知
+        "admin_notification_notification"
+        // 管理员通知
       ];
       notificationTypes.forEach((type) => {
         utils_websocket.wsClient.onMessageType(type, handleNotification);
-        common_vendor.index.__f__("log", "at App.vue:85", `【App】已注册通知类型: ${type}`);
+        common_vendor.index.__f__("log", "at App.vue:88", `【App】已注册通知类型: ${type}`);
       });
-      common_vendor.index.__f__("log", "at App.vue:88", "【App】全局通知处理器注册完成");
+      common_vendor.index.__f__("log", "at App.vue:91", "【App】全局通知处理器注册完成");
     },
     // 触发全局事件（供其他页面监听状态变化）
     emitNotificationEvent(message) {
@@ -129,6 +139,21 @@ const _sfc_main = {
         common_vendor.index.$emit("activityReminder", {
           activityId: message.activityId,
           activityTitle: message.activityTitle
+        });
+      } else if (type === "check_in_notification") {
+        common_vendor.index.$emit("checkInSuccess", {
+          activityId: message.activityId,
+          activityTitle: message.activityTitle
+        });
+      } else if (type === "system_broadcast_notification") {
+        common_vendor.index.$emit("systemBroadcast", {
+          title: message.title,
+          message: message.message
+        });
+      } else if (type === "admin_notification_notification") {
+        common_vendor.index.$emit("adminNotification", {
+          title: message.title,
+          message: message.message
         });
       }
     }

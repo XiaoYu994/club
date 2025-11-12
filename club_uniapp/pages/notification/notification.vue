@@ -166,14 +166,19 @@ async function handleNotificationClick(notification) {
   }
 
   // 根据通知类型跳转到相应页面
-  if (notification.type === 'activity_cancel' && notification.relatedId) {
-    uni.navigateTo({
-      url: `/pages/activity/activityDeatil?id=${notification.relatedId}`
-    });
-  } else if (notification.type === 'check_in' && notification.relatedId) {
-    uni.navigateTo({
-      url: `/pages/activity/activityDeatil?id=${notification.relatedId}`
-    });
+  if (notification.relatedId) {
+    const typeToPage = {
+      'activity_cancel': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
+      'check_in': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
+      'apply_approved': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
+      'apply_rejected': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
+      'activity_reminder': `/pages/activity/activityDeatil?id=${notification.relatedId}`
+    };
+
+    const url = typeToPage[notification.type];
+    if (url) {
+      uni.navigateTo({ url });
+    }
   }
 }
 
@@ -250,6 +255,9 @@ function getTypeIcon(type) {
   const iconMap = {
     'activity_cancel': 'closeempty',
     'check_in': 'checkmarkempty',
+    'apply_approved': 'checkmarkempty',
+    'apply_rejected': 'closeempty',
+    'activity_reminder': 'calendar',
     'apply_review': 'chatboxes'
   };
   return iconMap[type] || 'notification';
@@ -260,6 +268,9 @@ function getTypeClass(type) {
   const classMap = {
     'activity_cancel': 'type-cancel',
     'check_in': 'type-success',
+    'apply_approved': 'type-success',
+    'apply_rejected': 'type-cancel',
+    'activity_reminder': 'type-warning',
     'apply_review': 'type-info'
   };
   return classMap[type] || 'type-default';
@@ -404,6 +415,10 @@ onShow(() => {
 
   &.type-info {
     background: linear-gradient(135deg, #2979ff, #4dabf7);
+  }
+
+  &.type-warning {
+    background: linear-gradient(135deg, #ff9800, #ffa726);
   }
 
   &.type-default {

@@ -26,6 +26,10 @@ public class NotificationConstant {
     // 签到相关通知
     public static final String TYPE_CHECK_IN = "check_in";                         // 签到成功
 
+    // 管理员通知
+    public static final String TYPE_ADMIN_NOTIFICATION = "admin_notification";     // 管理员发送的通知
+    public static final String TYPE_SYSTEM_BROADCAST = "system_broadcast";         // 系统广播通知
+
     /**
      * 通知标题
      */

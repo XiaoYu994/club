@@ -626,15 +626,30 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
         apply.setCheckInTime(checkInTime);
         clubActivityApplyMapper.updateById(apply);
 
-        // 通过WebSocket发送签到成功通知给用户
+        // 查询活动信息以获取活动标题
+        ClubActivity activity = clubActivityMapper.selectById(request.getActivityId());
+
+        // 发送签到成功通知
         try {
+            // 1. 保存通知到数据库
+            String notificationTitle = NotificationConstant.TITLE_CHECK_IN;
+            String notificationMessage = "您已成功签到活动 \"" + (activity != null ? activity.getTitle() : "未知活动") + "\"";
+            userNotificationService.createNotification(
+                    signCodeInfo.getUserId(),
+                    NotificationConstant.TYPE_CHECK_IN,
+                    notificationTitle,
+                    notificationMessage,
+                    request.getActivityId()
+            );
+
+            // 2. 通过WebSocket发送实时通知给用户
             chatWebSocketHandler.sendCheckInNotification(
                     signCodeInfo.getUserId(),
                     request.getActivityId(),
                     StatusConstant.ENABLE
             );
         } catch (Exception e) {
-            log.error("发送WebSocket签到通知失败: {}", e.getMessage(), e);
+            log.error("发送签到通知失败: {}", e.getMessage(), e);
             // 不影响签到流程，仅记录日志
         }
 

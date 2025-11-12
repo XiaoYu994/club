@@ -74,10 +74,13 @@ export default {
 
       // 注册所有通知类型到统一处理函数
       const notificationTypes = [
-        'activity_cancel_notification',
-        'apply_approved_notification',
-        'apply_rejected_notification',
-        'activity_reminder_notification'
+        'activity_cancel_notification',        // 活动取消通知
+        'apply_approved_notification',         // 报名审核通过
+        'apply_rejected_notification',         // 报名审核拒绝
+        'activity_reminder_notification',      // 活动提醒
+        'check_in_notification',               // 签到成功通知
+        'system_broadcast_notification',       // 系统广播通知
+        'admin_notification_notification'      // 管理员通知
       ]
 
       notificationTypes.forEach(type => {
@@ -107,6 +110,24 @@ export default {
         uni.$emit('activityReminder', {
           activityId: message.activityId,
           activityTitle: message.activityTitle
+        })
+      } else if (type === 'check_in_notification') {
+        // 签到成功事件
+        uni.$emit('checkInSuccess', {
+          activityId: message.activityId,
+          activityTitle: message.activityTitle
+        })
+      } else if (type === 'system_broadcast_notification') {
+        // 系统广播事件
+        uni.$emit('systemBroadcast', {
+          title: message.title,
+          message: message.message
+        })
+      } else if (type === 'admin_notification_notification') {
+        // 管理员通知事件
+        uni.$emit('adminNotification', {
+          title: message.title,
+          message: message.message
         })
       }
     }
