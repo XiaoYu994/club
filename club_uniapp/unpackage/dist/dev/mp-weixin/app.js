@@ -22,7 +22,6 @@ if (!Math) {
   "./pages/club/detail.js";
   "./pages/club/recruitment.js";
   "./pages/club/createRecruitment.js";
-  "./pages/club/editRecruitment.js";
   "./pages/club/apply.js";
   "./pages/club/applies.js";
   "./pages/club/members.js";
@@ -103,13 +102,25 @@ const _sfc_main = {
         "activity_cancel_notification",
         // 活动取消通知
         "apply_approved_notification",
-        // 报名审核通过
+        // 活动报名审核通过
         "apply_rejected_notification",
-        // 报名审核拒绝
+        // 活动报名审核拒绝
         "activity_reminder_notification",
         // 活动提醒
         "check_in_notification",
         // 签到成功通知
+        "club_apply_approved_notification",
+        // 社团申请审核通过
+        "club_apply_rejected_notification",
+        // 社团申请审核拒绝
+        "club_member_removed_notification",
+        // 社团成员被移除
+        "club_quit_apply_notification",
+        // 退社申请（通知管理员）
+        "club_quit_approved_notification",
+        // 退社申请通过（通知用户）
+        "club_quit_rejected_notification",
+        // 退社申请拒绝（通知用户）
         "system_broadcast_notification",
         // 系统广播通知
         "admin_notification_notification"
@@ -117,9 +128,9 @@ const _sfc_main = {
       ];
       notificationTypes.forEach((type) => {
         utils_websocket.wsClient.onMessageType(type, handleNotification);
-        common_vendor.index.__f__("log", "at App.vue:88", `【App】已注册通知类型: ${type}`);
+        common_vendor.index.__f__("log", "at App.vue:94", `【App】已注册通知类型: ${type}`);
       });
-      common_vendor.index.__f__("log", "at App.vue:91", "【App】全局通知处理器注册完成");
+      common_vendor.index.__f__("log", "at App.vue:97", "【App】全局通知处理器注册完成");
     },
     // 触发全局事件（供其他页面监听状态变化）
     emitNotificationEvent(message) {
@@ -134,6 +145,35 @@ const _sfc_main = {
           activityId: message.activityId,
           applyId: message.applyId,
           status: type === "apply_approved_notification" ? "approved" : "rejected"
+        });
+      } else if (type === "club_apply_approved_notification" || type === "club_apply_rejected_notification") {
+        common_vendor.index.$emit("clubApplyStatusChanged", {
+          clubId: message.clubId,
+          clubName: message.clubName,
+          applyId: message.applyId,
+          status: type === "club_apply_approved_notification" ? "approved" : "rejected"
+        });
+      } else if (type === "club_member_removed_notification") {
+        common_vendor.index.$emit("clubMemberRemoved", {
+          clubId: message.clubId,
+          clubName: message.clubName
+        });
+      } else if (type === "club_quit_apply_notification") {
+        common_vendor.index.$emit("clubQuitApply", {
+          clubId: message.clubId,
+          clubName: message.clubName,
+          applicantUserId: message.applicantUserId,
+          applicantName: message.applicantName
+        });
+      } else if (type === "club_quit_approved_notification") {
+        common_vendor.index.$emit("clubQuitApproved", {
+          clubId: message.clubId,
+          clubName: message.clubName
+        });
+      } else if (type === "club_quit_rejected_notification") {
+        common_vendor.index.$emit("clubQuitRejected", {
+          clubId: message.clubId,
+          clubName: message.clubName
         });
       } else if (type === "activity_reminder_notification") {
         common_vendor.index.$emit("activityReminder", {

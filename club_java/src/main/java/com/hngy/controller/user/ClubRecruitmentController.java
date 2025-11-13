@@ -76,21 +76,35 @@ public class ClubRecruitmentController {
         if (dto.getPlanCount() > RecruitmentConstant.MAX_RECRUITMENT_COUNT) {
             return R.error(RecruitmentConstant.ERROR_MAX_COUNT_EXCEEDED);
         }
-        
+
         // 验证时间范围是否合规
         if (dto.getStartTime() >= dto.getEndTime()) {
             return R.error(RecruitmentConstant.ERROR_INVALID_TIME_RANGE);
         }
-        
+
         // 计算持续天数
         long durationMillis = dto.getEndTime() - dto.getStartTime();
         long durationDays = durationMillis / (1000 * 60 * 60 * 24);
         if (durationDays > RecruitmentConstant.MAX_DURATION_DAYS) {
             return R.error(RecruitmentConstant.ERROR_MAX_DURATION_EXCEEDED);
         }
-        
+
+        // 验证全局配置时间范围
+        ClubRecruitmentConfig config = clubRecruitmentConfigService.getById(dto.getConfigId());
+        if (config == null) {
+            return R.error(RecruitmentConstant.ERROR_CONFIG_NOT_FOUND);
+        }
+        if (config.getStatus() != StatusConstant.ENABLE) {
+            return R.error(RecruitmentConstant.ERROR_CONFIG_DISABLED);
+        }
+
+        // 检查社团招新时间是否在全局配置时间范围内
+        if (dto.getStartTime() < config.getGlobalStartTime() || dto.getEndTime() > config.getGlobalEndTime()) {
+            return R.error("社团招新时间必须在全局招新配置时间范围内");
+        }
+
         ClubRecruitment recruitment = BeanUtil.copyProperties(dto, ClubRecruitment.class);
-        recruitment.setStatus(RecruitmentConstant.STATUS_PENDING); // 初始状态：未开始
+        recruitment.setStatus(RecruitmentConstant.STATUS_PENDING); // 初始状态：审核中
         clubRecruitmentService.createRecruitment(recruitment);
         RecruitmentVO recruitmentVO = BeanUtil.copyProperties(recruitment, RecruitmentVO.class);
         return R.success(recruitmentVO);
@@ -124,6 +138,29 @@ public class ClubRecruitmentController {
     @ApiOperation("更新社团招新活动")
     @PutMapping("/recruitment/{id}")
     public R<String> updateRecruitment(@PathVariable Long id, @RequestBody CreateRecruitmentDTO dto) {
+        // 查询原招新信息
+        ClubRecruitment existingRecruitment = clubRecruitmentService.getById(id);
+        if (existingRecruitment == null) {
+            return R.error(RecruitmentConstant.ERROR_RECRUITMENT_NOT_FOUND);
+        }
+
+        // 检查招新状态，只允许审核中(0)或已驳回(3)状态的招新被编辑
+        if (existingRecruitment.getStatus() != RecruitmentConstant.STATUS_PENDING &&
+            existingRecruitment.getStatus() != RecruitmentConstant.STATUS_REJECTED) {
+            String statusText = "";
+            switch (existingRecruitment.getStatus()) {
+                case 1:
+                    statusText = "进行中";
+                    break;
+                case 2:
+                    statusText = "已结束";
+                    break;
+                default:
+                    statusText = "未知状态";
+            }
+            return R.error("该招新活动状态为\"" + statusText + "\"，不允许编辑");
+        }
+
         // 验证计划招收人数是否合规
         if (dto.getPlanCount() <= 0) {
             return R.error(RecruitmentConstant.ERROR_INVALID_COUNT);
@@ -131,22 +168,39 @@ public class ClubRecruitmentController {
         if (dto.getPlanCount() > RecruitmentConstant.MAX_RECRUITMENT_COUNT) {
             return R.error(RecruitmentConstant.ERROR_MAX_COUNT_EXCEEDED);
         }
-        
+
         // 验证时间范围是否合规
         if (dto.getStartTime() >= dto.getEndTime()) {
             return R.error(RecruitmentConstant.ERROR_INVALID_TIME_RANGE);
         }
-        
+
         // 计算持续天数
         long durationMillis = dto.getEndTime() - dto.getStartTime();
         long durationDays = durationMillis / (1000 * 60 * 60 * 24);
         if (durationDays > RecruitmentConstant.MAX_DURATION_DAYS) {
             return R.error(RecruitmentConstant.ERROR_MAX_DURATION_EXCEEDED);
         }
-        
+
+        // 验证全局配置时间范围
+        ClubRecruitmentConfig config = clubRecruitmentConfigService.getById(dto.getConfigId());
+        if (config == null) {
+            return R.error(RecruitmentConstant.ERROR_CONFIG_NOT_FOUND);
+        }
+        if (config.getStatus() != StatusConstant.ENABLE) {
+            return R.error(RecruitmentConstant.ERROR_CONFIG_DISABLED);
+        }
+
+        // 检查社团招新时间是否在全局配置时间范围内
+        if (dto.getStartTime() < config.getGlobalStartTime() || dto.getEndTime() > config.getGlobalEndTime()) {
+            return R.error("社团招新时间必须在全局招新配置时间范围内");
+        }
+
         ClubRecruitment recruitment = BeanUtil.copyProperties(dto, ClubRecruitment.class);
         recruitment.setId(id.intValue());
         recruitment.setUpdateTime(System.currentTimeMillis());
+        // 编辑后将状态重置为审核中，需要重新审核
+        recruitment.setStatus(RecruitmentConstant.STATUS_PENDING);
+
         return clubRecruitmentService.updateById(recruitment)
             ? R.success(RecruitmentConstant.UPDATE_SUCCESS) : R.error(RecruitmentConstant.UPDATE_FAILED);
     }

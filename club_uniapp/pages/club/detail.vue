@@ -1212,7 +1212,7 @@ const handleCreateRecruitment = () => {
 // 跳转到编辑招新页面
 const goToEditRecruitment = () => {
 	uni.navigateTo({
-		url: `/pages/club/editRecruitment?clubId=${id.value}&recruitmentId=${recruitmentInfo.value ? recruitmentInfo.value.id : ''}`
+		url: `/pages/club/createRecruitment?clubId=${id.value}&recruitmentId=${recruitmentInfo.value ? recruitmentInfo.value.id : ''}`
 	});
 }
 </script>

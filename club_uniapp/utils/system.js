@@ -6,7 +6,7 @@ export const getStatusBarHeight = ()=> SYSTEM_INFO.statusBarHeight || 15;
 export const getTitleBarHeight = ()=>{
 	if(uni.getMenuButtonBoundingClientRect){
 		let {top,height} = uni.getMenuButtonBoundingClientRect();
-		return height + (top - getStatusBarHeight())*2		
+		return height + (top - getStatusBarHeight())*2
 	}else{
 		return 40;
 	}
@@ -20,8 +20,19 @@ export const getLeftIconLeft = ()=> {
 		let {leftIcon:{left,width}}  = tt.getCustomButtonBoundingClientRect();
 		return left+ parseInt(width);
 	// #endif
-	
+
 	// #ifndef MP-TOUTIAO
 		return 0
-	// #endif	
+	// #endif
+}
+
+// 获取胶囊按钮的右边距（用于避免右侧内容与胶囊按钮重叠）
+export const getMenuButtonRight = () => {
+	if (uni.getMenuButtonBoundingClientRect) {
+		let { right } = uni.getMenuButtonBoundingClientRect();
+		// 返回从屏幕右边缘到胶囊按钮右侧的距离，再加上一些间距
+		return SYSTEM_INFO.windowWidth - right + 10; // 加10px的安全间距
+	} else {
+		return 10; // 默认10px
+	}
 }

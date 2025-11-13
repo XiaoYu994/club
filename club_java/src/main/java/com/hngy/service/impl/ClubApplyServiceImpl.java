@@ -137,11 +137,17 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
             throw new ServiceException(HttpStatus.HTTP_CONFLICT, "该申请已审核，不可重复操作");
         }
 
+        // 获取社团信息，用于通知
+        ClubInfo clubInfo = clubInfoMapper.selectById(apply.getClubId());
+        if (clubInfo == null) {
+            throw new ServiceException(HttpStatus.HTTP_BAD_REQUEST, "社团不存在");
+        }
+
         // 更新申请状态和反馈
         apply.setStatus(reviewApplyDTO.getStatus());
         apply.setFeedback(reviewApplyDTO.getFeedback());
         apply.setUpdateTime(System.currentTimeMillis());
-        
+
         // 如果审核通过且状态为"已通过"，则添加为社团成员
         if (reviewApplyDTO.getStatus() == 1) {
             // 创建社团成员记录
@@ -153,13 +159,13 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
             member.setJoinTime(System.currentTimeMillis());
             member.setCreateTime(System.currentTimeMillis());
             member.setUpdateTime(System.currentTimeMillis());
-            
+
             // 保存成员记录
             clubMemberMapper.insert(member);
-            
+
             // 将申请状态更新为已入社
             apply.setStatus(4);
-            
+
             // 更新招新通过人数
             ClubRecruitment recruitment = clubRecruitmentMapper.selectById(apply.getRecruitmentId());
             if (recruitment != null) {
@@ -167,24 +173,89 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
                 clubRecruitmentMapper.updateById(recruitment);
             }
             // 更新社团成员数
-            ClubInfo clubInfo = clubInfoMapper.selectById(apply.getClubId());
             if (clubInfo != null) {
                 Integer count = clubInfo.getMemberCount() == null ? 0 : clubInfo.getMemberCount();
                 clubInfo.setMemberCount(count + 1);
                 clubInfoMapper.updateById(clubInfo);
-                
+
                 // 检查是否已有聊天群组，如果没有则创建
                 ClubChatGroup chatGroup = findOrCreateClubChatGroup(clubInfo);
-                
+
                 // 将新成员添加到聊天群组
                 if (chatGroup != null) {
                     chatService.addUserToGroup(chatGroup.getId(), Long.valueOf(apply.getUserId()), false);
                 }
             }
         }
-        
+
         // 更新申请记录
-        return updateById(apply);
+        boolean updated = updateById(apply);
+
+        // 发送审核结果通知
+        if (updated) {
+            try {
+                String notificationType;
+                String notificationTitle;
+                String notificationMessage;
+
+                if (reviewApplyDTO.getStatus() == 1 || apply.getStatus() == 4) {
+                    // 审核通过（状态1或已入社状态4）
+                    notificationType = NotificationConstant.TYPE_CLUB_APPLY_APPROVED;
+                    notificationTitle = NotificationConstant.TITLE_CLUB_APPLY_APPROVED;
+                    notificationMessage = "恭喜！您加入社团 \"" + clubInfo.getName() + "\" 的申请已通过";
+
+                    // 发送WebSocket通知
+                    chatWebSocketHandler.sendClubApplyApprovedNotification(
+                        Long.valueOf(apply.getUserId()),
+                        apply.getClubId(),
+                        clubInfo.getName(),
+                        applyId,
+                        reviewApplyDTO.getFeedback()
+                    );
+                } else if (reviewApplyDTO.getStatus() == 2) {
+                    // 审核拒绝
+                    notificationType = NotificationConstant.TYPE_CLUB_APPLY_REJECTED;
+                    notificationTitle = NotificationConstant.TITLE_CLUB_APPLY_REJECTED;
+                    notificationMessage = "很遗憾，您加入社团 \"" + clubInfo.getName() + "\" 的申请未通过";
+
+                    // 拒绝原因
+                    String rejectReason = reviewApplyDTO.getFeedback() != null && !reviewApplyDTO.getFeedback().isEmpty()
+                        ? reviewApplyDTO.getFeedback()
+                        : "如有疑问，请联系社团管理员";
+                    notificationMessage += "。原因：" + rejectReason;
+
+                    // 发送WebSocket通知
+                    chatWebSocketHandler.sendClubApplyRejectedNotification(
+                        Long.valueOf(apply.getUserId()),
+                        apply.getClubId(),
+                        clubInfo.getName(),
+                        applyId,
+                        reviewApplyDTO.getFeedback()
+                    );
+                } else {
+                    // 其他状态不发送通知
+                    return updated;
+                }
+
+                // 保存通知到数据库
+                userNotificationService.createNotification(
+                    Long.valueOf(apply.getUserId()),
+                    notificationType,
+                    notificationTitle,
+                    notificationMessage,
+                    Long.valueOf(apply.getClubId()),
+                    null
+                );
+
+                log.info("发送社团申请审核通知成功，用户ID: {}, 社团ID: {}, 审核状态: {}",
+                    apply.getUserId(), apply.getClubId(), reviewApplyDTO.getStatus());
+            } catch (Exception e) {
+                log.error("发送社团申请审核通知失败，申请ID: {}, 社团ID: {}",
+                    applyId, apply.getClubId(), e);
+            }
+        }
+
+        return updated;
     }
     
     /**
@@ -483,7 +554,7 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
                     // 审核拒绝
                     notificationType = NotificationConstant.TYPE_APPLY_REJECTED;
                     notificationTitle = NotificationConstant.TITLE_APPLY_REJECTED;
-                    notificationMessage = "您的活动\"" + activity.getTitle() + "\"报名申请未通过";
+                    notificationMessage = "您的活动\"" + activity.getTitle() + "\"报名申请未通过，原因:"+reviewApplyDTO.getFeedback();
 
                     // 发送WebSocket通知
                     chatWebSocketHandler.sendApplyRejectedNotification(

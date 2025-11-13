@@ -333,88 +333,101 @@ const _sfc_main = {
       });
     };
     const exportApplyList = async () => {
-      common_vendor.index.showLoading({ title: "导出中..." });
-      const res = await proxy.$api.activity.exportApplyList(id.value);
-      if (res.code === 200 && res.data) {
-        const { url, fileName } = res.data;
-        common_vendor.index.downloadFile({
-          url,
-          success: (res2) => {
-            if (res2.statusCode === 200) {
-              const tempFilePath = res2.tempFilePath;
-              common_vendor.index.saveFile({
-                tempFilePath,
-                success: (saveRes) => {
-                  const savedFilePath = saveRes.savedFilePath;
-                  common_vendor.index.hideLoading();
-                  common_vendor.index.showToast({ title: "导出成功", icon: "success" });
-                  common_vendor.index.openDocument({
-                    filePath: savedFilePath,
-                    showMenu: true,
-                    success: () => {
-                      common_vendor.index.__f__("log", "at pages/activity/applies.vue:604", "打开文档成功");
-                    },
-                    fail: () => {
-                      common_vendor.index.showModal({
-                        title: "提示",
-                        content: "导出成功，但无法直接打开Excel文件",
-                        showCancel: false
+      try {
+        common_vendor.index.showLoading({ title: "导出中..." });
+        const res = await proxy.$api.activity.exportApplyList(id.value);
+        common_vendor.index.__f__("log", "at pages/activity/applies.vue:587", "【导出】后端返回结果:", res);
+        if (res.code === 200 && res.data) {
+          const { url, fileName } = res.data;
+          common_vendor.index.__f__("log", "at pages/activity/applies.vue:592", "【导出】文件URL:", url);
+          common_vendor.index.__f__("log", "at pages/activity/applies.vue:593", "【导出】文件名:", fileName);
+          common_vendor.index.downloadFile({
+            url,
+            success: (downloadRes) => {
+              common_vendor.index.__f__("log", "at pages/activity/applies.vue:598", "【导出】downloadFile success:", downloadRes);
+              if (downloadRes.statusCode === 200) {
+                const tempFilePath = downloadRes.tempFilePath;
+                common_vendor.index.__f__("log", "at pages/activity/applies.vue:602", "【导出】临时文件路径:", tempFilePath);
+                common_vendor.index.hideLoading();
+                common_vendor.index.openDocument({
+                  filePath: tempFilePath,
+                  showMenu: true,
+                  fileType: "xlsx",
+                  success: () => {
+                    common_vendor.index.__f__("log", "at pages/activity/applies.vue:613", "【导出】打开文档成功");
+                    common_vendor.index.showToast({ title: "导出成功", icon: "success" });
+                  },
+                  fail: (err) => {
+                    common_vendor.index.__f__("error", "at pages/activity/applies.vue:617", "【导出】打开文档失败:", err);
+                    common_vendor.index.showModal({
+                      title: "提示",
+                      content: "文件下载成功，但无法直接打开。错误: " + (err.errMsg || "未知错误"),
+                      showCancel: true,
+                      cancelText: "取消",
+                      confirmText: "复制链接",
+                      success: (modalRes) => {
+                        if (modalRes.confirm) {
+                          common_vendor.index.setClipboardData({
+                            data: url,
+                            success: () => {
+                              common_vendor.index.showToast({ title: "链接已复制，可在浏览器中下载", icon: "none", duration: 2e3 });
+                            }
+                          });
+                        }
+                      }
+                    });
+                  }
+                });
+              } else {
+                common_vendor.index.__f__("error", "at pages/activity/applies.vue:638", "【导出】下载失败，状态码:", downloadRes.statusCode);
+                common_vendor.index.hideLoading();
+                common_vendor.index.showModal({
+                  title: "下载失败",
+                  content: `状态码: ${downloadRes.statusCode}，是否复制链接？`,
+                  confirmText: "复制链接",
+                  success: (modalRes) => {
+                    if (modalRes.confirm) {
+                      common_vendor.index.setClipboardData({
+                        data: url,
+                        success: () => {
+                          common_vendor.index.showToast({ title: "链接已复制", icon: "none" });
+                        }
                       });
                     }
-                  });
-                },
-                fail: () => {
-                  common_vendor.index.hideLoading();
-                  common_vendor.index.showModal({
-                    title: "导出提示",
-                    content: "无法保存文件，是否复制下载链接？",
-                    confirmText: "复制链接",
-                    success: (res3) => {
-                      if (res3.confirm) {
-                        common_vendor.index.setClipboardData({
-                          data: url,
-                          success: () => {
-                            common_vendor.index.showToast({
-                              title: "链接已复制",
-                              icon: "none"
-                            });
-                          }
-                        });
+                  }
+                });
+              }
+            },
+            fail: (err) => {
+              common_vendor.index.__f__("error", "at pages/activity/applies.vue:658", "【导出】downloadFile失败:", err);
+              common_vendor.index.hideLoading();
+              const isDomainError = err.errMsg && (err.errMsg.includes("downloadFile:fail") || err.errMsg.includes("domain") || err.errMsg.includes("not in domain list"));
+              common_vendor.index.showModal({
+                title: "导出提示",
+                content: isDomainError ? "下载失败，可能是域名未配置。请在微信公众平台配置downloadFile合法域名，或复制链接在浏览器中下载。" : "下载失败: " + (err.errMsg || "未知错误") + "。是否复制链接？",
+                confirmText: "复制链接",
+                success: (modalRes) => {
+                  if (modalRes.confirm) {
+                    common_vendor.index.setClipboardData({
+                      data: url,
+                      success: () => {
+                        common_vendor.index.showToast({ title: "链接已复制", icon: "none" });
                       }
-                    }
-                  });
+                    });
+                  }
                 }
               });
-            } else {
-              common_vendor.index.hideLoading();
-              common_vendor.index.showToast({ title: "下载文件失败", icon: "none" });
             }
-          },
-          fail: () => {
-            common_vendor.index.hideLoading();
-            common_vendor.index.showModal({
-              title: "导出提示",
-              content: "下载失败，是否复制链接？",
-              confirmText: "复制链接",
-              success: (res2) => {
-                if (res2.confirm) {
-                  common_vendor.index.setClipboardData({
-                    data: url,
-                    success: () => {
-                      common_vendor.index.showToast({
-                        title: "链接已复制",
-                        icon: "none"
-                      });
-                    }
-                  });
-                }
-              }
-            });
-          }
-        });
-      } else {
+          });
+        } else {
+          common_vendor.index.__f__("error", "at pages/activity/applies.vue:688", "【导出】接口返回错误:", res);
+          common_vendor.index.hideLoading();
+          common_vendor.index.showToast({ title: res.message || "导出失败", icon: "none" });
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/activity/applies.vue:693", "【导出】导出报名表失败:", error);
         common_vendor.index.hideLoading();
-        common_vendor.index.showToast({ title: res.message || "导出失败", icon: "none" });
+        common_vendor.index.showToast({ title: "导出失败: " + (error.message || "未知错误"), icon: "none" });
       }
     };
     const safeParseFormData = (formData) => {
@@ -426,7 +439,7 @@ const _sfc_main = {
       try {
         return JSON.parse(formData);
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/activity/applies.vue:685", "解析表单数据失败:", e);
+        common_vendor.index.__f__("error", "at pages/activity/applies.vue:712", "解析表单数据失败:", e);
         try {
           if (typeof formData === "string") {
             if (formData.startsWith("参加")) {
@@ -452,7 +465,7 @@ const _sfc_main = {
             }
           }
         } catch (e2) {
-          common_vendor.index.__f__("error", "at pages/activity/applies.vue:722", "尝试替代解析方法失败:", e2);
+          common_vendor.index.__f__("error", "at pages/activity/applies.vue:749", "尝试替代解析方法失败:", e2);
         }
         return { "表单数据": "解析失败，原始数据: " + (formData.substring(0, 30) + (formData.length > 30 ? "..." : "")) };
       }

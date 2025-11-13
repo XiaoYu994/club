@@ -14,7 +14,16 @@ const getNavBarHeight = () => getStatusBarHeight() + getTitleBarHeight();
 const getLeftIconLeft = () => {
   return 0;
 };
+const getMenuButtonRight = () => {
+  if (common_vendor.index.getMenuButtonBoundingClientRect) {
+    let { right } = common_vendor.index.getMenuButtonBoundingClientRect();
+    return SYSTEM_INFO.windowWidth - right + 10;
+  } else {
+    return 10;
+  }
+};
 exports.getLeftIconLeft = getLeftIconLeft;
+exports.getMenuButtonRight = getMenuButtonRight;
 exports.getNavBarHeight = getNavBarHeight;
 exports.getStatusBarHeight = getStatusBarHeight;
 exports.getTitleBarHeight = getTitleBarHeight;

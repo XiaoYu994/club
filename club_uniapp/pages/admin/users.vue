@@ -257,39 +257,123 @@ const toggleUserStatus = (user) => {
  */
 const exportAllUsers = async () => {
   if (loading.value) return;
-  uni.showLoading({ title: '正在导出...' });
+
   try {
+    uni.showLoading({ title: '正在导出...' })
+
     // 使用当前筛选条件导出
-    const params = { ...searchParams, page: 1 };
-    const response = await apiModule.admin.user.exportUsers(params);
-    uni.hideLoading();
+    const params = { ...searchParams, page: 1 }
+    const response = await apiModule.admin.user.exportUsers(params)
+
+    console.log('【导出】后端返回结果:', response)
+
     if (response.code === 200) {
-      const { url, fileName } = response.data;
+      const { url, fileName } = response.data
+
+      console.log('【导出】文件URL:', url)
+      console.log('【导出】文件名:', fileName)
+
       // 小程序 / App
       // #ifdef MP-WEIXIN || APP-PLUS
       uni.downloadFile({
         url,
-        success: res => {
-          uni.saveFile({ tempFilePath: res.tempFilePath, success: saveRes => {
-            uni.openDocument({ filePath: saveRes.savedFilePath });
-          }});
+        success: downloadRes => {
+          console.log('【导出】downloadFile success:', downloadRes)
+
+          if (downloadRes.statusCode === 200) {
+            const tempFilePath = downloadRes.tempFilePath
+            console.log('【导出】临时文件路径:', tempFilePath)
+
+            uni.hideLoading()
+
+            // 直接使用临时文件打开，不保存到永久存储
+            uni.openDocument({
+              filePath: tempFilePath,
+              showMenu: true,
+              fileType: 'xlsx',
+              success: () => {
+                console.log('【导出】打开文档成功')
+                uni.showToast({ title: '导出成功', icon: 'success' })
+              },
+              fail: err => {
+                console.error('【导出】打开文档失败:', err)
+                uni.showModal({
+                  title: '提示',
+                  content: '文件下载成功，但无法直接打开。错误: ' + (err.errMsg || '未知错误'),
+                  showCancel: true,
+                  cancelText: '取消',
+                  confirmText: '复制链接',
+                  success: modalRes => {
+                    if (modalRes.confirm) {
+                      uni.setClipboardData({
+                        data: url,
+                        success: () => {
+                          uni.showToast({ title: '链接已复制，可在浏览器中下载', icon: 'none', duration: 2000 })
+                        }
+                      })
+                    }
+                  }
+                })
+              }
+            })
+          } else {
+            console.error('【导出】下载失败，状态码:', downloadRes.statusCode)
+            uni.hideLoading()
+            uni.showToast({ title: '下载文件失败', icon: 'none' })
+          }
         },
-        fail: () => uni.showToast({ title: '下载失败', icon: 'none' })
-      });
+        fail: err => {
+          console.error('【导出】downloadFile失败:', err)
+          uni.hideLoading()
+
+          // 判断是否是域名配置问题
+          const isDomainError = err.errMsg && (
+            err.errMsg.includes('downloadFile:fail') ||
+            err.errMsg.includes('domain') ||
+            err.errMsg.includes('not in domain list')
+          )
+
+          uni.showModal({
+            title: '导出提示',
+            content: isDomainError
+              ? '下载失败，可能是域名未配置。请在微信公众平台配置downloadFile合法域名，或复制链接在浏览器中下载。'
+              : '下载失败: ' + (err.errMsg || '未知错误') + '。是否复制链接？',
+            confirmText: '复制链接',
+            success: modalRes => {
+              if (modalRes.confirm) {
+                uni.setClipboardData({
+                  data: url,
+                  success: () => {
+                    uni.showToast({ title: '链接已复制', icon: 'none' })
+                  }
+                })
+              }
+            }
+          })
+        }
+      })
       // #endif
+
       // H5
       // #ifdef H5
-      const a = document.createElement('a'); a.href = url; a.download = fileName; a.click();
+      const a = document.createElement('a')
+      a.href = url
+      a.download = fileName
+      a.click()
+      uni.hideLoading()
+      uni.showToast({ title: '导出成功', icon: 'success' })
       // #endif
     } else {
-      uni.showToast({ title: response.message || '导出失败', icon: 'none' });
+      console.error('【导出】接口返回错误:', response)
+      uni.hideLoading()
+      uni.showToast({ title: response.message || '导出失败', icon: 'none' })
     }
   } catch (error) {
-    uni.hideLoading();
-    uni.showToast({ title: '导出失败', icon: 'none' });
-    console.error('导出用户失败', error);
+    console.error('【导出】导出用户失败:', error)
+    uni.hideLoading()
+    uni.showToast({ title: '导出失败: ' + (error.message || '未知错误'), icon: 'none' })
   }
-};
+}
 
 // 页面加载
 onMounted(() => {

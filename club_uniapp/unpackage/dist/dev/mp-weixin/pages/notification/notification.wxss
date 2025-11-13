@@ -8,7 +8,7 @@
 .notification-container .nav-actions.data-v-7956d0c3 {
   display: flex;
   align-items: center;
-  padding-right: 30rpx;
+  padding-left: 30rpx;
 }
 .notification-container .nav-actions .read-all-btn.data-v-7956d0c3 {
   font-size: 28rpx;

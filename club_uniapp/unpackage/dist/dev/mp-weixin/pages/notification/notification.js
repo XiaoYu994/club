@@ -93,7 +93,13 @@ const _sfc_main = {
           "check_in": `/pages/activity/activityDeatil?id=${notification.relatedId}`,
           "apply_approved": `/pages/activity/activityDeatil?id=${notification.relatedId}`,
           "apply_rejected": `/pages/activity/activityDeatil?id=${notification.relatedId}`,
-          "activity_reminder": `/pages/activity/activityDeatil?id=${notification.relatedId}`
+          "activity_reminder": `/pages/activity/activityDeatil?id=${notification.relatedId}`,
+          "club_apply_approved": `/pages/club/detail?id=${notification.relatedId}`,
+          "club_apply_rejected": `/pages/club/detail?id=${notification.relatedId}`,
+          "club_member_removed": `/pages/club/detail?id=${notification.relatedId}`,
+          "club_quit_apply": `/pages/club/detail?id=${notification.relatedId}`,
+          "club_quit_approved": `/pages/club/detail?id=${notification.relatedId}`,
+          "club_quit_rejected": `/pages/club/detail?id=${notification.relatedId}`
         };
         const url = typeToPage[notification.type];
         if (url) {
@@ -120,7 +126,7 @@ const _sfc_main = {
                 common_vendor.index.showToast({ title: response.message || "操作失败", icon: "none" });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/notification/notification.vue:208", "标记全部已读失败:", error);
+              common_vendor.index.__f__("error", "at pages/notification/notification.vue:214", "标记全部已读失败:", error);
               common_vendor.index.showToast({ title: "网络异常，请稍后重试", icon: "none" });
             } finally {
               common_vendor.index.hideLoading();
@@ -150,7 +156,7 @@ const _sfc_main = {
                 common_vendor.index.showToast({ title: response.message || "删除失败", icon: "none" });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/notification/notification.vue:245", "删除消息失败:", error);
+              common_vendor.index.__f__("error", "at pages/notification/notification.vue:251", "删除消息失败:", error);
               common_vendor.index.showToast({ title: "网络异常，请稍后重试", icon: "none" });
             }
           }
@@ -164,7 +170,13 @@ const _sfc_main = {
         "apply_approved": "checkmarkempty",
         "apply_rejected": "closeempty",
         "activity_reminder": "calendar",
-        "apply_review": "chatboxes"
+        "apply_review": "chatboxes",
+        "club_apply_approved": "checkmarkempty",
+        "club_apply_rejected": "closeempty",
+        "club_member_removed": "closeempty",
+        "club_quit_apply": "info",
+        "club_quit_approved": "checkmarkempty",
+        "club_quit_rejected": "closeempty"
       };
       return iconMap[type] || "notification";
     }
@@ -175,7 +187,13 @@ const _sfc_main = {
         "apply_approved": "type-success",
         "apply_rejected": "type-cancel",
         "activity_reminder": "type-warning",
-        "apply_review": "type-info"
+        "apply_review": "type-info",
+        "club_apply_approved": "type-success",
+        "club_apply_rejected": "type-cancel",
+        "club_member_removed": "type-cancel",
+        "club_quit_apply": "type-warning",
+        "club_quit_approved": "type-success",
+        "club_quit_rejected": "type-cancel"
       };
       return classMap[type] || "type-default";
     }
@@ -184,7 +202,7 @@ const _sfc_main = {
         return "";
       const time = typeof timestamp === "string" ? Number(timestamp) : timestamp;
       if (isNaN(time)) {
-        common_vendor.index.__f__("error", "at pages/notification/notification.vue:287", "【通知】时间格式错误:", timestamp);
+        common_vendor.index.__f__("error", "at pages/notification/notification.vue:305", "【通知】时间格式错误:", timestamp);
         return "";
       }
       const date = new Date(time);

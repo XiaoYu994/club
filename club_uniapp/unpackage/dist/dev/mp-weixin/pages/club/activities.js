@@ -289,10 +289,6 @@ const _sfc_main = {
                 });
               }
             } catch (error) {
-              common_vendor.index.showToast({
-                title: "网络异常，请稍后重试",
-                icon: "none"
-              });
             } finally {
               common_vendor.index.hideLoading();
             }

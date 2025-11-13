@@ -5,13 +5,13 @@
 
     <!-- 招新活动列表 -->
     <scroll-view scroll-y class="recruitment-list" refresher-enabled :refresher-triggered="refreshing" @refresherrefresh="refreshData" @scrolltolower="loadMore">
-      <!-- 当前招新活动 -->
+      <!-- 进行中和待处理的招新活动 -->
       <view class="section" v-if="activeRecruitments.length > 0">
-        <view class="section-title">当前招新</view>
+        <view class="section-title">进行中 / 待处理</view>
         <view class="recruitment-card" v-for="(item, index) in activeRecruitments" :key="'active-' + index">
           <view class="card-header">
             <text class="title">{{ item.title }}</text>
-            <view class="status-tag active">招新中</view>
+            <view class="status-tag" :class="getStatusClass(item.status)">{{ getStatusText(item.status) }}</view>
           </view>
           <view class="card-content">
             <view class="info-item">
@@ -24,7 +24,7 @@
             </view>
           </view>
           <view class="card-footer">
-            <button class="action-btn edit" @tap="goToEditRecruitment(item)">编辑</button>
+            <button class="action-btn edit" v-if="item.status === 0 || item.status === 3" @tap="goToEditRecruitment(item)">编辑</button>
             <button class="action-btn view-applies" @tap="viewApplies(item)">查看申请</button>
             <button class="action-btn end" v-if="item.status === 1" @tap="endRecruitment(item)">结束招新</button>
           </view>
@@ -54,7 +54,6 @@
             </view>
           </view>
           <view class="card-footer">
-            <button class="action-btn edit" @tap="goToEditRecruitment(item)">编辑</button>
             <button class="action-btn view-applies" @tap="viewApplies(item)">查看申请</button>
             <button class="action-btn copy" @tap="copyRecruitment(item)">复制创建</button>
           </view>
@@ -76,7 +75,7 @@
     <!-- 底部固定创建招新按钮 -->
     <view class="bottom-create-btn" @tap="goToCreateRecruitment">
       <uni-icons type="plusempty" size="20" color="#fff"></uni-icons>
-      <text>创建新招新</text>
+      <text>创建招新活动</text>
     </view>
   </view>
 </template>
@@ -118,18 +117,46 @@ onMounted(() => {
 // 加载数据
 const loadData = async () => {
   if (isLoading.value) return
-  
+
   isLoading.value = true
-  
+
   try {
     // 添加调试信息
     console.log('开始加载招新数据，社团ID:', clubId.value)
-    
-    // 加载当前招新活动
-    await loadActiveRecruitments()
-    
-    // 加载历史招新活动
-    await loadHistoryRecruitments()
+
+    // 加载所有状态的招新活动（不传status参数）
+    const params = {
+      pageNo: page.value,
+      pageSize: pageSize.value
+    }
+
+    const res = await proxy.$api.club.listRecruitments(clubId.value, params)
+
+    if (res.code === 200) {
+      const list = res.data.list || []
+
+      if (page.value === 1) {
+        // 首次加载，按状态分类
+        activeRecruitments.value = list.filter(item =>
+          item.status === 0 || item.status === 1 || item.status === 3
+        ) // 审核中、进行中、已驳回
+        historyRecruitments.value = list.filter(item => item.status === 2) // 已结束
+      } else {
+        // 加载更多，追加到历史招新
+        historyRecruitments.value = [...historyRecruitments.value, ...list.filter(item => item.status === 2)]
+      }
+
+      hasMore.value = list.length === pageSize.value
+      if (list.length > 0) {
+        page.value++
+      }
+    } else {
+      console.error('加载招新数据失败:', res.message)
+      uni.showToast({
+        title: res.message || '加载失败',
+        icon: 'none'
+      })
+    }
   } catch (error) {
     console.error('加载招新数据失败', error)
     uni.showToast({
@@ -140,122 +167,6 @@ const loadData = async () => {
   } finally {
     isLoading.value = false
     refreshing.value = false
-  }
-}
-
-// 加载当前招新活动
-const loadActiveRecruitments = async () => {
-  try {
-    // 直接使用备用方法：使用listRecruitments获取正在进行的招新
-    const params = {
-      pageNo: 1,
-      pageSize: 10,
-      status: 1 // 进行中状态
-    }
-    
-    const res = await proxy.$api.club.listRecruitments(clubId.value, params)
-    if (res.code === 200) {
-      activeRecruitments.value = res.data.list || []
-    } else {
-      console.error('加载当前招新活动失败:', res.message)
-      uni.showToast({
-        title: res.message || '加载失败',
-        icon: 'none'
-      })
-    }
-  } catch (error) {
-    console.error('加载当前招新活动失败', error)
-    uni.showToast({
-      title: '加载当前招新活动失败',
-      icon: 'none'
-    })
-  }
-}
-
-// 备用加载历史招新数据方法（通过getRecruitmentList API）
-const fallbackLoadHistoryRecruitments = async () => {
-  try {
-    console.log('使用备用方法加载历史招新数据')
-    const params = {
-      pageNo: page.value,
-      pageSize: pageSize.value,
-      clubId: clubId.value,
-      status: 2 // 已结束状态
-    }
-    
-    const res = await proxy.$api.club.getRecruitmentList(params)
-    
-    if (res.code === 200) {
-      const list = res.data.list || []
-      
-      if (page.value === 1) {
-        historyRecruitments.value = list
-      } else {
-        historyRecruitments.value = [...historyRecruitments.value, ...list]
-      }
-      
-      hasMore.value = list.length === pageSize.value
-      if (list.length > 0) {
-        page.value++
-      }
-    } else {
-      console.error('备用方法加载历史招新数据失败:', res.message)
-      uni.showToast({
-        title: res.message || '加载失败',
-        icon: 'none'
-      })
-    }
-  } catch (error) {
-    console.error('备用方法加载历史招新数据失败:', error)
-    uni.showToast({
-      title: '加载历史招新活动失败',
-      icon: 'none'
-    })
-  }
-}
-
-// 加载历史招新活动
-const loadHistoryRecruitments = async () => {
-  try {
-    const params = {
-      pageNo: page.value,
-      pageSize: pageSize.value,
-      status: 2 // 已结束状态
-    }
-    
-    console.log('尝试加载历史招新数据，参数:', params)
-    
-    try {
-      // 首先尝试使用listRecruitments方法
-      const res = await proxy.$api.club.listRecruitments(clubId.value, params)
-      
-      if (res.code === 200) {
-        const list = res.data.list || []
-        
-        if (page.value === 1) {
-          historyRecruitments.value = list
-        } else {
-          historyRecruitments.value = [...historyRecruitments.value, ...list]
-        }
-        
-        hasMore.value = list.length === pageSize.value
-        if (list.length > 0) {
-          page.value++
-        }
-      } else {
-        throw new Error(res.message || '加载失败')
-      }
-    } catch (primaryError) {
-      console.error('主方法加载历史招新数据失败:', primaryError)
-      console.log('尝试使用备用方法加载历史招新数据')
-      await fallbackLoadHistoryRecruitments()
-    }
-  } catch (error) {
-    console.error('加载历史招新活动失败', error)
-    uni.showToast({
-      title: '加载历史招新活动失败',
-      icon: 'none'
-    })
   }
 }
 
@@ -270,16 +181,17 @@ const refreshData = () => {
 // 加载更多
 const loadMore = () => {
   if (hasMore.value && !isLoading.value) {
-    loadHistoryRecruitments()
+    loadData()
   }
 }
 
 // 获取状态文本
 const getStatusText = (status) => {
   switch (status) {
-    case 0: return '未开始'
-    case 1: return '招新中'
+    case 0: return '审核中'
+    case 1: return '进行中'
     case 2: return '已结束'
+    case 3: return '已驳回'
     default: return '未知状态'
   }
 }
@@ -290,6 +202,7 @@ const getStatusClass = (status) => {
     case 0: return 'pending'
     case 1: return 'active'
     case 2: return 'ended'
+    case 3: return 'rejected'
     default: return ''
   }
 }
@@ -304,7 +217,7 @@ const goToCreateRecruitment = () => {
 // 跳转到编辑招新页面
 const goToEditRecruitment = (item) => {
   uni.navigateTo({
-    url: `/pages/club/editRecruitment?clubId=${clubId.value}&recruitmentId=${item.id}`
+    url: `/pages/club/createRecruitment?clubId=${clubId.value}&recruitmentId=${item.id}`
   })
 }
 
@@ -486,20 +399,25 @@ const goBack = () => {
       padding: 4rpx 16rpx;
       border-radius: 20rpx;
       font-size: 22rpx;
-      
+
       &.pending {
         color: #ff9800;
         background: rgba(255, 152, 0, 0.1);
       }
-      
+
       &.active {
         color: #4caf50;
         background: rgba(76, 175, 80, 0.1);
       }
-      
+
       &.ended {
         color: #999;
         background: rgba(0, 0, 0, 0.05);
+      }
+
+      &.rejected {
+        color: #f44336;
+        background: rgba(244, 67, 54, 0.1);
       }
     }
   }

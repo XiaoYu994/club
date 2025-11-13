@@ -2,7 +2,7 @@
   <view class="notification-container pageBg">
     <!-- 顶部导航栏 -->
     <custom-nav-bar title="消息通知" background="#fff" title-color="#333">
-      <template #right>
+      <template #left>
         <view class="nav-actions">
           <text v-if="unreadCount > 0" class="read-all-btn" @tap="handleMarkAllRead">全部已读</text>
         </view>
@@ -172,7 +172,13 @@ async function handleNotificationClick(notification) {
       'check_in': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
       'apply_approved': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
       'apply_rejected': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
-      'activity_reminder': `/pages/activity/activityDeatil?id=${notification.relatedId}`
+      'activity_reminder': `/pages/activity/activityDeatil?id=${notification.relatedId}`,
+      'club_apply_approved': `/pages/club/detail?id=${notification.relatedId}`,
+      'club_apply_rejected': `/pages/club/detail?id=${notification.relatedId}`,
+      'club_member_removed': `/pages/club/detail?id=${notification.relatedId}`,
+      'club_quit_apply': `/pages/club/detail?id=${notification.relatedId}`,
+      'club_quit_approved': `/pages/club/detail?id=${notification.relatedId}`,
+      'club_quit_rejected': `/pages/club/detail?id=${notification.relatedId}`
     };
 
     const url = typeToPage[notification.type];
@@ -258,7 +264,13 @@ function getTypeIcon(type) {
     'apply_approved': 'checkmarkempty',
     'apply_rejected': 'closeempty',
     'activity_reminder': 'calendar',
-    'apply_review': 'chatboxes'
+    'apply_review': 'chatboxes',
+    'club_apply_approved': 'checkmarkempty',
+    'club_apply_rejected': 'closeempty',
+    'club_member_removed': 'closeempty',
+    'club_quit_apply': 'info',
+    'club_quit_approved': 'checkmarkempty',
+    'club_quit_rejected': 'closeempty'
   };
   return iconMap[type] || 'notification';
 }
@@ -271,7 +283,13 @@ function getTypeClass(type) {
     'apply_approved': 'type-success',
     'apply_rejected': 'type-cancel',
     'activity_reminder': 'type-warning',
-    'apply_review': 'type-info'
+    'apply_review': 'type-info',
+    'club_apply_approved': 'type-success',
+    'club_apply_rejected': 'type-cancel',
+    'club_member_removed': 'type-cancel',
+    'club_quit_apply': 'type-warning',
+    'club_quit_approved': 'type-success',
+    'club_quit_rejected': 'type-cancel'
   };
   return classMap[type] || 'type-default';
 }
@@ -345,7 +363,7 @@ onShow(() => {
   .nav-actions {
     display: flex;
     align-items: center;
-    padding-right: 30rpx;
+    padding-left: 30rpx;
 
     .read-all-btn {
       font-size: 28rpx;

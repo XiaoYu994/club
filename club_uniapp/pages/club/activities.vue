@@ -520,10 +520,7 @@ const deleteActivity = (activity) => {
             })
           }
         } catch (error) {
-          uni.showToast({
-            title: '网络异常，请稍后重试',
-            icon: 'none'
-          })
+
         } finally {
           uni.hideLoading()
         }

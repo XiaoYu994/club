@@ -181,8 +181,8 @@ const _sfc_main = {
         title: "关于我们",
         content: `校园社团管理小程序
 版本：v1.0.0
-开发者：xhy
-联系方式：123456789@qq.com
+开发者：肖恒昱
+联系方式：2489927141@qq.com
 © 2025 `,
         showCancel: false,
         confirmText: "我知道了"

@@ -36,11 +36,35 @@ const _sfc_main = {
         return;
       isLoading.value = true;
       try {
-        common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:126", "开始加载招新数据，社团ID:", clubId.value);
-        await loadActiveRecruitments();
-        await loadHistoryRecruitments();
+        common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:125", "开始加载招新数据，社团ID:", clubId.value);
+        const params = {
+          pageNo: page.value,
+          pageSize: pageSize.value
+        };
+        const res = await proxy.$api.club.listRecruitments(clubId.value, params);
+        if (res.code === 200) {
+          const list = res.data.list || [];
+          if (page.value === 1) {
+            activeRecruitments.value = list.filter(
+              (item) => item.status === 0 || item.status === 1 || item.status === 3
+            );
+            historyRecruitments.value = list.filter((item) => item.status === 2);
+          } else {
+            historyRecruitments.value = [...historyRecruitments.value, ...list.filter((item) => item.status === 2)];
+          }
+          hasMore.value = list.length === pageSize.value;
+          if (list.length > 0) {
+            page.value++;
+          }
+        } else {
+          common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:154", "加载招新数据失败:", res.message);
+          common_vendor.index.showToast({
+            title: res.message || "加载失败",
+            icon: "none"
+          });
+        }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:134", "加载招新数据失败", error);
+        common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:161", "加载招新数据失败", error);
         common_vendor.index.showToast({
           title: "加载招新数据失败，请稍后重试",
           icon: "none",
@@ -51,107 +75,6 @@ const _sfc_main = {
         refreshing.value = false;
       }
     };
-    const loadActiveRecruitments = async () => {
-      try {
-        const params = {
-          pageNo: 1,
-          pageSize: 10,
-          status: 1
-          // 进行中状态
-        };
-        const res = await proxy.$api.club.listRecruitments(clubId.value, params);
-        if (res.code === 200) {
-          activeRecruitments.value = res.data.list || [];
-        } else {
-          common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:160", "加载当前招新活动失败:", res.message);
-          common_vendor.index.showToast({
-            title: res.message || "加载失败",
-            icon: "none"
-          });
-        }
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:167", "加载当前招新活动失败", error);
-        common_vendor.index.showToast({
-          title: "加载当前招新活动失败",
-          icon: "none"
-        });
-      }
-    };
-    const fallbackLoadHistoryRecruitments = async () => {
-      try {
-        common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:178", "使用备用方法加载历史招新数据");
-        const params = {
-          pageNo: page.value,
-          pageSize: pageSize.value,
-          clubId: clubId.value,
-          status: 2
-          // 已结束状态
-        };
-        const res = await proxy.$api.club.getRecruitmentList(params);
-        if (res.code === 200) {
-          const list = res.data.list || [];
-          if (page.value === 1) {
-            historyRecruitments.value = list;
-          } else {
-            historyRecruitments.value = [...historyRecruitments.value, ...list];
-          }
-          hasMore.value = list.length === pageSize.value;
-          if (list.length > 0) {
-            page.value++;
-          }
-        } else {
-          common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:202", "备用方法加载历史招新数据失败:", res.message);
-          common_vendor.index.showToast({
-            title: res.message || "加载失败",
-            icon: "none"
-          });
-        }
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:209", "备用方法加载历史招新数据失败:", error);
-        common_vendor.index.showToast({
-          title: "加载历史招新活动失败",
-          icon: "none"
-        });
-      }
-    };
-    const loadHistoryRecruitments = async () => {
-      try {
-        const params = {
-          pageNo: page.value,
-          pageSize: pageSize.value,
-          status: 2
-          // 已结束状态
-        };
-        common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:226", "尝试加载历史招新数据，参数:", params);
-        try {
-          const res = await proxy.$api.club.listRecruitments(clubId.value, params);
-          if (res.code === 200) {
-            const list = res.data.list || [];
-            if (page.value === 1) {
-              historyRecruitments.value = list;
-            } else {
-              historyRecruitments.value = [...historyRecruitments.value, ...list];
-            }
-            hasMore.value = list.length === pageSize.value;
-            if (list.length > 0) {
-              page.value++;
-            }
-          } else {
-            throw new Error(res.message || "加载失败");
-          }
-        } catch (primaryError) {
-          common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:249", "主方法加载历史招新数据失败:", primaryError);
-          common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:250", "尝试使用备用方法加载历史招新数据");
-          await fallbackLoadHistoryRecruitments();
-        }
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:254", "加载历史招新活动失败", error);
-        common_vendor.index.showToast({
-          title: "加载历史招新活动失败",
-          icon: "none"
-        });
-      }
-    };
     const refreshData = () => {
       refreshing.value = true;
       page.value = 1;
@@ -160,17 +83,19 @@ const _sfc_main = {
     };
     const loadMore = () => {
       if (hasMore.value && !isLoading.value) {
-        loadHistoryRecruitments();
+        loadData();
       }
     };
     const getStatusText = (status) => {
       switch (status) {
         case 0:
-          return "未开始";
+          return "审核中";
         case 1:
-          return "招新中";
+          return "进行中";
         case 2:
           return "已结束";
+        case 3:
+          return "已驳回";
         default:
           return "未知状态";
       }
@@ -183,6 +108,8 @@ const _sfc_main = {
           return "active";
         case 2:
           return "ended";
+        case 3:
+          return "rejected";
         default:
           return "";
       }
@@ -194,7 +121,7 @@ const _sfc_main = {
     };
     const goToEditRecruitment = (item) => {
       common_vendor.index.navigateTo({
-        url: `/pages/club/editRecruitment?clubId=${clubId.value}&recruitmentId=${item.id}`
+        url: `/pages/club/createRecruitment?clubId=${clubId.value}&recruitmentId=${item.id}`
       });
     };
     const viewApplies = (item) => {
@@ -216,7 +143,7 @@ const _sfc_main = {
             try {
               common_vendor.index.showLoading({ title: "处理中..." });
               try {
-                common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:343", "尝试更新招新状态:", item.id, 2);
+                common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:256", "尝试更新招新状态:", item.id, 2);
                 const updateRes = await proxy.$api.club.updateRecruitmentStatus(item.id, 2);
                 if (updateRes.code === 200) {
                   common_vendor.index.showToast({
@@ -228,8 +155,8 @@ const _sfc_main = {
                   throw new Error(updateRes.message || "操作失败");
                 }
               } catch (primaryError) {
-                common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:358", "主方法更新招新状态失败:", primaryError);
-                common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:359", "尝试使用备用方法更新招新状态");
+                common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:271", "主方法更新招新状态失败:", primaryError);
+                common_vendor.index.__f__("log", "at pages/club/manageRecruitment.vue:272", "尝试使用备用方法更新招新状态");
                 const updateData = {
                   id: item.id,
                   status: 2
@@ -246,7 +173,7 @@ const _sfc_main = {
                 }
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:382", "结束招新失败", error);
+              common_vendor.index.__f__("error", "at pages/club/manageRecruitment.vue:295", "结束招新失败", error);
               common_vendor.index.showToast({
                 title: error.message || "网络异常，请稍后重试",
                 icon: "none"
@@ -274,20 +201,25 @@ const _sfc_main = {
         e: common_vendor.f(activeRecruitments.value, (item, index, i0) => {
           return common_vendor.e({
             a: common_vendor.t(item.title),
-            b: "b4c90a47-1-" + i0,
-            c: common_vendor.t(common_vendor.unref(utils_common.formatDate)(item.startTime)),
-            d: common_vendor.t(common_vendor.unref(utils_common.formatDate)(item.endTime)),
-            e: "b4c90a47-2-" + i0,
-            f: common_vendor.t(item.joinCount || 0),
-            g: common_vendor.t(item.passCount || 0),
-            h: common_vendor.t(item.planCount || 0),
-            i: common_vendor.o(($event) => goToEditRecruitment(item), "active-" + index),
-            j: common_vendor.o(($event) => viewApplies(), "active-" + index),
-            k: item.status === 1
-          }, item.status === 1 ? {
-            l: common_vendor.o(($event) => endRecruitment(item), "active-" + index)
+            b: common_vendor.t(getStatusText(item.status)),
+            c: common_vendor.n(getStatusClass(item.status)),
+            d: "b4c90a47-1-" + i0,
+            e: common_vendor.t(common_vendor.unref(utils_common.formatDate)(item.startTime)),
+            f: common_vendor.t(common_vendor.unref(utils_common.formatDate)(item.endTime)),
+            g: "b4c90a47-2-" + i0,
+            h: common_vendor.t(item.joinCount || 0),
+            i: common_vendor.t(item.passCount || 0),
+            j: common_vendor.t(item.planCount || 0),
+            k: item.status === 0 || item.status === 3
+          }, item.status === 0 || item.status === 3 ? {
+            l: common_vendor.o(($event) => goToEditRecruitment(item), "active-" + index)
           } : {}, {
-            m: "active-" + index
+            m: common_vendor.o(($event) => viewApplies(), "active-" + index),
+            n: item.status === 1
+          }, item.status === 1 ? {
+            o: common_vendor.o(($event) => endRecruitment(item), "active-" + index)
+          } : {}, {
+            p: "active-" + index
           });
         }),
         f: common_vendor.p({
@@ -317,10 +249,9 @@ const _sfc_main = {
             h: common_vendor.t(item.joinCount || 0),
             i: common_vendor.t(item.passCount || 0),
             j: common_vendor.t(item.planCount || 0),
-            k: common_vendor.o(($event) => goToEditRecruitment(item), "history-" + index),
-            l: common_vendor.o(($event) => viewApplies(), "history-" + index),
-            m: common_vendor.o(($event) => copyRecruitment(item), "history-" + index),
-            n: "history-" + index
+            k: common_vendor.o(($event) => viewApplies(), "history-" + index),
+            l: common_vendor.o(($event) => copyRecruitment(item), "history-" + index),
+            m: "history-" + index
           };
         }),
         k: common_vendor.p({

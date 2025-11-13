@@ -18,6 +18,10 @@ const _sfc_main = {
     const configs = common_vendor.ref([]);
     const selectedConfig = common_vendor.ref(null);
     const clubId = common_vendor.ref(null);
+    const recruitmentId = common_vendor.ref(null);
+    const copyFromId = common_vendor.ref(null);
+    const isEditMode = common_vendor.computed(() => !!recruitmentId.value);
+    const isCopyMode = common_vendor.computed(() => !!copyFromId.value);
     const title = common_vendor.ref("");
     const description = common_vendor.ref("");
     const startTime = common_vendor.ref(null);
@@ -27,6 +31,13 @@ const _sfc_main = {
     const interviewPlace = common_vendor.ref("");
     const poster = common_vendor.ref("");
     const formFields = common_vendor.ref([]);
+    const pageTitle = common_vendor.computed(() => {
+      if (isEditMode.value)
+        return "编辑招新";
+      if (isCopyMode.value)
+        return "复制创建招新";
+      return "创建招新";
+    });
     const fieldTypes = [
       "文本输入",
       "数字输入",
@@ -53,22 +64,162 @@ const _sfc_main = {
     };
     const formattedStartTime = common_vendor.computed(() => startTime.value ? utils_common.formatDate(startTime.value, "yyyy-MM-dd") : "");
     const formattedEndTime = common_vendor.computed(() => endTime.value ? utils_common.formatDate(endTime.value, "yyyy-MM-dd") : "");
+    const formattedGlobalStartTime = common_vendor.computed(() => {
+      var _a;
+      return ((_a = selectedConfig.value) == null ? void 0 : _a.globalStartTime) ? utils_common.formatDate(selectedConfig.value.globalStartTime, "yyyy-MM-dd") : "";
+    });
+    const formattedGlobalEndTime = common_vendor.computed(() => {
+      var _a;
+      return ((_a = selectedConfig.value) == null ? void 0 : _a.globalEndTime) ? utils_common.formatDate(selectedConfig.value.globalEndTime, "yyyy-MM-dd") : "";
+    });
     const statusBarHeight = common_vendor.ref(common_vendor.index.getSystemInfoSync().statusBarHeight || 20);
     common_vendor.onMounted(async () => {
       const pages = getCurrentPages();
       const current = pages[pages.length - 1];
       clubId.value = current.options.clubId;
-      const res = await proxy.$api.club.getRecruitmentConfigs();
-      if (res.code === 200) {
-        const allConfigs = res.data || [];
-        const now = Date.now();
-        configs.value = allConfigs.filter((c) => now >= c.globalStartTime && now <= c.globalEndTime);
-        if (!configs.value.length) {
-          common_vendor.index.showToast({ title: "当前暂无可用招新配置", icon: "none" });
-        }
+      recruitmentId.value = current.options.recruitmentId;
+      copyFromId.value = current.options.copyFrom;
+      await loadRecruitmentConfigs();
+      if (isEditMode.value) {
+        await loadRecruitmentDetail();
+      } else if (isCopyMode.value) {
+        await loadRecruitmentForCopy();
+      } else {
+        addDefaultFields();
       }
-      addDefaultFields();
     });
+    const loadRecruitmentConfigs = async () => {
+      try {
+        const res = await proxy.$api.club.getRecruitmentConfigs();
+        if (res.code === 200) {
+          const allConfigs = res.data || [];
+          if (isEditMode.value) {
+            configs.value = allConfigs;
+          } else {
+            const now = Date.now();
+            configs.value = allConfigs.filter((c) => now >= c.globalStartTime && now <= c.globalEndTime);
+            if (!configs.value.length) {
+              common_vendor.index.showToast({ title: "当前暂无可用招新配置", icon: "none" });
+            }
+          }
+        } else {
+          common_vendor.index.showToast({ title: res.message || "加载配置失败", icon: "none" });
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:276", "加载配置失败", error);
+      }
+    };
+    const loadRecruitmentDetail = async () => {
+      try {
+        common_vendor.index.showLoading({ title: "加载中..." });
+        const res = await proxy.$api.club.getRecruitmentDetail(recruitmentId.value);
+        if (res.code === 200 && res.data) {
+          const recruitment = res.data;
+          if (recruitment.status !== 0 && recruitment.status !== 3) {
+            let statusText = "";
+            switch (recruitment.status) {
+              case 1:
+                statusText = "进行中";
+                break;
+              case 2:
+                statusText = "已结束";
+                break;
+              default:
+                statusText = "未知状态";
+            }
+            common_vendor.index.showToast({
+              title: `该招新活动状态为"${statusText}"，不允许编辑`,
+              icon: "none",
+              duration: 2e3
+            });
+            setTimeout(() => common_vendor.index.navigateBack(), 2e3);
+            return;
+          }
+          title.value = recruitment.title;
+          description.value = recruitment.description;
+          startTime.value = recruitment.startTime;
+          endTime.value = recruitment.endTime;
+          planCount.value = recruitment.planCount;
+          needInterview.value = recruitment.needInterview;
+          interviewPlace.value = recruitment.interviewPlace || "";
+          poster.value = recruitment.poster || "";
+          const configId = recruitment.configId;
+          common_vendor.index.__f__("log", "at pages/club/createRecruitment.vue:324", "招新的configId:", configId);
+          common_vendor.index.__f__("log", "at pages/club/createRecruitment.vue:325", "可用配置列表:", configs.value);
+          if (configId && configs.value.length > 0) {
+            selectedConfig.value = configs.value.find((c) => c.id == configId);
+            common_vendor.index.__f__("log", "at pages/club/createRecruitment.vue:330", "找到的配置:", selectedConfig.value);
+            if (!selectedConfig.value) {
+              common_vendor.index.__f__("warn", "at pages/club/createRecruitment.vue:333", "未找到匹配的配置，configId:", configId);
+              common_vendor.index.showToast({ title: "未找到对应的招新配置", icon: "none" });
+            }
+          }
+          if (recruitment.forms) {
+            try {
+              formFields.value = JSON.parse(recruitment.forms);
+            } catch (error) {
+              common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:343", "解析表单字段失败", error);
+              addDefaultFields();
+            }
+          } else {
+            addDefaultFields();
+          }
+        } else {
+          common_vendor.index.showToast({ title: res.message || "加载招新详情失败", icon: "none" });
+          setTimeout(() => common_vendor.index.navigateBack(), 1500);
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:354", "加载招新详情失败", error);
+      } finally {
+        common_vendor.index.hideLoading();
+      }
+    };
+    const loadRecruitmentForCopy = async () => {
+      try {
+        common_vendor.index.showLoading({ title: "加载中..." });
+        const res = await proxy.$api.club.getRecruitmentDetail(copyFromId.value);
+        if (res.code === 200 && res.data) {
+          const recruitment = res.data;
+          title.value = recruitment.title + " (复制)";
+          description.value = recruitment.description;
+          startTime.value = recruitment.startTime;
+          endTime.value = recruitment.endTime;
+          planCount.value = recruitment.planCount;
+          needInterview.value = recruitment.needInterview;
+          interviewPlace.value = recruitment.interviewPlace || "";
+          poster.value = recruitment.poster || "";
+          const configId = recruitment.configId;
+          common_vendor.index.__f__("log", "at pages/club/createRecruitment.vue:381", "招新的configId:", configId);
+          common_vendor.index.__f__("log", "at pages/club/createRecruitment.vue:382", "可用配置列表:", configs.value);
+          if (configId && configs.value.length > 0) {
+            selectedConfig.value = configs.value.find((c) => c.id == configId);
+            common_vendor.index.__f__("log", "at pages/club/createRecruitment.vue:386", "找到的配置:", selectedConfig.value);
+            if (!selectedConfig.value) {
+              common_vendor.index.__f__("warn", "at pages/club/createRecruitment.vue:389", "未找到匹配的配置，configId:", configId);
+              common_vendor.index.showToast({ title: "未找到对应的招新配置", icon: "none" });
+            }
+          }
+          if (recruitment.forms) {
+            try {
+              formFields.value = JSON.parse(recruitment.forms);
+            } catch (error) {
+              common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:399", "解析表单字段失败", error);
+              addDefaultFields();
+            }
+          } else {
+            addDefaultFields();
+          }
+        } else {
+          common_vendor.index.showToast({ title: res.message || "加载招新详情失败", icon: "none" });
+          setTimeout(() => common_vendor.index.navigateBack(), 1500);
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:410", "加载招新详情失败", error);
+        common_vendor.index.showToast({ title: "网络异常，请稍后重试", icon: "none" });
+      } finally {
+        common_vendor.index.hideLoading();
+      }
+    };
     const onConfigChange = (e) => {
       const idx = e.detail.value;
       selectedConfig.value = configs.value[idx];
@@ -96,8 +247,7 @@ const _sfc_main = {
               common_vendor.index.showToast({ title: uploadRes.message || "海报上传失败", icon: "none" });
             }
           } catch (error) {
-            common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:256", "上传海报失败", error);
-            common_vendor.index.showToast({ title: "海报上传失败", icon: "none" });
+            common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:451", "上传海报失败", error);
           } finally {
             common_vendor.index.hideLoading();
           }
@@ -153,9 +303,11 @@ const _sfc_main = {
     const submitRecruitment = async () => {
       if (!selectedConfig.value)
         return common_vendor.index.showToast({ title: "请选择配置", icon: "none" });
-      const now = Date.now();
-      if (now < selectedConfig.value.globalStartTime || now > selectedConfig.value.globalEndTime) {
-        return common_vendor.index.showToast({ title: "当前不在配置的招新时间范围内", icon: "none" });
+      if (!isEditMode.value) {
+        const now = Date.now();
+        if (now < selectedConfig.value.globalStartTime || now > selectedConfig.value.globalEndTime) {
+          return common_vendor.index.showToast({ title: "当前不在配置的招新时间范围内", icon: "none" });
+        }
       }
       if (!title.value)
         return common_vendor.index.showToast({ title: "请输入标题", icon: "none" });
@@ -174,17 +326,37 @@ const _sfc_main = {
         needInterview: needInterview.value,
         interviewPlace: needInterview.value === 1 ? interviewPlace.value : null,
         poster: poster.value,
-        // 以下字段由前端提供，避免后端字段非空校验失败
         forms: JSON.stringify(formFields.value),
         joinCount: 0,
         passCount: 0
       };
-      const res = await proxy.$api.club.createRecruitment(payload);
-      if (res.code === 200) {
-        common_vendor.index.showToast({ title: "创建成功", icon: "success" });
-        setTimeout(() => common_vendor.index.navigateBack(), 1500);
-      } else {
-        common_vendor.index.showToast({ title: res.message || "创建失败", icon: "none" });
+      if (isEditMode.value) {
+        payload.status = 0;
+      }
+      try {
+        common_vendor.index.showLoading({ title: isEditMode.value ? "保存中..." : "提交中..." });
+        let res;
+        if (isEditMode.value) {
+          res = await proxy.$api.club.updateRecruitment(recruitmentId.value, payload);
+        } else {
+          res = await proxy.$api.club.createRecruitment(payload);
+        }
+        if (res.code === 200) {
+          common_vendor.index.showToast({
+            title: isEditMode.value ? "更新成功" : "创建成功",
+            icon: "success"
+          });
+          setTimeout(() => common_vendor.index.navigateBack(), 1500);
+        } else {
+          common_vendor.index.showToast({
+            title: res.message || (isEditMode.value ? "更新失败" : "创建失败"),
+            icon: "none"
+          });
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/club/createRecruitment.vue:588", "提交失败", error);
+      } finally {
+        common_vendor.index.hideLoading();
       }
     };
     return (_ctx, _cache) => {
@@ -192,54 +364,59 @@ const _sfc_main = {
         a: statusBarHeight.value + "px",
         b: common_vendor.o(goBack),
         c: common_vendor.p({
-          title: "创建招新",
+          title: pageTitle.value,
           showBack: true
         }),
         d: common_vendor.t(selectedConfig.value ? selectedConfig.value.name : "请选择配置"),
         e: configs.value,
         f: common_vendor.o(onConfigChange),
-        g: title.value,
-        h: common_vendor.o(($event) => title.value = $event.detail.value),
-        i: poster.value
+        g: selectedConfig.value
+      }, selectedConfig.value ? {
+        h: common_vendor.t(formattedGlobalStartTime.value),
+        i: common_vendor.t(formattedGlobalEndTime.value)
+      } : {}, {
+        j: title.value,
+        k: common_vendor.o(($event) => title.value = $event.detail.value),
+        l: poster.value
       }, poster.value ? {
-        j: poster.value
+        m: poster.value
       } : {
-        k: common_vendor.p({
+        n: common_vendor.p({
           type: "image",
           size: "50",
           color: "#ccc"
         })
       }, {
-        l: common_vendor.o(uploadPoster),
-        m: description.value,
-        n: common_vendor.o(($event) => description.value = $event.detail.value),
-        o: common_vendor.p({
-          type: "calendar",
-          size: "16",
-          color: "#b13b7a"
-        }),
-        p: common_vendor.t(formattedStartTime.value || "请选择日期"),
-        q: common_vendor.o(onStartChange),
+        o: common_vendor.o(uploadPoster),
+        p: description.value,
+        q: common_vendor.o(($event) => description.value = $event.detail.value),
         r: common_vendor.p({
           type: "calendar",
           size: "16",
           color: "#b13b7a"
         }),
-        s: common_vendor.t(formattedEndTime.value || "请选择日期"),
-        t: common_vendor.o(onEndChange),
-        v: planCount.value,
-        w: common_vendor.o(common_vendor.m(($event) => planCount.value = $event.detail.value, {
+        s: common_vendor.t(formattedStartTime.value || "请选择日期"),
+        t: common_vendor.o(onStartChange),
+        v: common_vendor.p({
+          type: "calendar",
+          size: "16",
+          color: "#b13b7a"
+        }),
+        w: common_vendor.t(formattedEndTime.value || "请选择日期"),
+        x: common_vendor.o(onEndChange),
+        y: planCount.value,
+        z: common_vendor.o(common_vendor.m(($event) => planCount.value = $event.detail.value, {
           number: true
         })),
-        x: needInterview.value === 0,
-        y: needInterview.value === 1,
-        z: common_vendor.o(onInterviewChange),
-        A: needInterview.value === 1
+        A: needInterview.value === 0,
+        B: needInterview.value === 1,
+        C: common_vendor.o(onInterviewChange),
+        D: needInterview.value === 1
       }, needInterview.value === 1 ? {
-        B: interviewPlace.value,
-        C: common_vendor.o(($event) => interviewPlace.value = $event.detail.value)
+        E: interviewPlace.value,
+        F: common_vendor.o(($event) => interviewPlace.value = $event.detail.value)
       } : {}, {
-        D: common_vendor.f(formFields.value, (field, fieldIndex, i0) => {
+        G: common_vendor.f(formFields.value, (field, fieldIndex, i0) => {
           return common_vendor.e({
             a: field.name,
             b: common_vendor.o(($event) => field.name = $event.detail.value, fieldIndex),
@@ -277,20 +454,21 @@ const _sfc_main = {
             p: fieldIndex
           });
         }),
-        E: common_vendor.p({
+        H: common_vendor.p({
           type: "trash",
           size: "20",
           color: "#999"
         }),
-        F: fieldTypes,
-        G: common_vendor.p({
+        I: fieldTypes,
+        J: common_vendor.p({
           type: "plusempty",
           size: "24",
           color: "#b13b7a"
         }),
-        H: common_vendor.o(addField),
-        I: common_vendor.o(goBack),
-        J: common_vendor.o(submitRecruitment)
+        K: common_vendor.o(addField),
+        L: common_vendor.o(goBack),
+        M: common_vendor.t(isEditMode.value ? "保存更新" : "提交创建"),
+        N: common_vendor.o(submitRecruitment)
       });
     };
   }

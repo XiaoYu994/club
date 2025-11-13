@@ -14,6 +14,14 @@
   padding: 0 30rpx;
   position: relative;
 }
+.layout .navbar .titleBar .left-slot.data-v-412fc155 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 .layout .navbar .titleBar .title.data-v-412fc155 {
   flex: 1;
   text-align: center;

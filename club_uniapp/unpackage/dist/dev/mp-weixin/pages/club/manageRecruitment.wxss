@@ -92,6 +92,10 @@
   color: #999;
   background: rgba(0, 0, 0, 0.05);
 }
+.recruitment-card .card-header .status-tag.rejected.data-v-b4c90a47 {
+  color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
 .recruitment-card .card-content.data-v-b4c90a47 {
   margin-bottom: 20rpx;
 }

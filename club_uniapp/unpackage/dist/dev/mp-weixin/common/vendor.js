@@ -7339,7 +7339,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "172.28.64.1,192.168.234.200,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_x3Lk54";
+  const id = "mp-weixin_urVt6i";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8425,13 +8425,6 @@ const pages = [
     path: "pages/club/createRecruitment",
     style: {
       navigationBarTitleText: "创建招新",
-      navigationStyle: "custom"
-    }
-  },
-  {
-    path: "pages/club/editRecruitment",
-    style: {
-      navigationBarTitleText: "编辑招新",
       navigationStyle: "custom"
     }
   },

@@ -566,7 +566,7 @@ const _sfc_main = {
     };
     const goToEditRecruitment = () => {
       common_vendor.index.navigateTo({
-        url: `/pages/club/editRecruitment?clubId=${id.value}&recruitmentId=${recruitmentInfo.value ? recruitmentInfo.value.id : ""}`
+        url: `/pages/club/createRecruitment?clubId=${id.value}&recruitmentId=${recruitmentInfo.value ? recruitmentInfo.value.id : ""}`
       });
     };
     return (_ctx, _cache) => {

@@ -122,13 +122,6 @@
 		}
 	},
 	{
-		"path": "pages/club/editRecruitment",
-		"style": {
-			"navigationBarTitleText": "编辑招新",
-			"navigationStyle": "custom"
-		}
-	},
-	{
 		"path" : "pages/club/apply",
 		"style" : 
 		{

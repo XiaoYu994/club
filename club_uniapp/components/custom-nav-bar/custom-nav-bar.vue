@@ -2,11 +2,15 @@
 	<view class="layout">
 		<view class="navbar">
 			<view class="statusBar" :style="{height:getStatusBarHeight()+'px'}"></view>
-			<view class="titleBar" 
+			<view class="titleBar"
 			:style="{height:getTitleBarHeight()+'px',marginLeft:getLeftIconLeft()+'px'}">
+				<!-- 新增左侧插槽 -->
+				<view class="left-slot">
+					<slot name="left"></slot>
+				</view>
 				<view class="title">{{title}}</view>
 				<!-- 新增右侧插槽 -->
-				<view class="right-slot">
+				<view class="right-slot" :style="{right:getMenuButtonRight()+'px'}">
 					<slot name="right"></slot>
 				</view>
 			</view>
@@ -17,7 +21,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import {getStatusBarHeight,getTitleBarHeight,getNavBarHeight,getLeftIconLeft} from "@/utils/system.js"
+import {getStatusBarHeight,getTitleBarHeight,getNavBarHeight,getLeftIconLeft,getMenuButtonRight} from "@/utils/system.js"
 
 defineProps({
 	title:{
@@ -40,10 +44,18 @@ defineProps({
 		linear-gradient(to right,#beecd8 20%,#F4E2D8);
 		.statusBar{}
 		.titleBar{
-			display: flex;	
+			display: flex;
 			align-items: center;
 			padding:0 30rpx;
 			position: relative;
+			.left-slot {
+				position: absolute;
+				left: 0;
+				top: 0;
+				height: 100%;
+				display: flex;
+				align-items: center;
+			}
 			.title{
 				flex: 1;
 				text-align: center;

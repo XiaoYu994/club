@@ -365,6 +365,139 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
+     * 发送社团申请审核通过通知
+     * @param userId 用户ID
+     * @param clubId 社团ID
+     * @param clubName 社团名称
+     * @param applyId 申请ID
+     * @param feedback 反馈信息
+     */
+    public void sendClubApplyApprovedNotification(Long userId, Integer clubId, String clubName, Long applyId, String feedback) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "club_apply_approved_notification");
+        notification.put("title", "社团申请通过");
+        notification.put("message", "恭喜！您加入社团 \"" + clubName + "\" 的申请已通过");
+        notification.put("extraInfo", feedback != null && !feedback.isEmpty() ? feedback : "欢迎加入我们！");
+        notification.put("clubId", clubId);
+        notification.put("clubName", clubName);
+        notification.put("applyId", applyId);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送社团申请审核通过通知给用户{}，社团ID: {}，社团名称: {}", userId, clubId, clubName);
+    }
+
+    /**
+     * 发送社团申请审核拒绝通知
+     * @param userId 用户ID
+     * @param clubId 社团ID
+     * @param clubName 社团名称
+     * @param applyId 申请ID
+     * @param feedback 反馈信息（拒绝理由）
+     */
+    public void sendClubApplyRejectedNotification(Long userId, Integer clubId, String clubName, Long applyId, String feedback) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "club_apply_rejected_notification");
+        notification.put("title", "社团申请未通过");
+        notification.put("message", "很遗憾，您加入社团 \"" + clubName + "\" 的申请未通过");
+        notification.put("extraInfo", feedback != null && !feedback.isEmpty() ? feedback : "如有疑问，请联系社团管理员");
+        notification.put("clubId", clubId);
+        notification.put("clubName", clubName);
+        notification.put("applyId", applyId);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送社团申请审核拒绝通知给用户{}，社团ID: {}，社团名称: {}，拒绝理由: {}", userId, clubId, clubName, feedback);
+    }
+
+    /**
+     * 发送社团成员被移除通知
+     * @param userId 用户ID
+     * @param clubId 社团ID
+     * @param clubName 社团名称
+     * @param reason 移除原因
+     */
+    public void sendClubMemberRemovedNotification(Long userId, Integer clubId, String clubName, String reason) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "club_member_removed_notification");
+        notification.put("title", "社团成员移除");
+        notification.put("message", "您已被移除出社团 \"" + clubName + "\"");
+        notification.put("extraInfo", reason != null && !reason.isEmpty() ? reason : "如有疑问，请联系社团管理员");
+        notification.put("clubId", clubId);
+        notification.put("clubName", clubName);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送社团成员移除通知给用户{}，社团ID: {}，社团名称: {}，移除原因: {}", userId, clubId, clubName, reason);
+    }
+
+    /**
+     * 发送退社申请通知给管理员
+     * @param adminUserId 管理员用户ID
+     * @param clubId 社团ID
+     * @param clubName 社团名称
+     * @param applicantUserId 申请人用户ID
+     * @param applicantName 申请人姓名
+     */
+    public void sendClubQuitApplyNotification(Long adminUserId, Integer clubId, String clubName, Long applicantUserId, String applicantName) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "club_quit_apply_notification");
+        notification.put("title", "退社申请");
+        notification.put("message", "成员 \"" + applicantName + "\" 申请退出社团 \"" + clubName + "\"");
+        notification.put("extraInfo", "请及时处理该申请");
+        notification.put("clubId", clubId);
+        notification.put("clubName", clubName);
+        notification.put("applicantUserId", applicantUserId);
+        notification.put("applicantName", applicantName);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(adminUserId, notification.toJSONString());
+        log.info("发送退社申请通知给管理员{}，社团ID: {}，社团名称: {}，申请人: {}", adminUserId, clubId, clubName, applicantName);
+    }
+
+    /**
+     * 发送退社申请通过通知给用户
+     * @param userId 用户ID
+     * @param clubId 社团ID
+     * @param clubName 社团名称
+     * @param feedback 反馈信息
+     */
+    public void sendClubQuitApprovedNotification(Long userId, Integer clubId, String clubName, String feedback) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "club_quit_approved_notification");
+        notification.put("title", "退社申请通过");
+        notification.put("message", "您的退社申请已通过，您已退出社团 \"" + clubName + "\"");
+        notification.put("extraInfo", feedback != null && !feedback.isEmpty() ? feedback : "感谢您的参与，期待未来再次相遇");
+        notification.put("clubId", clubId);
+        notification.put("clubName", clubName);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送退社申请通过通知给用户{}，社团ID: {}，社团名称: {}", userId, clubId, clubName);
+    }
+
+    /**
+     * 发送退社申请拒绝通知给用户
+     * @param userId 用户ID
+     * @param clubId 社团ID
+     * @param clubName 社团名称
+     * @param feedback 拒绝原因
+     */
+    public void sendClubQuitRejectedNotification(Long userId, Integer clubId, String clubName, String feedback) {
+        JSONObject notification = new JSONObject();
+        notification.put("type", "club_quit_rejected_notification");
+        notification.put("title", "退社申请拒绝");
+        notification.put("message", "您的退社申请未通过，您仍是社团 \"" + clubName + "\" 的成员");
+        notification.put("extraInfo", feedback != null && !feedback.isEmpty() ? feedback : "如有疑问，请联系社团管理员");
+        notification.put("clubId", clubId);
+        notification.put("clubName", clubName);
+        notification.put("timestamp", System.currentTimeMillis());
+
+        sendMessageToUser(userId, notification.toJSONString());
+        log.info("发送退社申请拒绝通知给用户{}，社团ID: {}，社团名称: {}，拒绝原因: {}", userId, clubId, clubName, feedback);
+    }
+
+    /**
      * 向WebSocket会话发送消息
      */
     private void sendMessageToSession(WebSocketSession session, String message) {

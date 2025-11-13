@@ -1,7 +1,7 @@
 <template>
   <view class="create-recruitment-container pageBg">
     <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
-    <custom-nav-bar title="创建招新" :showBack="true" @backClick="goBack"></custom-nav-bar>
+    <custom-nav-bar :title="pageTitle" :showBack="true" @backClick="goBack"></custom-nav-bar>
     <scroll-view scroll-y class="form-container">
       <!-- 基本信息 -->
       <view class="form-section">
@@ -11,6 +11,10 @@
           <picker mode="selector" :range="configs" range-key="name" @change="onConfigChange">
             <view class="form-picker">{{ selectedConfig ? selectedConfig.name : '请选择配置' }}</view>
           </picker>
+          <!-- 显示选中配置的全局时间 -->
+          <view v-if="selectedConfig" class="config-time-info">
+            <text class="time-info-text">全局招新时间：{{ formattedGlobalStartTime }} 至 {{ formattedGlobalEndTime }}</text>
+          </view>
         </view>
         <view class="form-item">
           <text class="form-label">招新标题：</text>
@@ -142,7 +146,7 @@
     <!-- 底部操作栏 -->
     <view class="form-actions">
       <button class="cancel-btn" @tap="goBack">取消</button>
-      <button class="submit-btn" @tap="submitRecruitment">提交创建</button>
+      <button class="submit-btn" @tap="submitRecruitment">{{ isEditMode ? '保存更新' : '提交创建' }}</button>
     </view>
   </view>
 </template>
@@ -155,6 +159,10 @@ const { proxy } = getCurrentInstance()
 const configs = ref([])
 const selectedConfig = ref(null)
 const clubId = ref(null)
+const recruitmentId = ref(null)  // 招新ID，有值表示编辑模式
+const copyFromId = ref(null)  // 复制来源ID，有值表示复制模式
+const isEditMode = computed(() => !!recruitmentId.value)  // 是否为编辑模式
+const isCopyMode = computed(() => !!copyFromId.value)  // 是否为复制模式
 const title = ref('')
 const description = ref('')
 const startTime = ref(null)
@@ -164,6 +172,13 @@ const needInterview = ref(0)
 const interviewPlace = ref('')
 const poster = ref('')
 const formFields = ref([])
+
+// 页面标题
+const pageTitle = computed(() => {
+  if (isEditMode.value) return '编辑招新'
+  if (isCopyMode.value) return '复制创建招新'
+  return '创建招新'
+})
 
 // 字段类型选项
 const fieldTypes = [
@@ -198,6 +213,19 @@ const reverseFieldTypeMap = {
 const formattedStartTime = computed(() => startTime.value ? formatDate(startTime.value, 'yyyy-MM-dd') : '')
 const formattedEndTime = computed(() => endTime.value ? formatDate(endTime.value, 'yyyy-MM-dd') : '')
 
+// 格式化配置的全局时间
+const formattedGlobalStartTime = computed(() => {
+  return selectedConfig.value?.globalStartTime
+    ? formatDate(selectedConfig.value.globalStartTime, 'yyyy-MM-dd')
+    : ''
+})
+
+const formattedGlobalEndTime = computed(() => {
+  return selectedConfig.value?.globalEndTime
+    ? formatDate(selectedConfig.value.globalEndTime, 'yyyy-MM-dd')
+    : ''
+})
+
 const statusBarHeight = ref(uni.getSystemInfoSync().statusBarHeight || 20)
 
 onMounted(async () => {
@@ -205,19 +233,186 @@ onMounted(async () => {
   const pages = getCurrentPages()
   const current = pages[pages.length - 1]
   clubId.value = current.options.clubId
-  // 加载配置并过滤可用时间
-  const res = await proxy.$api.club.getRecruitmentConfigs()
-  if (res.code === 200) {
-    const allConfigs = res.data || []
-    const now = Date.now()
-    configs.value = allConfigs.filter(c => now >= c.globalStartTime && now <= c.globalEndTime)
-    if (!configs.value.length) {
-      uni.showToast({ title: '当前暂无可用招新配置', icon: 'none' })
-    }
+  recruitmentId.value = current.options.recruitmentId  // 获取招新ID
+  copyFromId.value = current.options.copyFrom  // 获取复制来源ID
+
+  // 加载招新配置
+  await loadRecruitmentConfigs()
+
+  // 如果是编辑模式，加载招新详情
+  if (isEditMode.value) {
+    await loadRecruitmentDetail()
+  } else if (isCopyMode.value) {
+    // 如果是复制模式，加载要复制的招新详情
+    await loadRecruitmentForCopy()
+  } else {
+    // 创建模式，添加默认表单字段
+    addDefaultFields()
   }
-  // 添加默认表单字段
-  addDefaultFields()
 })
+
+// 加载招新配置
+const loadRecruitmentConfigs = async () => {
+  try {
+    const res = await proxy.$api.club.getRecruitmentConfigs()
+    if (res.code === 200) {
+      const allConfigs = res.data || []
+
+      // 创建模式：过滤可用时间范围内的配置
+      // 编辑模式：显示所有启用的配置
+      if (isEditMode.value) {
+        configs.value = allConfigs
+      } else {
+        const now = Date.now()
+        configs.value = allConfigs.filter(c => now >= c.globalStartTime && now <= c.globalEndTime)
+        if (!configs.value.length) {
+          uni.showToast({ title: '当前暂无可用招新配置', icon: 'none' })
+        }
+      }
+    } else {
+      uni.showToast({ title: res.message || '加载配置失败', icon: 'none' })
+    }
+  } catch (error) {
+    console.error('加载配置失败', error)
+  }
+}
+
+// 加载招新详情（编辑模式）
+const loadRecruitmentDetail = async () => {
+  try {
+    uni.showLoading({ title: '加载中...' })
+    const res = await proxy.$api.club.getRecruitmentDetail(recruitmentId.value)
+
+    if (res.code === 200 && res.data) {
+      const recruitment = res.data
+
+      // 检查招新状态，只允许审核中(0)或已驳回(3)状态的招新被编辑
+      // 状态: 0=审核中 1=进行中 2=已结束 3=已驳回
+      if (recruitment.status !== 0 && recruitment.status !== 3) {
+        let statusText = ''
+        switch (recruitment.status) {
+          case 1:
+            statusText = '进行中'
+            break
+          case 2:
+            statusText = '已结束'
+            break
+          default:
+            statusText = '未知状态'
+        }
+        uni.showToast({
+          title: `该招新活动状态为"${statusText}"，不允许编辑`,
+          icon: 'none',
+          duration: 2000
+        })
+        setTimeout(() => uni.navigateBack(), 2000)
+        return
+      }
+
+      // 回显数据
+      title.value = recruitment.title
+      description.value = recruitment.description
+      startTime.value = recruitment.startTime
+      endTime.value = recruitment.endTime
+      planCount.value = recruitment.planCount
+      needInterview.value = recruitment.needInterview
+      interviewPlace.value = recruitment.interviewPlace || ''
+      poster.value = recruitment.poster || ''
+
+      // 设置选中的配置
+      const configId = recruitment.configId
+      console.log('招新的configId:', configId)
+      console.log('可用配置列表:', configs.value)
+
+      if (configId && configs.value.length > 0) {
+        // 尝试使用宽松比较（==）而不是严格比较（===），因为ID可能是字符串或数字
+        selectedConfig.value = configs.value.find(c => c.id == configId)
+        console.log('找到的配置:', selectedConfig.value)
+
+        if (!selectedConfig.value) {
+          console.warn('未找到匹配的配置，configId:', configId)
+          uni.showToast({ title: '未找到对应的招新配置', icon: 'none' })
+        }
+      }
+
+      // 解析表单字段
+      if (recruitment.forms) {
+        try {
+          formFields.value = JSON.parse(recruitment.forms)
+        } catch (error) {
+          console.error('解析表单字段失败', error)
+          addDefaultFields()
+        }
+      } else {
+        addDefaultFields()
+      }
+    } else {
+      uni.showToast({ title: res.message || '加载招新详情失败', icon: 'none' })
+      setTimeout(() => uni.navigateBack(), 1500)
+    }
+  } catch (error) {
+    console.error('加载招新详情失败', error)
+  } finally {
+    uni.hideLoading()
+  }
+}
+
+// 加载招新详情用于复制（复制模式）
+const loadRecruitmentForCopy = async () => {
+  try {
+    uni.showLoading({ title: '加载中...' })
+    const res = await proxy.$api.club.getRecruitmentDetail(copyFromId.value)
+
+    if (res.code === 200 && res.data) {
+      const recruitment = res.data
+
+      // 复制模式：回显除ID外的所有数据
+      title.value = recruitment.title + ' (复制)'  // 标题加上"复制"标记
+      description.value = recruitment.description
+      startTime.value = recruitment.startTime
+      endTime.value = recruitment.endTime
+      planCount.value = recruitment.planCount
+      needInterview.value = recruitment.needInterview
+      interviewPlace.value = recruitment.interviewPlace || ''
+      poster.value = recruitment.poster || ''
+
+      // 设置选中的配置
+      const configId = recruitment.configId
+      console.log('招新的configId:', configId)
+      console.log('可用配置列表:', configs.value)
+
+      if (configId && configs.value.length > 0) {
+        selectedConfig.value = configs.value.find(c => c.id == configId)
+        console.log('找到的配置:', selectedConfig.value)
+
+        if (!selectedConfig.value) {
+          console.warn('未找到匹配的配置，configId:', configId)
+          uni.showToast({ title: '未找到对应的招新配置', icon: 'none' })
+        }
+      }
+
+      // 解析表单字段
+      if (recruitment.forms) {
+        try {
+          formFields.value = JSON.parse(recruitment.forms)
+        } catch (error) {
+          console.error('解析表单字段失败', error)
+          addDefaultFields()
+        }
+      } else {
+        addDefaultFields()
+      }
+    } else {
+      uni.showToast({ title: res.message || '加载招新详情失败', icon: 'none' })
+      setTimeout(() => uni.navigateBack(), 1500)
+    }
+  } catch (error) {
+    console.error('加载招新详情失败', error)
+    uni.showToast({ title: '网络异常，请稍后重试', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
+}
 
 const onConfigChange = (e) => {
   const idx = e.detail.value
@@ -254,7 +449,6 @@ const uploadPoster = () => {
         }
       } catch (error) {
         console.error('上传海报失败', error)
-        uni.showToast({ title: '海报上传失败', icon: 'none' })
       } finally {
         uni.hideLoading()
       }
@@ -329,15 +523,22 @@ const deleteOption = (fieldIndex, optionIndex) => {
 }
 
 const submitRecruitment = async () => {
+  // 表单验证
   if (!selectedConfig.value) return uni.showToast({ title: '请选择配置', icon: 'none' })
-  // 检查是否在配置时间内
-  const now = Date.now()
-  if (now < selectedConfig.value.globalStartTime || now > selectedConfig.value.globalEndTime) {
-    return uni.showToast({ title: '当前不在配置的招新时间范围内', icon: 'none' })
+
+  // 创建模式和复制模式：检查是否在配置时间内
+  // 编辑模式：不检查时间范围（允许编辑过期的招新）
+  if (!isEditMode.value) {
+    const now = Date.now()
+    if (now < selectedConfig.value.globalStartTime || now > selectedConfig.value.globalEndTime) {
+      return uni.showToast({ title: '当前不在配置的招新时间范围内', icon: 'none' })
+    }
   }
+
   if (!title.value) return uni.showToast({ title: '请输入标题', icon: 'none' })
   if (!startTime.value || !endTime.value) return uni.showToast({ title: '请选择时间', icon: 'none' })
   if (!planCount.value) return uni.showToast({ title: '请输入计划人数', icon: 'none' })
+
   const payload = {
     clubId: Number(clubId.value),
     configId: selectedConfig.value.id,
@@ -349,17 +550,44 @@ const submitRecruitment = async () => {
     needInterview: needInterview.value,
     interviewPlace: needInterview.value === 1 ? interviewPlace.value : null,
     poster: poster.value,
-    // 以下字段由前端提供，避免后端字段非空校验失败
     forms: JSON.stringify(formFields.value),
     joinCount: 0,
     passCount: 0
   }
-  const res = await proxy.$api.club.createRecruitment(payload)
-  if (res.code === 200) {
-    uni.showToast({ title: '创建成功', icon: 'success' })
-    setTimeout(() => uni.navigateBack(), 1500)
-  } else {
-    uni.showToast({ title: res.message || '创建失败', icon: 'none' })
+
+  // 编辑模式：将状态重置为审核中（0）
+  if (isEditMode.value) {
+    payload.status = 0  // 0=审核中，需要重新审核
+  }
+
+  try {
+    uni.showLoading({ title: isEditMode.value ? '保存中...' : '提交中...' })
+
+    let res
+    if (isEditMode.value) {
+      // 编辑模式：调用更新接口
+      res = await proxy.$api.club.updateRecruitment(recruitmentId.value, payload)
+    } else {
+      // 创建模式：调用创建接口
+      res = await proxy.$api.club.createRecruitment(payload)
+    }
+
+    if (res.code === 200) {
+      uni.showToast({
+        title: isEditMode.value ? '更新成功' : '创建成功',
+        icon: 'success'
+      })
+      setTimeout(() => uni.navigateBack(), 1500)
+    } else {
+      uni.showToast({
+        title: res.message || (isEditMode.value ? '更新失败' : '创建失败'),
+        icon: 'none'
+      })
+    }
+  } catch (error) {
+    console.error('提交失败', error)
+  } finally {
+    uni.hideLoading()
   }
 }
 </script>
@@ -455,6 +683,18 @@ const submitRecruitment = async () => {
   border-radius: 8rpx;
   font-size: 28rpx;
   box-sizing: border-box;
+}
+.config-time-info {
+  margin-top: 12rpx;
+  padding: 12rpx 20rpx;
+  background: #f0f7ff;
+  border-left: 3rpx solid #b13b7a;
+  border-radius: 4rpx;
+}
+.time-info-text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
 }
 .date-input {
   display: flex;

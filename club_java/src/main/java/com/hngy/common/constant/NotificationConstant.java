@@ -23,6 +23,12 @@ public class NotificationConstant {
     public static final String TYPE_CLUB_APPLY_APPROVED = "club_apply_approved";   // 社团申请审核通过
     public static final String TYPE_CLUB_APPLY_REJECTED = "club_apply_rejected";   // 社团申请审核拒绝
 
+    // 社团成员相关通知
+    public static final String TYPE_CLUB_MEMBER_REMOVED = "club_member_removed";   // 被移除出社团
+    public static final String TYPE_CLUB_QUIT_APPLY = "club_quit_apply";           // 用户申请退社（通知管理员）
+    public static final String TYPE_CLUB_QUIT_APPROVED = "club_quit_approved";     // 退社申请通过（通知用户）
+    public static final String TYPE_CLUB_QUIT_REJECTED = "club_quit_rejected";     // 退社申请拒绝（通知用户）
+
     // 签到相关通知
     public static final String TYPE_CHECK_IN = "check_in";                         // 签到成功
 
@@ -39,6 +45,10 @@ public class NotificationConstant {
     public static final String TITLE_APPLY_REJECTED = "报名审核未通过";
     public static final String TITLE_CLUB_APPLY_APPROVED = "社团申请通过";
     public static final String TITLE_CLUB_APPLY_REJECTED = "社团申请未通过";
+    public static final String TITLE_CLUB_MEMBER_REMOVED = "社团成员移除";
+    public static final String TITLE_CLUB_QUIT_APPLY = "退社申请";
+    public static final String TITLE_CLUB_QUIT_APPROVED = "退社申请通过";
+    public static final String TITLE_CLUB_QUIT_REJECTED = "退社申请拒绝";
     public static final String TITLE_CHECK_IN = "签到成功";
 
     /**

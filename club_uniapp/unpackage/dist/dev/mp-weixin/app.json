@@ -17,7 +17,6 @@
     "pages/club/detail",
     "pages/club/recruitment",
     "pages/club/createRecruitment",
-    "pages/club/editRecruitment",
     "pages/club/apply",
     "pages/club/applies",
     "pages/club/members",

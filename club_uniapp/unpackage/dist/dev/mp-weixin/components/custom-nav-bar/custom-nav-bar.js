@@ -14,9 +14,10 @@ const _sfc_main = {
       return {
         a: common_vendor.unref(utils_system.getStatusBarHeight)() + "px",
         b: common_vendor.t(__props.title),
-        c: common_vendor.unref(utils_system.getTitleBarHeight)() + "px",
-        d: common_vendor.unref(utils_system.getLeftIconLeft)() + "px",
-        e: common_vendor.unref(utils_system.getNavBarHeight)() + "px"
+        c: common_vendor.unref(utils_system.getMenuButtonRight)() + "px",
+        d: common_vendor.unref(utils_system.getTitleBarHeight)() + "px",
+        e: common_vendor.unref(utils_system.getLeftIconLeft)() + "px",
+        f: common_vendor.unref(utils_system.getNavBarHeight)() + "px"
       };
     };
   }
