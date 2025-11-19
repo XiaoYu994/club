@@ -442,6 +442,39 @@ export const chatAPI = {
 
   // 创建群组
   createChatGroup: (data) => request.post('/user/chat-api/group', data),
+
+  // 更新群组信息（名称、头像、简介等）
+  updateGroupInfo: (groupId, data) => request.put(`/user/chat-api/group/${groupId}`, data),
+
+  // 获取用户在群组中的设置
+  getUserGroupSettings: (groupId) => request.get(`/user/chat-api/group/${groupId}/user-settings`, null),
+
+  // 更新用户在群组中的设置（免打扰、置顶等）
+  updateUserGroupSettings: (groupId, data) => request.put(`/user/chat-api/group/${groupId}/user-settings`, data),
+
+  // 获取群组成员列表
+  getGroupMembers: (groupId) => request.get(`/user/chat-api/group/${groupId}/members`, null),
+
+  // 移除群成员（仅群主和管理员）
+  removeGroupMember: (groupId, userId) => request.delete(`/user/chat-api/group/${groupId}/member/${userId}`, null),
+
+  // 设置/取消管理员（仅群主）
+  setGroupAdmin: (groupId, userId, isAdmin) => request.put(`/user/chat-api/group/${groupId}/admin/${userId}`, { isAdmin }),
+
+  // 退出群组
+  quitGroup: (groupId) => request.post(`/user/chat-api/group/${groupId}/quit`, null),
+
+  // 解散群组（仅群主）
+  dismissGroup: (groupId) => request.delete(`/user/chat-api/group/${groupId}`, null),
+
+  // 转让群主（仅群主）
+  transferOwner: (groupId, userId) => request.put(`/user/chat-api/group/${groupId}/transfer/${userId}`, null),
+
+  // 更新群公告（仅群主和管理员）
+  updateGroupAnnouncement: (groupId, announcement) => request.put(`/user/chat-api/group/${groupId}/announcement`, { announcement }),
+
+  // 获取在线用户列表（公共接口）
+  getOnlineUsers: () => request.get('/user/chat-api/online-users', null),
 }
 
 /**

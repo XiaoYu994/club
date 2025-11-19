@@ -16,8 +16,8 @@ const getLeftIconLeft = () => {
 };
 const getMenuButtonRight = () => {
   if (common_vendor.index.getMenuButtonBoundingClientRect) {
-    let { right } = common_vendor.index.getMenuButtonBoundingClientRect();
-    return SYSTEM_INFO.windowWidth - right + 10;
+    let { left, width } = common_vendor.index.getMenuButtonBoundingClientRect();
+    return SYSTEM_INFO.windowWidth - left + 10;
   } else {
     return 10;
   }

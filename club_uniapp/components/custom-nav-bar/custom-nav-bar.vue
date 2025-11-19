@@ -9,7 +9,7 @@
 					<slot name="left"></slot>
 				</view>
 				<view class="title">{{title}}</view>
-				<!-- 新增右侧插槽 -->
+				<!-- 新增右侧插槽，确保不被胶囊遮挡 -->
 				<view class="right-slot" :style="{right:getMenuButtonRight()+'px'}">
 					<slot name="right"></slot>
 				</view>
@@ -42,7 +42,9 @@ defineProps({
 		background:
 		linear-gradient(to bottom,transparent,#fff 400rpx),
 		linear-gradient(to right,#beecd8 20%,#F4E2D8);
-		.statusBar{}
+		.statusBar{
+			// 状态栏占位区域
+		}
 		.titleBar{
 			display: flex;
 			align-items: center;
@@ -50,11 +52,13 @@ defineProps({
 			position: relative;
 			.left-slot {
 				position: absolute;
-				left: 0;
-				top: 0;
-				height: 100%;
+				left: 30rpx;
+				top: 50%;
+				transform: translateY(-50%);
 				display: flex;
 				align-items: center;
+				z-index: 2;
+				max-width: 50%; // 确保左侧插槽有足够空间显示多个按钮
 			}
 			.title{
 				flex: 1;
@@ -62,14 +66,15 @@ defineProps({
 				font-size: 22px;
 				font-weight: 700;
 				color: $text-color-primary;
+				padding: 0 150rpx; // 为左右两侧的按钮留出足够空间
 			}
 			.right-slot {
 				position: absolute;
-				right: 0;
-				top: 0;
-				height: 100%;
+				top: 50%;
+				transform: translateY(-50%);
 				display: flex;
 				align-items: center;
+				z-index: 2;
 			}
 		}
 	}

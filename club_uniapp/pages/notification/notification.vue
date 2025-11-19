@@ -160,6 +160,9 @@ async function handleNotificationClick(notification) {
       await proxy.$api.notification.markAsRead(notification.id);
       notification.isRead = 1;
       unreadCount.value = Math.max(0, unreadCount.value - 1);
+
+      // 更新tabBar红点
+      updateTabBarBadge();
     } catch (error) {
       console.error('标记已读失败:', error);
     }
@@ -188,6 +191,18 @@ async function handleNotificationClick(notification) {
   }
 }
 
+// 更新tabBar红点
+function updateTabBarBadge() {
+  if (unreadCount.value > 0) {
+    uni.setTabBarBadge({
+      index: 3,
+      text: unreadCount.value > 99 ? '99+' : String(unreadCount.value)
+    });
+  } else {
+    uni.removeTabBarBadge({ index: 3 });
+  }
+}
+
 // 全部标记为已读
 function handleMarkAllRead() {
   uni.showModal({
@@ -205,6 +220,9 @@ function handleMarkAllRead() {
               item.isRead = 1;
             });
             unreadCount.value = 0;
+
+            // 更新tabBar红点
+            updateTabBarBadge();
 
             uni.showToast({ title: '已全部标记为已读', icon: 'success' });
           } else {
@@ -241,6 +259,8 @@ function handleDelete(notification) {
             // 更新未读数量
             if (notification.isRead === 0) {
               unreadCount.value = Math.max(0, unreadCount.value - 1);
+              // 更新tabBar红点
+              updateTabBarBadge();
             }
 
             uni.showToast({ title: '删除成功', icon: 'success' });

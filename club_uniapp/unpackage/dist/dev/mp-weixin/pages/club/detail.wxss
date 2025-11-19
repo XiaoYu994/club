@@ -378,14 +378,20 @@
 .action-bar .admin-actions.data-v-425dc59c {
   flex: 1;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 16rpx;
 }
 .action-bar .admin-actions button.data-v-425dc59c {
-  margin-left: 20rpx;
+  flex: 1;
+  min-width: 0;
   height: 80rpx;
   line-height: 80rpx;
-  font-size: 28rpx;
+  padding: 0 16rpx;
+  font-size: 26rpx;
   border-radius: 40rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .action-bar .admin-actions .edit-btn.data-v-425dc59c {
   background-color: #f5f5f5;
@@ -406,7 +412,6 @@
 .action-bar .admin-actions .recruit-btn.data-v-425dc59c {
   background-color: #4caf50;
   color: #fff;
-  margin-left: 20rpx;
 }
 .action-bar .user-actions.data-v-425dc59c {
   flex: 1;

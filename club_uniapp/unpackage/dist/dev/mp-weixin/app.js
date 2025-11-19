@@ -30,6 +30,7 @@ if (!Math) {
   "./pages/club/topTen.js";
   "./pages/club/manageRecruitment.js";
   "./pages/chat/room.js";
+  "./pages/chat/settings.js";
   "./pages/chat/create.js";
   "./pages/notice/notice.js";
   "./pages/notice/detail.js";
@@ -62,31 +63,61 @@ const _sfc_main = {
         common_vendor.index.__f__("error", "at App.vue:23", "【App】WebSocket连接失败:", error);
         common_vendor.index.__f__("error", "at App.vue:24", "【App】错误详情:", JSON.stringify(error));
       });
+      this.loadUnreadCountAndUpdateBadge();
     } else {
-      common_vendor.index.__f__("log", "at App.vue:27", "【App】用户未登录，跳过WebSocket连接");
+      common_vendor.index.__f__("log", "at App.vue:30", "【App】用户未登录，跳过WebSocket连接");
     }
     this.registerGlobalNotificationHandlers();
   },
   onShow: function() {
-    common_vendor.index.__f__("log", "at App.vue:34", "【App】应用显示");
+    common_vendor.index.__f__("log", "at App.vue:37", "【App】应用显示");
     const token = common_vendor.index.getStorageSync("token");
     if (token && utils_websocket.wsClient.isConnected) {
       this.registerGlobalNotificationHandlers();
+      this.loadUnreadCountAndUpdateBadge();
     }
   },
   onHide: function() {
-    common_vendor.index.__f__("log", "at App.vue:44", "App Hide");
+    common_vendor.index.__f__("log", "at App.vue:50", "App Hide");
   },
   methods: {
+    /**
+     * 加载未读消息数量并更新tabBar红点
+     */
+    async loadUnreadCountAndUpdateBadge() {
+      try {
+        common_vendor.index.__f__("log", "at App.vue:58", "【App】开始加载未读消息数量");
+        const response = await api_api.apiModule.notification.getUnreadCount();
+        if (response.code === 200) {
+          const unreadCount = response.data || 0;
+          common_vendor.index.__f__("log", "at App.vue:63", "【App】未读消息数量:", unreadCount);
+          if (unreadCount > 0) {
+            const badgeText = unreadCount > 99 ? "99+" : String(unreadCount);
+            common_vendor.index.setTabBarBadge({
+              index: 3,
+              text: badgeText
+            });
+            common_vendor.index.__f__("log", "at App.vue:72", "【App】已设置tabBar红点:", badgeText);
+          } else {
+            common_vendor.index.removeTabBarBadge({ index: 3 });
+            common_vendor.index.__f__("log", "at App.vue:75", "【App】已移除tabBar红点");
+          }
+        } else {
+          common_vendor.index.__f__("error", "at App.vue:78", "【App】获取未读消息数量失败:", response.message);
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at App.vue:81", "【App】加载未读消息数量异常:", error);
+      }
+    },
     /**
      * 注册全局消息通知处理器
      */
     registerGlobalNotificationHandlers() {
-      common_vendor.index.__f__("log", "at App.vue:51", "【App】开始注册全局通知处理器");
+      common_vendor.index.__f__("log", "at App.vue:89", "【App】开始注册全局通知处理器");
       const handleNotification = (message) => {
-        common_vendor.index.__f__("log", "at App.vue:55", "【通知】收到通知消息:", message);
+        common_vendor.index.__f__("log", "at App.vue:93", "【通知】收到通知消息:", message);
         if (!message.type || !message.title || !message.message) {
-          common_vendor.index.__f__("error", "at App.vue:59", "【通知】消息格式不正确，缺少必需字段:", message);
+          common_vendor.index.__f__("error", "at App.vue:97", "【通知】消息格式不正确，缺少必需字段:", message);
           return;
         }
         utils_notification.showNotification({
@@ -96,6 +127,7 @@ const _sfc_main = {
           message: message.message,
           extraInfo: message.extraInfo || message.feedback || null
         });
+        this.updateTabBarBadgeOnNewMessage();
         this.emitNotificationEvent(message);
       };
       const notificationTypes = [
@@ -128,9 +160,9 @@ const _sfc_main = {
       ];
       notificationTypes.forEach((type) => {
         utils_websocket.wsClient.onMessageType(type, handleNotification);
-        common_vendor.index.__f__("log", "at App.vue:94", `【App】已注册通知类型: ${type}`);
+        common_vendor.index.__f__("log", "at App.vue:135", `【App】已注册通知类型: ${type}`);
       });
-      common_vendor.index.__f__("log", "at App.vue:97", "【App】全局通知处理器注册完成");
+      common_vendor.index.__f__("log", "at App.vue:138", "【App】全局通知处理器注册完成");
     },
     // 触发全局事件（供其他页面监听状态变化）
     emitNotificationEvent(message) {
@@ -195,6 +227,39 @@ const _sfc_main = {
           title: message.title,
           message: message.message
         });
+      }
+    },
+    // 收到新消息时更新tabBar红点
+    updateTabBarBadgeOnNewMessage() {
+      try {
+        common_vendor.index.getTabBarBadge({
+          index: 3,
+          success: (res) => {
+            let currentCount = 0;
+            if (res.text) {
+              if (res.text === "99+") {
+                return;
+              }
+              currentCount = parseInt(res.text) || 0;
+            }
+            const newCount = currentCount + 1;
+            const badgeText = newCount > 99 ? "99+" : String(newCount);
+            common_vendor.index.setTabBarBadge({
+              index: 3,
+              text: badgeText
+            });
+            common_vendor.index.__f__("log", "at App.vue:238", "【TabBar】更新红点数量:", badgeText);
+          },
+          fail: () => {
+            common_vendor.index.setTabBarBadge({
+              index: 3,
+              text: "1"
+            });
+            common_vendor.index.__f__("log", "at App.vue:246", "【TabBar】设置红点数量: 1");
+          }
+        });
+      } catch (error) {
+        common_vendor.index.__f__("error", "at App.vue:250", "【TabBar】更新红点失败:", error);
       }
     }
   }

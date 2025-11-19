@@ -94,6 +94,27 @@
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
   font-size: 26rpx;
   color: #333;
+  position: relative;
+}
+.quick-entry .entry-item .icon-wrapper.data-v-0f7520f0 {
+  position: relative;
+  margin-bottom: 12rpx;
+}
+.quick-entry .entry-item .icon-wrapper .badge.data-v-0f7520f0 {
+  position: absolute;
+  top: -8rpx;
+  right: -20rpx;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 20rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  text-align: center;
+  border-radius: 16rpx;
+  padding: 0 8rpx;
+  font-weight: bold;
+  box-shadow: 0 2rpx 4rpx rgba(255, 59, 48, 0.3);
 }
 .quick-entry .entry-item .uni-icons.data-v-0f7520f0 {
   margin-bottom: 12rpx;

@@ -183,6 +183,13 @@
 		}
 	},
 	{
+		"path": "pages/chat/settings",
+		"style": {
+			"navigationBarTitleText": "群聊设置",
+			"navigationStyle": "custom"
+		}
+	},
+	{
 		"path": "pages/chat/create",
 		"style": {
 			"navigationBarTitleText": "创建群聊",

@@ -26,7 +26,10 @@
           <text>我的活动</text>
         </view>
         <view class="entry-item" @tap="goMyMessages">
-          <uni-icons type="email" size="28" color="#22e58b"></uni-icons>
+          <view class="icon-wrapper">
+            <uni-icons type="email" size="28" color="#22e58b"></uni-icons>
+            <view v-if="unreadCount > 0" class="badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</view>
+          </view>
           <text>我的消息</text>
         </view>
         <view class="entry-item" @tap="goMyApplies">
@@ -151,6 +154,7 @@
 
 <script setup>
 import { getCurrentInstance, ref, reactive, onMounted, onActivated } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { removeUser } from '@/utils/auth.js'
 
 const { proxy } = getCurrentInstance()
@@ -159,6 +163,9 @@ const editPopup = ref(null)
 
 // 用户信息 - 直接使用后端返回的数据结构
 const user = ref({})
+
+// 未读消息数量
+const unreadCount = ref(0)
 
 // 编辑表单
 const editForm = reactive({
@@ -193,20 +200,38 @@ onMounted(() => {
   }
   // 获取用户信息
   getUserInfo()
+  // 获取未读消息数量
+  loadUnreadCount()
+  // 更新tabBar红点
+  updateTabBarBadge()
 })
 
 // 添加页面激活时的钩子函数
 onActivated(() => {
   // 检查是否已登录
-  const token = uni.getStorageSync('token')  
+  const token = uni.getStorageSync('token')
   // 正确设置登录状态 - 如果有token则为true，否则为false
   isLoggedIn.value = !!token
   // 如果已登录，则重新获取用户信息
   if (token) {
     getUserInfo()
+    loadUnreadCount()
+    updateTabBarBadge()
   } else {
     // 如果没有token，确保用户信息被清空
     user.value = {}
+    unreadCount.value = 0
+    // 清除tabBar红点
+    uni.removeTabBarBadge({ index: 3 })
+  }
+})
+
+// 页面显示时刷新未读数量
+onShow(() => {
+  const token = uni.getStorageSync('token')
+  if (token) {
+    loadUnreadCount()
+    updateTabBarBadge()
   }
 })
 
@@ -230,6 +255,33 @@ async function getUserInfo() {
       title: '获取用户信息失败',
       icon: 'none'
     })
+  }
+}
+
+// 获取未读消息数量
+async function loadUnreadCount() {
+  try {
+    const res = await proxy.$api.notification.getUnreadCount()
+    if (res.code === 200) {
+      unreadCount.value = res.data || 0
+      console.log('【未读消息】数量:', unreadCount.value)
+    }
+  } catch (error) {
+    console.error('获取未读消息数量失败', error)
+  }
+}
+
+// 更新tabBar红点
+function updateTabBarBadge() {
+  if (unreadCount.value > 0) {
+    // 在"我的"tab（索引3）上显示红点
+    uni.setTabBarBadge({
+      index: 3,
+      text: unreadCount.value > 99 ? '99+' : String(unreadCount.value)
+    })
+  } else {
+    // 移除红点
+    uni.removeTabBarBadge({ index: 3 })
   }
 }
 
@@ -520,7 +572,7 @@ function logout() {
   justify-content: space-between;
   flex-wrap: wrap;
   margin: 32rpx 24rpx 0 24rpx;
-  
+
   .entry-item {
     width: 48%;
     background: #fff;
@@ -533,7 +585,30 @@ function logout() {
     box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
     font-size: 26rpx;
     color: #333;
-    
+    position: relative;
+
+    .icon-wrapper {
+      position: relative;
+      margin-bottom: 12rpx;
+
+      .badge {
+        position: absolute;
+        top: -8rpx;
+        right: -20rpx;
+        background: #ff3b30;
+        color: #fff;
+        font-size: 20rpx;
+        min-width: 32rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+        text-align: center;
+        border-radius: 16rpx;
+        padding: 0 8rpx;
+        font-weight: bold;
+        box-shadow: 0 2rpx 4rpx rgba(255, 59, 48, 0.3);
+      }
+    }
+
     .uni-icons {
       margin-bottom: 12rpx;
     }

@@ -16,11 +16,13 @@
 }
 .layout .navbar .titleBar .left-slot.data-v-412fc155 {
   position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
+  left: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
+  z-index: 2;
+  max-width: 50%;
 }
 .layout .navbar .titleBar .title.data-v-412fc155 {
   flex: 1;
@@ -28,12 +30,13 @@
   font-size: 22px;
   font-weight: 700;
   color: #334155;
+  padding: 0 150rpx;
 }
 .layout .navbar .titleBar .right-slot.data-v-412fc155 {
   position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
+  z-index: 2;
 }

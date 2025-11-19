@@ -23,6 +23,9 @@ export default {
           console.error('【App】WebSocket连接失败:', error)
           console.error('【App】错误详情:', JSON.stringify(error))
         })
+
+      // 加载未读消息数量并显示tabBar红点
+      this.loadUnreadCountAndUpdateBadge()
     } else {
       console.log('【App】用户未登录，跳过WebSocket连接')
     }
@@ -38,12 +41,47 @@ export default {
     if (token && wsClient.isConnected) {
       // 重新注册全局处理器（防御性措施，避免被其他页面清除）
       this.registerGlobalNotificationHandlers()
+
+      // 刷新未读消息数量
+      this.loadUnreadCountAndUpdateBadge()
     }
   },
   onHide: function() {
     console.log('App Hide')
   },
   methods: {
+    /**
+     * 加载未读消息数量并更新tabBar红点
+     */
+    async loadUnreadCountAndUpdateBadge() {
+      try {
+        console.log('【App】开始加载未读消息数量')
+        const response = await apiModule.notification.getUnreadCount()
+
+        if (response.code === 200) {
+          const unreadCount = response.data || 0
+          console.log('【App】未读消息数量:', unreadCount)
+
+          // 更新tabBar红点
+          if (unreadCount > 0) {
+            const badgeText = unreadCount > 99 ? '99+' : String(unreadCount)
+            uni.setTabBarBadge({
+              index: 3,
+              text: badgeText
+            })
+            console.log('【App】已设置tabBar红点:', badgeText)
+          } else {
+            uni.removeTabBarBadge({ index: 3 })
+            console.log('【App】已移除tabBar红点')
+          }
+        } else {
+          console.error('【App】获取未读消息数量失败:', response.message)
+        }
+      } catch (error) {
+        console.error('【App】加载未读消息数量异常:', error)
+      }
+    },
+
     /**
      * 注册全局消息通知处理器
      */
@@ -67,6 +105,9 @@ export default {
           message: message.message,
           extraInfo: message.extraInfo || message.feedback || null
         })
+
+        // 更新tabBar红点（收到新消息时，未读数+1）
+        this.updateTabBarBadgeOnNewMessage()
 
         // 触发对应的全局事件（供其他页面监听）
         this.emitNotificationEvent(message)
@@ -169,6 +210,44 @@ export default {
           title: message.title,
           message: message.message
         })
+      }
+    },
+
+    // 收到新消息时更新tabBar红点
+    updateTabBarBadgeOnNewMessage() {
+      try {
+        // 获取当前显示的徽章文本
+        uni.getTabBarBadge({
+          index: 3,
+          success: (res) => {
+            let currentCount = 0
+            if (res.text) {
+              // 如果显示的是99+，则保持99+
+              if (res.text === '99+') {
+                return
+              }
+              currentCount = parseInt(res.text) || 0
+            }
+            // 新消息数+1
+            const newCount = currentCount + 1
+            const badgeText = newCount > 99 ? '99+' : String(newCount)
+            uni.setTabBarBadge({
+              index: 3,
+              text: badgeText
+            })
+            console.log('【TabBar】更新红点数量:', badgeText)
+          },
+          fail: () => {
+            // 如果没有徽章，则设置为1
+            uni.setTabBarBadge({
+              index: 3,
+              text: '1'
+            })
+            console.log('【TabBar】设置红点数量: 1')
+          }
+        })
+      } catch (error) {
+        console.error('【TabBar】更新红点失败:', error)
       }
     }
   }

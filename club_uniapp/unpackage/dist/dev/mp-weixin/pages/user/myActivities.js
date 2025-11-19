@@ -20,28 +20,74 @@ const _sfc_main = {
     const hasMore = common_vendor.ref(true);
     const isLoading = common_vendor.ref(false);
     const refreshing = common_vendor.ref(false);
+    const formatTime = (timestamp) => {
+      if (!timestamp)
+        return "";
+      const ts = timestamp < 1e10 ? timestamp * 1e3 : timestamp;
+      const date = new Date(ts);
+      if (isNaN(date.getTime())) {
+        common_vendor.index.__f__("warn", "at pages/user/myActivities.vue:87", "[时间格式化] 无效的时间戳:", timestamp);
+        return "";
+      }
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${month}-${day} ${hours}:${minutes}`;
+    };
     const loadActivities = async () => {
       if (isLoading.value)
         return;
       isLoading.value = true;
       try {
+        common_vendor.index.__f__("log", "at pages/user/myActivities.vue:103", "[我的活动] 开始加载活动列表...");
         const res = await proxy.$api.activity.getMyActivities();
+        common_vendor.index.__f__("log", "at pages/user/myActivities.vue:105", "[我的活动] API响应:", res);
         if (res.code === 200) {
           const applies = res.data || [];
+          common_vendor.index.__f__("log", "at pages/user/myActivities.vue:109", "[我的活动] 获取到报名记录数:", applies.length);
           const enriched = await Promise.all(
             applies.map(async (apply) => {
-              const detailRes = await proxy.$api.activity.getActivityDetail(apply.activityId);
-              if (detailRes.code === 200) {
-                apply.poster = detailRes.data.poster;
-                apply.title = detailRes.data.title;
+              try {
+                const detailRes = await proxy.$api.activity.getActivityDetail(apply.activityId);
+                if (detailRes.code === 200) {
+                  const detail = detailRes.data;
+                  return {
+                    ...apply,
+                    poster: detail.poster,
+                    title: detail.title,
+                    description: detail.description,
+                    startTime: detail.startTime,
+                    endTime: detail.endTime,
+                    address: detail.address,
+                    activityStatus: detail.status
+                    // 活动状态（0=取消 1=计划中 2=进行中 3=已结束）
+                  };
+                } else {
+                  common_vendor.index.__f__("warn", "at pages/user/myActivities.vue:130", `[我的活动] 获取活动详情失败 activityId=${apply.activityId}`, detailRes);
+                  return apply;
+                }
+              } catch (err) {
+                common_vendor.index.__f__("error", "at pages/user/myActivities.vue:134", `[我的活动] 获取活动详情异常 activityId=${apply.activityId}`, err);
+                return apply;
               }
-              return apply;
             })
           );
           activityList.value = enriched;
+          common_vendor.index.__f__("log", "at pages/user/myActivities.vue:141", "[我的活动] 最终活动列表:", enriched);
+        } else {
+          common_vendor.index.__f__("error", "at pages/user/myActivities.vue:143", "[我的活动] API返回错误码:", res.code, res.msg);
+          common_vendor.index.showToast({
+            title: res.msg || "加载失败",
+            icon: "none"
+          });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/myActivities.vue:81", "加载我的活动失败", error);
+        common_vendor.index.__f__("error", "at pages/user/myActivities.vue:150", "[我的活动] 加载活动列表异常:", error);
+        common_vendor.index.showToast({
+          title: "网络错误，请重试",
+          icon: "none"
+        });
       } finally {
         isLoading.value = false;
         refreshing.value = false;
@@ -59,6 +105,18 @@ const _sfc_main = {
           return "未知";
       }
     };
+    const getApplyStatusClass = (status) => {
+      switch (status) {
+        case 0:
+          return "status-pending";
+        case 1:
+          return "status-approved";
+        case 2:
+          return "status-rejected";
+        default:
+          return "status-unknown";
+      }
+    };
     const getCheckInStatusText = (status) => {
       switch (status) {
         case 0:
@@ -67,6 +125,44 @@ const _sfc_main = {
           return "已签到";
         default:
           return "未知";
+      }
+    };
+    const getCheckInStatusClass = (status) => {
+      switch (status) {
+        case 0:
+          return "status-not-checked";
+        case 1:
+          return "status-checked";
+        default:
+          return "status-unknown";
+      }
+    };
+    const getActivityStatusText = (status) => {
+      switch (status) {
+        case 0:
+          return "已取消";
+        case 1:
+          return "计划中";
+        case 2:
+          return "进行中";
+        case 3:
+          return "已结束";
+        default:
+          return "";
+      }
+    };
+    const getActivityStatusClass = (status) => {
+      switch (status) {
+        case 0:
+          return "status-cancelled";
+        case 1:
+          return "status-planned";
+        case 2:
+          return "status-ongoing";
+        case 3:
+          return "status-finished";
+        default:
+          return "status-unknown";
       }
     };
     const refreshActivities = () => {
@@ -95,14 +191,41 @@ const _sfc_main = {
           showBack: true
         }),
         c: common_vendor.f(activityList.value, (act, idx, i0) => {
-          return {
+          return common_vendor.e({
             a: act.poster || "/static/images/default-activity.png",
-            b: common_vendor.t(act.title),
-            c: common_vendor.t(getApplyStatusText(act.status)),
-            d: common_vendor.t(getCheckInStatusText(act.checkInStatus)),
-            e: idx,
-            f: common_vendor.o(($event) => goToDetail(act), idx)
-          };
+            b: common_vendor.t(act.title || "活动标题加载中..."),
+            c: act.startTime
+          }, act.startTime ? {
+            d: "dc2080c9-1-" + i0,
+            e: common_vendor.p({
+              type: "calendar",
+              size: "14",
+              color: "#999"
+            }),
+            f: common_vendor.t(formatTime(act.startTime))
+          } : {}, {
+            g: act.address
+          }, act.address ? {
+            h: "dc2080c9-2-" + i0,
+            i: common_vendor.p({
+              type: "location",
+              size: "14",
+              color: "#999"
+            }),
+            j: common_vendor.t(act.address)
+          } : {}, {
+            k: common_vendor.t(getApplyStatusText(act.status)),
+            l: common_vendor.n(getApplyStatusClass(act.status)),
+            m: common_vendor.t(getCheckInStatusText(act.checkInStatus)),
+            n: common_vendor.n(getCheckInStatusClass(act.checkInStatus)),
+            o: act.activityStatus !== void 0
+          }, act.activityStatus !== void 0 ? {
+            p: common_vendor.t(getActivityStatusText(act.activityStatus)),
+            q: common_vendor.n(getActivityStatusClass(act.activityStatus))
+          } : {}, {
+            r: idx,
+            s: common_vendor.o(($event) => goToDetail(act), idx)
+          });
         }),
         d: isLoading.value
       }, isLoading.value ? {
@@ -113,10 +236,16 @@ const _sfc_main = {
         })
       } : {}, {
         f: activityList.value.length === 0 && !isLoading.value
-      }, activityList.value.length === 0 && !isLoading.value ? {} : {}, {
-        g: refreshing.value,
-        h: common_vendor.o(refreshActivities),
-        i: common_vendor.o(loadMore)
+      }, activityList.value.length === 0 && !isLoading.value ? {
+        g: common_vendor.p({
+          type: "inbox",
+          size: "80",
+          color: "#ddd"
+        })
+      } : {}, {
+        h: refreshing.value,
+        i: common_vendor.o(refreshActivities),
+        j: common_vendor.o(loadMore)
       });
     };
   }

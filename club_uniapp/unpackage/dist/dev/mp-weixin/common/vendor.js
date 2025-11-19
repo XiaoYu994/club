@@ -7337,9 +7337,9 @@ function isConsoleWritable() {
   return isWritable;
 }
 function initRuntimeSocketService() {
-  const hosts = "172.28.64.1,192.168.234.200,127.0.0.1";
+  const hosts = "172.28.64.1,192.168.16.200,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_urVt6i";
+  const id = "mp-weixin_c85afk";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8482,6 +8482,13 @@ const pages = [
     style: {
       navigationBarTitleText: "聊天室",
       enablePullDownRefresh: true,
+      navigationStyle: "custom"
+    }
+  },
+  {
+    path: "pages/chat/settings",
+    style: {
+      navigationBarTitleText: "群聊设置",
       navigationStyle: "custom"
     }
   },

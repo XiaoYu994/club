@@ -4,14 +4,14 @@ const api_api = require("../../api/api.js");
 const utils_websocket = require("../../utils/websocket.js");
 const utils_auth = require("../../utils/auth.js");
 if (!Array) {
-  const _easycom_custom_nav_bar2 = common_vendor.resolveComponent("custom-nav-bar");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
-  (_easycom_custom_nav_bar2 + _easycom_uni_icons2)();
+  const _easycom_custom_nav_bar2 = common_vendor.resolveComponent("custom-nav-bar");
+  (_easycom_uni_icons2 + _easycom_custom_nav_bar2)();
 }
-const _easycom_custom_nav_bar = () => "../../components/custom-nav-bar/custom-nav-bar.js";
 const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+const _easycom_custom_nav_bar = () => "../../components/custom-nav-bar/custom-nav-bar.js";
 if (!Math) {
-  (_easycom_custom_nav_bar + _easycom_uni_icons)();
+  (_easycom_uni_icons + _easycom_custom_nav_bar)();
 }
 const _sfc_main = {
   __name: "room",
@@ -31,14 +31,16 @@ const _sfc_main = {
     const roomInfo = common_vendor.reactive({
       name: "",
       avatar: "",
-      memberCount: 0
+      memberCount: 0,
+      clubId: null
+      // 添加clubId字段
     });
     const userInfo = utils_auth.getUser();
-    common_vendor.index.__f__("log", "at pages/chat/room.vue:201", "当前用户信息:", userInfo);
+    common_vendor.index.__f__("log", "at pages/chat/room.vue:297", "当前用户信息:", userInfo);
     const userIdValue = common_vendor.ref(null);
     if (userInfo && userInfo.id) {
       userIdValue.value = Number(userInfo.id);
-      common_vendor.index.__f__("log", "at pages/chat/room.vue:207", "转换后的用户ID:", userIdValue.value);
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:303", "转换后的用户ID:", userIdValue.value);
     }
     const userId = common_vendor.computed(() => {
       if (userIdValue.value !== null) {
@@ -47,7 +49,7 @@ const _sfc_main = {
       const currentUser = utils_auth.getUser();
       if (currentUser && currentUser.id) {
         userIdValue.value = Number(currentUser.id);
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:217", "重新获取用户ID:", userIdValue.value);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:313", "重新获取用户ID:", userIdValue.value);
         return userIdValue.value;
       }
       return null;
@@ -62,6 +64,35 @@ const _sfc_main = {
     const hasMore = common_vendor.ref(true);
     const showMorePanel = common_vendor.ref(false);
     const scrollIntoViewId = common_vendor.ref("");
+    const showMemberDrawer = common_vendor.ref(false);
+    const memberList = common_vendor.ref([]);
+    const searchKeyword = common_vendor.ref("");
+    const isLoadingMembers = common_vendor.ref(false);
+    const isOwner = common_vendor.ref(false);
+    const onlineUserIds = common_vendor.ref(/* @__PURE__ */ new Set());
+    const sortedMembers = common_vendor.computed(() => {
+      const members = [...memberList.value];
+      return members.sort((a, b) => {
+        if (a.role !== b.role) {
+          return (b.role || 0) - (a.role || 0);
+        }
+        if (a.isOnline !== b.isOnline) {
+          return b.isOnline ? 1 : -1;
+        }
+        return (a.joinTime || 0) - (b.joinTime || 0);
+      });
+    });
+    const filteredMembers = common_vendor.computed(() => {
+      if (!searchKeyword.value || !searchKeyword.value.trim()) {
+        return sortedMembers.value;
+      }
+      const keyword = searchKeyword.value.trim().toLowerCase();
+      return sortedMembers.value.filter((member) => {
+        const nickname = (member.nickname || member.username || "").toLowerCase();
+        const studentId = (member.studentId || "").toLowerCase();
+        return nickname.includes(keyword) || studentId.includes(keyword);
+      });
+    });
     async function initUserInfo() {
       if (!utils_auth.getUser()) {
         try {
@@ -71,32 +102,32 @@ const _sfc_main = {
             userAvatar.value = res.data.avatar || userAvatar.value;
             userName.value = res.data.name || userName.value;
             userIdValue.value = Number(res.data.id);
-            common_vendor.index.__f__("log", "at pages/chat/room.vue:245", "从后端拉取并更新用户信息:", res.data);
+            common_vendor.index.__f__("log", "at pages/chat/room.vue:384", "从后端拉取并更新用户信息:", res.data);
           }
         } catch (e) {
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:248", "获取用户信息失败:", e);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:387", "获取用户信息失败:", e);
         }
       }
     }
     function updateMessageHandler() {
       utils_websocket.wsClient.onMessageType("group_message", handleReceivedMessage);
       utils_websocket.wsClient.onMessageType("error", handleError);
-      common_vendor.index.__f__("log", "at pages/chat/room.vue:260", "【聊天室】消息处理器已注册");
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:399", "【聊天室】消息处理器已注册");
     }
     const connectWebSocket = async () => {
       const serverUrl = api_api.apiModule.baseURL || "localhost:8081";
       if (utils_websocket.wsClient.isConnected) {
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:271", "【聊天室】WebSocket已连接，直接使用现有连接");
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:410", "【聊天室】WebSocket已连接，直接使用现有连接");
         updateMessageHandler();
         return;
       }
-      common_vendor.index.__f__("log", "at pages/chat/room.vue:276", "【聊天室】WebSocket未连接，尝试连接...");
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:415", "【聊天室】WebSocket未连接，尝试连接...");
       try {
         await utils_websocket.wsClient.connect(serverUrl, false);
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:280", "【聊天室】WebSocket连接成功");
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:419", "【聊天室】WebSocket连接成功");
         updateMessageHandler();
       } catch (error) {
-        common_vendor.index.__f__("warn", "at pages/chat/room.vue:283", "【聊天室】WebSocket初次连接失败，正在重试...", error);
+        common_vendor.index.__f__("warn", "at pages/chat/room.vue:422", "【聊天室】WebSocket初次连接失败，正在重试...", error);
       }
     };
     const loadGroupDetail = async () => {
@@ -111,7 +142,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:303", "获取群组详情失败:", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:442", "获取群组详情失败:", error);
       }
     };
     function formatDividerTime(timestamp) {
@@ -130,7 +161,7 @@ const _sfc_main = {
         dateObj = timestamp;
       }
       if (isNaN(dateObj.getTime())) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:334", "无效的时间格式:", timestamp);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:473", "无效的时间格式:", timestamp);
         return "未知时间";
       }
       const now = /* @__PURE__ */ new Date();
@@ -164,7 +195,7 @@ const _sfc_main = {
         dateObj = timestamp;
       }
       if (isNaN(dateObj.getTime())) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:390", "无效的时间格式:", timestamp);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:529", "无效的时间格式:", timestamp);
         return "未知时间";
       }
       return `${dateObj.getHours().toString().padStart(2, "0")}:${dateObj.getMinutes().toString().padStart(2, "0")}`;
@@ -185,7 +216,7 @@ const _sfc_main = {
         prevTime = typeof prevMsg.createTime === "number" ? prevMsg.createTime : new Date(prevMsg.createTime).getTime();
         return Math.abs(prevTime - currentTime) > 5 * 60 * 1e3;
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:419", "比较消息时间出错:", e);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:558", "比较消息时间出错:", e);
         return false;
       }
     };
@@ -222,7 +253,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: response.msg || "获取消息失败", icon: "none" });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:466", "获取消息历史失败:", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:605", "获取消息历史失败:", error);
       } finally {
         loading.value = false;
       }
@@ -257,7 +288,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: response.msg || "获取消息失败", icon: "none" });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:508", "获取消息历史失败:", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:647", "获取消息历史失败:", error);
       } finally {
         loading.value = false;
       }
@@ -265,7 +296,7 @@ const _sfc_main = {
     const handleReceivedMessage = (message) => {
       if (message.groupId === groupId.value) {
         message.senderId = Number(message.senderId);
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:521", "收到WebSocket消息:", message);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:660", "收到WebSocket消息:", message);
         if (message.contentType === 3) {
           try {
             if (typeof message.content === "string") {
@@ -276,7 +307,7 @@ const _sfc_main = {
               message.content = JSON.stringify(locationData);
             }
           } catch (e) {
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:533", "解析位置消息失败:", e);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:672", "解析位置消息失败:", e);
           }
         }
         if (userId.value && message.senderId === userId.value) {
@@ -369,7 +400,7 @@ const _sfc_main = {
         }
         return content;
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:661", "解析位置信息失败:", e);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:800", "解析位置信息失败:", e);
         return { name: "位置信息", address: "" };
       }
     };
@@ -402,10 +433,10 @@ const _sfc_main = {
               fileType: getFileType(url),
               // 尝试获取文件类型
               success: function() {
-                common_vendor.index.__f__("log", "at pages/chat/room.vue:723", "打开文件成功");
+                common_vendor.index.__f__("log", "at pages/chat/room.vue:862", "打开文件成功");
               },
               fail: function(err) {
-                common_vendor.index.__f__("error", "at pages/chat/room.vue:726", "微信小程序打开文件失败:", err);
+                common_vendor.index.__f__("error", "at pages/chat/room.vue:865", "微信小程序打开文件失败:", err);
                 common_vendor.index.showModal({
                   title: "打开失败",
                   content: "无法打开此类型文件，是否复制链接后手动打开？",
@@ -429,7 +460,7 @@ const _sfc_main = {
         },
         fail: (err) => {
           common_vendor.index.hideLoading();
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:752", "下载文件失败:", err);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:891", "下载文件失败:", err);
           common_vendor.index.showToast({ title: "下载文件失败", icon: "none" });
         }
       });
@@ -459,15 +490,15 @@ const _sfc_main = {
           name: locationData.name || "位置信息",
           address: locationData.address || "",
           success: () => {
-            common_vendor.index.__f__("log", "at pages/chat/room.vue:814", "打开位置成功");
+            common_vendor.index.__f__("log", "at pages/chat/room.vue:953", "打开位置成功");
           },
           fail: (err) => {
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:817", "打开位置失败:", err);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:956", "打开位置失败:", err);
             common_vendor.index.showToast({ title: "打开位置失败", icon: "none" });
           }
         });
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:822", "解析位置信息失败:", e);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:961", "解析位置信息失败:", e);
         common_vendor.index.showToast({ title: "位置信息无效", icon: "none" });
       }
     };
@@ -489,7 +520,7 @@ const _sfc_main = {
                 title: "聊天服务连接失败，请稍后重试",
                 icon: "none"
               });
-              common_vendor.index.__f__("error", "at pages/chat/room.vue:852", "聊天服务连接失败:", error);
+              common_vendor.index.__f__("error", "at pages/chat/room.vue:991", "聊天服务连接失败:", error);
               return;
             }
           }
@@ -539,11 +570,11 @@ const _sfc_main = {
                 title: uploadRes.message || "上传失败",
                 icon: "none"
               });
-              common_vendor.index.__f__("error", "at pages/chat/room.vue:911", "图片上传响应异常:", uploadRes);
+              common_vendor.index.__f__("error", "at pages/chat/room.vue:1050", "图片上传响应异常:", uploadRes);
             }
           } catch (error) {
             common_vendor.index.hideLoading();
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:915", "上传图片失败", error);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:1054", "上传图片失败", error);
             common_vendor.index.showToast({
               title: "图片上传失败，请重试",
               icon: "none"
@@ -598,7 +629,7 @@ const _sfc_main = {
           }
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:981", "选择位置失败:", err);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1120", "选择位置失败:", err);
         }
       });
       showMorePanel.value = false;
@@ -611,12 +642,12 @@ const _sfc_main = {
         success: async (res) => {
           if (res.tempFiles && res.tempFiles.length > 0) {
             const file = res.tempFiles[0];
-            common_vendor.index.__f__("log", "at pages/chat/room.vue:1011", "选择的文件:", file);
+            common_vendor.index.__f__("log", "at pages/chat/room.vue:1150", "选择的文件:", file);
             handleFileUpload(file.path, file.name);
           }
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:1016", "选择文件失败:", err);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1155", "选择文件失败:", err);
           common_vendor.index.showToast({
             title: "选择文件失败",
             icon: "none"
@@ -638,7 +669,7 @@ const _sfc_main = {
               title: "聊天服务连接失败，请稍后重试",
               icon: "none"
             });
-            common_vendor.index.__f__("error", "at pages/chat/room.vue:1054", "聊天服务连接失败:", error);
+            common_vendor.index.__f__("error", "at pages/chat/room.vue:1193", "聊天服务连接失败:", error);
             return;
           }
         }
@@ -690,16 +721,117 @@ const _sfc_main = {
             title: uploadRes.message || "上传失败",
             icon: "none"
           });
-          common_vendor.index.__f__("error", "at pages/chat/room.vue:1113", "文件上传响应异常:", uploadRes);
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1252", "文件上传响应异常:", uploadRes);
         }
       } catch (error) {
         common_vendor.index.hideLoading();
-        common_vendor.index.__f__("error", "at pages/chat/room.vue:1117", "上传文件失败", error);
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:1256", "上传文件失败", error);
         common_vendor.index.showToast({
           title: "文件上传失败，请重试",
           icon: "none"
         });
       }
+    };
+    const goToSettings = () => {
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:1268", "[导航] 跳转到设置页面, groupId:", groupId.value);
+      if (!groupId.value) {
+        common_vendor.index.showToast({
+          title: "群组ID无效",
+          icon: "none"
+        });
+        return;
+      }
+      common_vendor.index.navigateTo({
+        url: `/pages/chat/settings?id=${groupId.value}`,
+        success: () => {
+          common_vendor.index.__f__("log", "at pages/chat/room.vue:1279", "[导航] 成功跳转到设置页面");
+        },
+        fail: (err) => {
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1282", "[导航] 跳转失败:", err);
+          common_vendor.index.showToast({
+            title: "打开设置页面失败",
+            icon: "none"
+          });
+        }
+      });
+    };
+    const toggleMemberDrawer = () => {
+      if (!showMemberDrawer.value) {
+        loadMembers();
+      }
+      showMemberDrawer.value = !showMemberDrawer.value;
+    };
+    const closeMemberDrawer = () => {
+      showMemberDrawer.value = false;
+      searchKeyword.value = "";
+    };
+    const loadMembers = async () => {
+      if (!groupId.value) {
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:1316", "[成员列表] 群组ID为空");
+        return;
+      }
+      isLoadingMembers.value = true;
+      try {
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:1323", "[成员列表] 开始加载群成员, groupId:", groupId.value);
+        await fetchOnlineUsers();
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:1329", "[成员列表] 使用groupId获取群组成员列表:", groupId.value);
+        const res = await api_api.chatAPI.getGroupMembers(groupId.value);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:1331", "[成员列表] API响应:", res);
+        if (res.code === 200 && res.data) {
+          const members = res.data || [];
+          memberList.value = members.map((member) => ({
+            userId: member.userId,
+            username: member.username || member.nickname,
+            nickname: member.nickname || member.username,
+            avatar: member.avatar,
+            studentId: member.studentId,
+            role: member.role || 0,
+            // 0=普通成员, 1=管理员, 2=群主
+            joinTime: member.joinTime || Date.now(),
+            isOnline: member.isOnline || false
+            // 后端已经返回在线状态
+          }));
+          common_vendor.index.__f__("log", "at pages/chat/room.vue:1347", "[成员列表] 成员数据处理完成，共", memberList.value.length, "人");
+          const currentUserMember = memberList.value.find((m) => m.userId === userId.value);
+          if (currentUserMember) {
+            isOwner.value = currentUserMember.role === 2;
+            common_vendor.index.__f__("log", "at pages/chat/room.vue:1353", "[成员列表] 当前用户角色:", isOwner.value ? "群主" : currentUserMember.role === 1 ? "管理员" : "普通成员");
+          }
+        } else {
+          common_vendor.index.__f__("error", "at pages/chat/room.vue:1356", "[成员列表] API返回错误:", res.msg || "未知错误");
+          common_vendor.index.showToast({
+            title: res.msg || "加载成员列表失败",
+            icon: "none"
+          });
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:1363", "[成员列表] 加载失败:", error);
+        common_vendor.index.showToast({
+          title: "加载成员列表失败",
+          icon: "none"
+        });
+      } finally {
+        isLoadingMembers.value = false;
+      }
+    };
+    const fetchOnlineUsers = async () => {
+      try {
+        const res = await api_api.chatAPI.getOnlineUsers();
+        if (res.code === 200 && res.data && res.data.onlineUserIds) {
+          onlineUserIds.value = new Set(res.data.onlineUserIds.map((id) => Number(id)));
+          common_vendor.index.__f__("log", "at pages/chat/room.vue:1382", "[在线用户] 获取在线用户列表成功，在线人数:", res.data.onlineCount);
+          return true;
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/chat/room.vue:1386", "[在线用户] 获取在线用户列表失败:", error);
+        return false;
+      }
+    };
+    const handleSearchInput = debounce((e) => {
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:1403", "[成员搜索] 搜索关键词:", searchKeyword.value);
+    }, 300);
+    const clearSearch = () => {
+      searchKeyword.value = "";
     };
     common_vendor.onLoad(async (option) => {
       chatPageCount++;
@@ -709,7 +841,7 @@ const _sfc_main = {
         if (option.name) {
           roomInfo.name = decodeURIComponent(option.name);
         }
-        common_vendor.index.__f__("log", "at pages/chat/room.vue:1136", `进入聊天室，群组ID: ${groupId.value}, 名称: ${roomInfo.name}`);
+        common_vendor.index.__f__("log", "at pages/chat/room.vue:1424", `进入聊天室，群组ID: ${groupId.value}, 名称: ${roomInfo.name}`);
         connectWebSocket();
         await loadGroupDetail();
         await loadInitialMessages();
@@ -720,23 +852,39 @@ const _sfc_main = {
       if (chatPageCount === 0) {
         if (utils_websocket.wsClient.isConnected) {
           utils_websocket.wsClient.disconnect();
-          common_vendor.index.__f__("log", "at pages/chat/room.vue:1153", "所有聊天页面已关闭，断开WebSocket连接");
+          common_vendor.index.__f__("log", "at pages/chat/room.vue:1441", "所有聊天页面已关闭，断开WebSocket连接");
         }
       }
     });
     common_vendor.onHide(() => {
-      common_vendor.index.__f__("log", "at pages/chat/room.vue:1160", "页面隐藏，保持WebSocket连接");
+      common_vendor.index.__f__("log", "at pages/chat/room.vue:1448", "页面隐藏，保持WebSocket连接");
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: common_vendor.p({
+          type: "contact-filled",
+          size: "22",
+          color: "#333"
+        }),
+        b: roomInfo.memberCount
+      }, roomInfo.memberCount ? {
+        c: common_vendor.t(roomInfo.memberCount)
+      } : {}, {
+        d: common_vendor.o(toggleMemberDrawer),
+        e: common_vendor.p({
+          type: "gear-filled",
+          size: "22",
+          color: "#333"
+        }),
+        f: common_vendor.o(goToSettings),
+        g: common_vendor.p({
           title: roomInfo.name || "聊天室",
           showBack: true
         }),
-        b: loading.value
+        h: loading.value
       }, loading.value ? {} : !hasMore.value ? {} : {}, {
-        c: !hasMore.value,
-        d: common_vendor.f(messages.value, (msg, idx, i0) => {
+        i: !hasMore.value,
+        j: common_vendor.f(messages.value, (msg, idx, i0) => {
           return common_vendor.e({
             a: shouldShowDivider(idx)
           }, shouldShowDivider(idx) ? {
@@ -753,7 +901,7 @@ const _sfc_main = {
             i: msg.mediaUrl,
             j: common_vendor.o(($event) => previewImage(msg.mediaUrl), msg.id)
           } : msg.contentType === 2 ? {
-            l: "bc4afd2d-1-" + i0,
+            l: "bc4afd2d-3-" + i0,
             m: common_vendor.p({
               type: "download",
               size: "30",
@@ -762,7 +910,7 @@ const _sfc_main = {
             n: common_vendor.t(extractFileName(msg.mediaUrl)),
             o: common_vendor.o(($event) => openFile(msg.mediaUrl), msg.id)
           } : msg.contentType === 3 ? {
-            q: "bc4afd2d-2-" + i0,
+            q: "bc4afd2d-4-" + i0,
             r: common_vendor.p({
               type: "location",
               size: "24",
@@ -771,7 +919,7 @@ const _sfc_main = {
             s: common_vendor.t(msg.content ? parseLocation(msg.content).name : "位置信息"),
             t: common_vendor.o(($event) => openLocation(msg.content), msg.id)
           } : msg.contentType === 4 ? {
-            w: "bc4afd2d-3-" + i0,
+            w: "bc4afd2d-5-" + i0,
             x: common_vendor.p({
               type: "info",
               size: "24",
@@ -791,7 +939,7 @@ const _sfc_main = {
             C: msg.mediaUrl,
             D: common_vendor.o(($event) => previewImage(msg.mediaUrl), msg.id)
           } : msg.contentType === 2 ? {
-            F: "bc4afd2d-4-" + i0,
+            F: "bc4afd2d-6-" + i0,
             G: common_vendor.p({
               type: "download",
               size: "30",
@@ -800,7 +948,7 @@ const _sfc_main = {
             H: common_vendor.t(extractFileName(msg.mediaUrl)),
             I: common_vendor.o(($event) => openFile(msg.mediaUrl), msg.id)
           } : msg.contentType === 3 ? {
-            K: "bc4afd2d-5-" + i0,
+            K: "bc4afd2d-7-" + i0,
             L: common_vendor.p({
               type: "location",
               size: "24",
@@ -809,7 +957,7 @@ const _sfc_main = {
             M: common_vendor.t(msg.content ? parseLocation(msg.content).name : "位置信息"),
             N: common_vendor.o(($event) => openLocation(msg.content), msg.id)
           } : msg.contentType === 4 ? {
-            P: "bc4afd2d-6-" + i0,
+            P: "bc4afd2d-8-" + i0,
             Q: common_vendor.p({
               type: "info",
               size: "24",
@@ -828,48 +976,111 @@ const _sfc_main = {
             V: "msg-" + msg.id
           });
         }),
-        e: common_vendor.o((...args) => common_vendor.unref(loadMoreMessages) && common_vendor.unref(loadMoreMessages)(...args)),
-        f: scrollIntoViewId.value,
-        g: common_vendor.p({
+        k: common_vendor.o((...args) => common_vendor.unref(loadMoreMessages) && common_vendor.unref(loadMoreMessages)(...args)),
+        l: scrollIntoViewId.value,
+        m: common_vendor.p({
           type: "plusempty",
           size: "28",
           color: "#666"
         }),
-        h: common_vendor.o(toggleMorePanel),
-        i: common_vendor.o([($event) => messageText.value = $event.detail.value, handleInput]),
-        j: common_vendor.o(inputFocus),
-        k: common_vendor.o(inputBlur),
-        l: messageText.value,
-        m: common_vendor.p({
+        n: common_vendor.o(toggleMorePanel),
+        o: common_vendor.o([($event) => messageText.value = $event.detail.value, handleInput]),
+        p: common_vendor.o(inputFocus),
+        q: common_vendor.o(inputBlur),
+        r: messageText.value,
+        s: common_vendor.p({
           type: "paperplane-filled",
           size: "24",
           color: "#fff"
         }),
-        n: common_vendor.o(sendMessage),
-        o: messageText.value.trim() ? 1 : "",
-        p: showMorePanel.value ? 1 : "",
-        q: showMorePanel.value
+        t: common_vendor.o(sendMessage),
+        v: messageText.value.trim() ? 1 : "",
+        w: showMorePanel.value ? 1 : "",
+        x: showMorePanel.value
       }, showMorePanel.value ? {
-        r: common_vendor.p({
+        y: common_vendor.p({
           type: "image",
           size: "28",
           color: "#07c160"
         }),
-        s: common_vendor.o(chooseImage),
-        t: common_vendor.p({
+        z: common_vendor.o(chooseImage),
+        A: common_vendor.p({
           type: "location",
           size: "28",
           color: "#ff9800"
         }),
-        v: common_vendor.o(chooseLocation),
-        w: common_vendor.p({
+        B: common_vendor.o(chooseLocation),
+        C: common_vendor.p({
           type: "folder-add",
           size: "28",
           color: "#2979ff"
         }),
-        x: common_vendor.o(chooseFile)
+        D: common_vendor.o(chooseFile)
       } : {}, {
-        y: showMorePanel.value ? 1 : ""
+        E: showMorePanel.value ? 1 : "",
+        F: showMemberDrawer.value
+      }, showMemberDrawer.value ? {
+        G: common_vendor.o(closeMemberDrawer),
+        H: showMemberDrawer.value ? 1 : ""
+      } : {}, {
+        I: common_vendor.t(memberList.value.length),
+        J: common_vendor.p({
+          type: "closeempty",
+          size: "24",
+          color: "#666"
+        }),
+        K: common_vendor.o(closeMemberDrawer),
+        L: common_vendor.p({
+          type: "search",
+          size: "18",
+          color: "#999"
+        }),
+        M: common_vendor.o([($event) => searchKeyword.value = $event.detail.value, (...args) => common_vendor.unref(handleSearchInput) && common_vendor.unref(handleSearchInput)(...args)]),
+        N: searchKeyword.value,
+        O: searchKeyword.value
+      }, searchKeyword.value ? {
+        P: common_vendor.p({
+          type: "clear",
+          size: "16",
+          color: "#999"
+        }),
+        Q: common_vendor.o(clearSearch)
+      } : {}, {
+        R: common_vendor.f(filteredMembers.value, (member, k0, i0) => {
+          return common_vendor.e({
+            a: member.avatar || "/static/images/avatar-default.png",
+            b: common_vendor.n(member.isOnline ? "online" : "offline"),
+            c: common_vendor.t(member.nickname || member.username || "未知用户"),
+            d: member.role === 2
+          }, member.role === 2 ? {} : member.role === 1 ? {} : {}, {
+            e: member.role === 1,
+            f: member.studentId
+          }, member.studentId ? {
+            g: common_vendor.t(member.studentId)
+          } : {}, {
+            h: common_vendor.t(member.isOnline ? "在线" : "离线"),
+            i: common_vendor.n(member.isOnline ? "online" : "offline"),
+            j: member.userId
+          });
+        }),
+        S: filteredMembers.value.length === 0 && !isLoadingMembers.value
+      }, filteredMembers.value.length === 0 && !isLoadingMembers.value ? {
+        T: common_vendor.p({
+          type: "info",
+          size: "60",
+          color: "#ddd"
+        }),
+        U: common_vendor.t(searchKeyword.value ? "未找到相关成员" : "暂无群成员")
+      } : {}, {
+        V: isLoadingMembers.value
+      }, isLoadingMembers.value ? {
+        W: common_vendor.p({
+          type: "spinner-cycle",
+          size: "30",
+          color: "#999"
+        })
+      } : {}, {
+        X: showMemberDrawer.value ? 1 : ""
       });
     };
   }

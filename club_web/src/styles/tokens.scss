@@ -1,0 +1,105 @@
+$color-primary-300: #cbd5e1;
+$color-primary-400: #a5b4cb;
+$color-primary-500: #94a3b8;
+$color-primary-600: #64748b;
+$color-primary-700: #475569;
+
+$color-secondary-500: #a78bfa;
+$color-success-500: #22c55e;
+$color-success-soft: #86efac;
+$color-warning-500: #f59e0b;
+$color-warning-soft: #fcd34d;
+$color-error-500: #ef4444;
+$color-error-soft: #fda4af;
+$color-info-500: #3b82f6;
+$color-info-soft: #93c5fd;
+
+$color-neutral-50: #f8fafc;
+$color-neutral-100: #f1f5f9;
+$color-neutral-200: #e2e8f0;
+$color-neutral-300: #cbd5e1;
+$color-neutral-400: #94a3b8;
+$color-neutral-500: #64748b;
+$color-neutral-600: #475569;
+$color-neutral-700: #334155;
+$color-neutral-900: #0f172a;
+
+$radius-xs: 6px;
+$radius-sm: 10px;
+$radius-md: 16px;
+$radius-lg: 20px;
+$radius-xl: 28px;
+
+$shadow-xs: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+$shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.05);
+$shadow-md: 0 15px 35px rgba(15, 23, 42, 0.08), 0 5px 15px rgba(15, 23, 42, 0.05);
+$shadow-lg: 0 24px 45px rgba(15, 23, 42, 0.12), 0 12px 24px rgba(15, 23, 42, 0.08);
+
+$transition-base: 0.25s ease;
+
+:root {
+  --color-primary-300: #{$color-primary-300};
+  --color-primary-400: #{$color-primary-400};
+  --color-primary-500: #{$color-primary-500};
+  --color-primary-600: #{$color-primary-600};
+  --color-primary-700: #{$color-primary-700};
+
+  --color-secondary-500: #{$color-secondary-500};
+  --color-success-500: #{$color-success-500};
+  --color-success-soft: #{$color-success-soft};
+  --color-warning-500: #{$color-warning-500};
+  --color-warning-soft: #{$color-warning-soft};
+  --color-error-500: #{$color-error-500};
+  --color-error-soft: #{$color-error-soft};
+  --color-info-500: #{$color-info-500};
+  --color-info-soft: #{$color-info-soft};
+
+  --color-neutral-50: #{$color-neutral-50};
+  --color-neutral-100: #{$color-neutral-100};
+  --color-neutral-200: #{$color-neutral-200};
+  --color-neutral-300: #{$color-neutral-300};
+  --color-neutral-400: #{$color-neutral-400};
+  --color-neutral-500: #{$color-neutral-500};
+  --color-neutral-600: #{$color-neutral-600};
+  --color-neutral-700: #{$color-neutral-700};
+  --color-neutral-900: #{$color-neutral-900};
+
+  --radius-xs: #{$radius-xs};
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+
+  --shadow-xs: #{$shadow-xs};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+
+  --transition-base: #{$transition-base};
+
+  --gradient-brand: linear-gradient(135deg, rgba(148, 163, 184, 0.25), rgba(99, 102, 241, 0.18));
+  --gradient-brand-soft: linear-gradient(135deg, rgba(148, 163, 184, 0.12), rgba(224, 231, 255, 0.4));
+  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(241, 245, 249, 0.72));
+}
+
+@mixin glass-panel {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+@mixin card-surface {
+  background: var(--gradient-card);
+  border-radius: $radius-lg;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: $shadow-xs;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

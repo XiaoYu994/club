@@ -21,6 +21,7 @@ const _sfc_main = {
     const isLoggedIn = common_vendor.ref(false);
     const editPopup = common_vendor.ref(null);
     const user = common_vendor.ref({});
+    const unreadCount = common_vendor.ref(0);
     const editForm = common_vendor.reactive({
       avatar: "",
       username: "",
@@ -47,14 +48,27 @@ const _sfc_main = {
         isLoggedIn.value = true;
       }
       getUserInfo();
+      loadUnreadCount();
+      updateTabBarBadge();
     });
     common_vendor.onActivated(() => {
       const token = common_vendor.index.getStorageSync("token");
       isLoggedIn.value = !!token;
       if (token) {
         getUserInfo();
+        loadUnreadCount();
+        updateTabBarBadge();
       } else {
         user.value = {};
+        unreadCount.value = 0;
+        common_vendor.index.removeTabBarBadge({ index: 3 });
+      }
+    });
+    common_vendor.onShow(() => {
+      const token = common_vendor.index.getStorageSync("token");
+      if (token) {
+        loadUnreadCount();
+        updateTabBarBadge();
       }
     });
     async function getUserInfo() {
@@ -64,11 +78,32 @@ const _sfc_main = {
           user.value = res.data;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/user.vue:228", "获取用户信息失败", error);
+        common_vendor.index.__f__("error", "at pages/user/user.vue:253", "获取用户信息失败", error);
         common_vendor.index.showToast({
           title: "获取用户信息失败",
           icon: "none"
         });
+      }
+    }
+    async function loadUnreadCount() {
+      try {
+        const res = await proxy.$api.notification.getUnreadCount();
+        if (res.code === 200) {
+          unreadCount.value = res.data || 0;
+          common_vendor.index.__f__("log", "at pages/user/user.vue:267", "【未读消息】数量:", unreadCount.value);
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/user/user.vue:270", "获取未读消息数量失败", error);
+      }
+    }
+    function updateTabBarBadge() {
+      if (unreadCount.value > 0) {
+        common_vendor.index.setTabBarBadge({
+          index: 3,
+          text: unreadCount.value > 99 ? "99+" : String(unreadCount.value)
+        });
+      } else {
+        common_vendor.index.removeTabBarBadge({ index: 3 });
       }
     }
     function initEditForm() {
@@ -91,7 +126,7 @@ const _sfc_main = {
         initEditForm();
         editPopup.value.open();
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/user.vue:263", "获取用户信息失败", error);
+        common_vendor.index.__f__("error", "at pages/user/user.vue:315", "获取用户信息失败", error);
         initEditForm();
         editPopup.value.open();
       }
@@ -103,7 +138,7 @@ const _sfc_main = {
       try {
         if (editForm.avatar && !editForm.avatar.startsWith("http")) {
           const uploadRes = await proxy.$api.common.upload(editForm.avatar);
-          common_vendor.index.__f__("log", "at pages/user/user.vue:281", "上传头像结果:", uploadRes);
+          common_vendor.index.__f__("log", "at pages/user/user.vue:333", "上传头像结果:", uploadRes);
           if (uploadRes.code === 200 && uploadRes.data && uploadRes.data.url) {
             editForm.avatar = uploadRes.data.url;
           } else {
@@ -111,7 +146,7 @@ const _sfc_main = {
             return;
           }
         }
-        common_vendor.index.__f__("log", "at pages/user/user.vue:290", editForm);
+        common_vendor.index.__f__("log", "at pages/user/user.vue:342", editForm);
         const res = await proxy.$api.user.updateUserInfo(editForm);
         if (res.code === 200) {
           closeEditPopup();
@@ -122,7 +157,7 @@ const _sfc_main = {
           await getUserInfo();
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/user.vue:307", "保存失败", error);
+        common_vendor.index.__f__("error", "at pages/user/user.vue:359", "保存失败", error);
       }
     }
     async function chooseAvatar() {
@@ -148,7 +183,7 @@ const _sfc_main = {
               common_vendor.index.showToast({ title: uploadRes.msg || "上传失败", icon: "none" });
             }
           } catch (error) {
-            common_vendor.index.__f__("error", "at pages/user/user.vue:342", "上传头像失败", error);
+            common_vendor.index.__f__("error", "at pages/user/user.vue:394", "上传头像失败", error);
             common_vendor.index.showToast({ title: "上传失败", icon: "none" });
           }
         }
@@ -212,7 +247,7 @@ const _sfc_main = {
       });
     }
     return (_ctx, _cache) => {
-      return {
+      return common_vendor.e({
         a: common_vendor.p({
           title: "我的"
         }),
@@ -239,36 +274,30 @@ const _sfc_main = {
           size: "28",
           color: "#22e58b"
         }),
-        m: common_vendor.o(goMyMessages),
-        n: common_vendor.p({
+        m: unreadCount.value > 0
+      }, unreadCount.value > 0 ? {
+        n: common_vendor.t(unreadCount.value > 99 ? "99+" : unreadCount.value)
+      } : {}, {
+        o: common_vendor.o(goMyMessages),
+        p: common_vendor.p({
           type: "paperplane",
           size: "28",
           color: "#ff6b6b"
         }),
-        o: common_vendor.o(goMyApplies),
-        p: common_vendor.p({
+        q: common_vendor.o(goMyApplies),
+        r: common_vendor.p({
           type: "gear",
           size: "22",
           color: "#888"
         }),
-        q: common_vendor.p({
-          type: "right",
-          size: "18",
-          color: "#bbb"
-        }),
-        r: common_vendor.o(goSetting),
         s: common_vendor.p({
-          type: "chat",
-          size: "22",
-          color: "#888"
-        }),
-        t: common_vendor.p({
           type: "right",
           size: "18",
           color: "#bbb"
         }),
+        t: common_vendor.o(goSetting),
         v: common_vendor.p({
-          type: "info",
+          type: "chat",
           size: "22",
           color: "#888"
         }),
@@ -277,48 +306,58 @@ const _sfc_main = {
           size: "18",
           color: "#bbb"
         }),
-        x: common_vendor.o(goAbout),
-        y: common_vendor.o(logout),
-        z: common_vendor.p({
+        x: common_vendor.p({
+          type: "info",
+          size: "22",
+          color: "#888"
+        }),
+        y: common_vendor.p({
+          type: "right",
+          size: "18",
+          color: "#bbb"
+        }),
+        z: common_vendor.o(goAbout),
+        A: common_vendor.o(logout),
+        B: common_vendor.p({
           type: "close",
           size: "20",
           color: "#999"
         }),
-        A: common_vendor.o(closeEditPopup),
-        B: editForm.avatar,
-        C: common_vendor.p({
+        C: common_vendor.o(closeEditPopup),
+        D: editForm.avatar,
+        E: common_vendor.p({
           type: "camera",
           size: "20",
           color: "#fff"
         }),
-        D: common_vendor.o(chooseAvatar),
-        E: editForm.username,
-        F: common_vendor.o(($event) => editForm.username = $event.detail.value),
-        G: editForm.gender === 1,
-        H: editForm.gender === 2,
-        I: common_vendor.o(onGenderChange),
-        J: editForm.mobile,
-        K: common_vendor.o(($event) => editForm.mobile = $event.detail.value),
-        L: editForm.email,
-        M: common_vendor.o(($event) => editForm.email = $event.detail.value),
-        N: editForm.studentId,
-        O: common_vendor.o(($event) => editForm.studentId = $event.detail.value),
-        P: common_vendor.t(editForm.college || "请选择学院"),
-        Q: collegeOptions,
-        R: common_vendor.o(onCollegeChange),
-        S: editForm.major,
-        T: common_vendor.o(($event) => editForm.major = $event.detail.value),
-        U: editForm.className,
-        V: common_vendor.o(($event) => editForm.className = $event.detail.value),
-        W: common_vendor.o(closeEditPopup),
-        X: common_vendor.o(saveUserInfo),
-        Y: common_vendor.sr(editPopup, "0f7520f0-11", {
+        F: common_vendor.o(chooseAvatar),
+        G: editForm.username,
+        H: common_vendor.o(($event) => editForm.username = $event.detail.value),
+        I: editForm.gender === 1,
+        J: editForm.gender === 2,
+        K: common_vendor.o(onGenderChange),
+        L: editForm.mobile,
+        M: common_vendor.o(($event) => editForm.mobile = $event.detail.value),
+        N: editForm.email,
+        O: common_vendor.o(($event) => editForm.email = $event.detail.value),
+        P: editForm.studentId,
+        Q: common_vendor.o(($event) => editForm.studentId = $event.detail.value),
+        R: common_vendor.t(editForm.college || "请选择学院"),
+        S: collegeOptions,
+        T: common_vendor.o(onCollegeChange),
+        U: editForm.major,
+        V: common_vendor.o(($event) => editForm.major = $event.detail.value),
+        W: editForm.className,
+        X: common_vendor.o(($event) => editForm.className = $event.detail.value),
+        Y: common_vendor.o(closeEditPopup),
+        Z: common_vendor.o(saveUserInfo),
+        aa: common_vendor.sr(editPopup, "0f7520f0-11", {
           "k": "editPopup"
         }),
-        Z: common_vendor.p({
+        ab: common_vendor.p({
           type: "center"
         })
-      };
+      });
     };
   }
 };

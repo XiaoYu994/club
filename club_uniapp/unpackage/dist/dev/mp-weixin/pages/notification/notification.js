@@ -83,8 +83,9 @@ const _sfc_main = {
           await proxy.$api.notification.markAsRead(notification.id);
           notification.isRead = 1;
           unreadCount.value = Math.max(0, unreadCount.value - 1);
+          updateTabBarBadge();
         } catch (error) {
-          common_vendor.index.__f__("error", "at pages/notification/notification.vue:164", "标记已读失败:", error);
+          common_vendor.index.__f__("error", "at pages/notification/notification.vue:167", "标记已读失败:", error);
         }
       }
       if (notification.relatedId) {
@@ -107,6 +108,16 @@ const _sfc_main = {
         }
       }
     }
+    function updateTabBarBadge() {
+      if (unreadCount.value > 0) {
+        common_vendor.index.setTabBarBadge({
+          index: 3,
+          text: unreadCount.value > 99 ? "99+" : String(unreadCount.value)
+        });
+      } else {
+        common_vendor.index.removeTabBarBadge({ index: 3 });
+      }
+    }
     function handleMarkAllRead() {
       common_vendor.index.showModal({
         title: "确认操作",
@@ -121,12 +132,13 @@ const _sfc_main = {
                   item.isRead = 1;
                 });
                 unreadCount.value = 0;
+                updateTabBarBadge();
                 common_vendor.index.showToast({ title: "已全部标记为已读", icon: "success" });
               } else {
                 common_vendor.index.showToast({ title: response.message || "操作失败", icon: "none" });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/notification/notification.vue:214", "标记全部已读失败:", error);
+              common_vendor.index.__f__("error", "at pages/notification/notification.vue:232", "标记全部已读失败:", error);
               common_vendor.index.showToast({ title: "网络异常，请稍后重试", icon: "none" });
             } finally {
               common_vendor.index.hideLoading();
@@ -150,13 +162,14 @@ const _sfc_main = {
                 }
                 if (notification.isRead === 0) {
                   unreadCount.value = Math.max(0, unreadCount.value - 1);
+                  updateTabBarBadge();
                 }
                 common_vendor.index.showToast({ title: "删除成功", icon: "success" });
               } else {
                 common_vendor.index.showToast({ title: response.message || "删除失败", icon: "none" });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/notification/notification.vue:251", "删除消息失败:", error);
+              common_vendor.index.__f__("error", "at pages/notification/notification.vue:271", "删除消息失败:", error);
               common_vendor.index.showToast({ title: "网络异常，请稍后重试", icon: "none" });
             }
           }
@@ -202,7 +215,7 @@ const _sfc_main = {
         return "";
       const time = typeof timestamp === "string" ? Number(timestamp) : timestamp;
       if (isNaN(time)) {
-        common_vendor.index.__f__("error", "at pages/notification/notification.vue:305", "【通知】时间格式错误:", timestamp);
+        common_vendor.index.__f__("error", "at pages/notification/notification.vue:325", "【通知】时间格式错误:", timestamp);
         return "";
       }
       const date = new Date(time);

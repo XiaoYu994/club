@@ -367,7 +367,29 @@ const chatAPI = {
   // 标记消息为已读
   markMessagesRead: (groupId) => utils_request.request.put(`/user/chat-api/messages/read/${groupId}`, null),
   // 创建群组
-  createChatGroup: (data) => utils_request.request.post("/user/chat-api/group", data)
+  createChatGroup: (data) => utils_request.request.post("/user/chat-api/group", data),
+  // 更新群组信息（名称、头像、简介等）
+  updateGroupInfo: (groupId, data) => utils_request.request.put(`/user/chat-api/group/${groupId}`, data),
+  // 获取用户在群组中的设置
+  getUserGroupSettings: (groupId) => utils_request.request.get(`/user/chat-api/group/${groupId}/user-settings`, null),
+  // 更新用户在群组中的设置（免打扰、置顶等）
+  updateUserGroupSettings: (groupId, data) => utils_request.request.put(`/user/chat-api/group/${groupId}/user-settings`, data),
+  // 获取群组成员列表
+  getGroupMembers: (groupId) => utils_request.request.get(`/user/chat-api/group/${groupId}/members`, null),
+  // 移除群成员（仅群主和管理员）
+  removeGroupMember: (groupId, userId) => utils_request.request.delete(`/user/chat-api/group/${groupId}/member/${userId}`, null),
+  // 设置/取消管理员（仅群主）
+  setGroupAdmin: (groupId, userId, isAdmin) => utils_request.request.put(`/user/chat-api/group/${groupId}/admin/${userId}`, { isAdmin }),
+  // 退出群组
+  quitGroup: (groupId) => utils_request.request.post(`/user/chat-api/group/${groupId}/quit`, null),
+  // 解散群组（仅群主）
+  dismissGroup: (groupId) => utils_request.request.delete(`/user/chat-api/group/${groupId}`, null),
+  // 转让群主（仅群主）
+  transferOwner: (groupId, userId) => utils_request.request.put(`/user/chat-api/group/${groupId}/transfer/${userId}`, null),
+  // 更新群公告（仅群主和管理员）
+  updateGroupAnnouncement: (groupId, announcement) => utils_request.request.put(`/user/chat-api/group/${groupId}/announcement`, { announcement }),
+  // 获取在线用户列表（公共接口）
+  getOnlineUsers: () => utils_request.request.get("/user/chat-api/online-users", null)
 };
 const notification = {
   /**

@@ -29,9 +29,10 @@ export const getLeftIconLeft = ()=> {
 // 获取胶囊按钮的右边距（用于避免右侧内容与胶囊按钮重叠）
 export const getMenuButtonRight = () => {
 	if (uni.getMenuButtonBoundingClientRect) {
-		let { right } = uni.getMenuButtonBoundingClientRect();
-		// 返回从屏幕右边缘到胶囊按钮右侧的距离，再加上一些间距
-		return SYSTEM_INFO.windowWidth - right + 10; // 加10px的安全间距
+		let { left, width } = uni.getMenuButtonBoundingClientRect();
+		// 返回从屏幕右边缘到胶囊按钮左侧的距离，确保右侧内容在胶囊左边
+		// screenWidth - capsule.left = 距离右边缘的距离
+		return SYSTEM_INFO.windowWidth - left + 10; // 加10px的安全间距
 	} else {
 		return 10; // 默认10px
 	}

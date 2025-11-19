@@ -1683,21 +1683,27 @@ const goToEditRecruitment = () => {
 	.admin-actions {
 		flex: 1;
 		display: flex;
-		justify-content: flex-end;
-		
+		justify-content: space-between;
+		gap: 16rpx;
+
 		button {
-			margin-left: 20rpx;
+			flex: 1;
+			min-width: 0; // 允许按钮缩小
 			height: 80rpx;
 			line-height: 80rpx;
-			font-size: 28rpx;
+			padding: 0 16rpx;
+			font-size: 26rpx;
 			border-radius: 40rpx;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
-		
+
 		.edit-btn {
 			background-color: #f5f5f5;
 			color: #333;
 		}
-		
+
 		.manage-btn {
 			background-color: #b13b7a;
 			color: #fff;
@@ -1716,7 +1722,6 @@ const goToEditRecruitment = () => {
 		.recruit-btn {
 			background-color: #4caf50;
 			color: #fff;
-			margin-left: 20rpx;
 		}
 	}
 	

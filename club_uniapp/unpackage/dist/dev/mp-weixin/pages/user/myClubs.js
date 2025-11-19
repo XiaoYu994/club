@@ -25,21 +25,41 @@ const _sfc_main = {
         return;
       isLoading.value = true;
       try {
+        common_vendor.index.__f__("log", "at pages/user/myClubs.vue:77", "[我的社团] 开始加载社团列表...");
         const res = await proxy.$api.club.getMyClubs();
+        common_vendor.index.__f__("log", "at pages/user/myClubs.vue:79", "[我的社团] API响应:", res);
         if (res.code === 200) {
           let list = res.data || [];
+          common_vendor.index.__f__("log", "at pages/user/myClubs.vue:83", "[我的社团] 获取到社团数:", list.length);
           list = await Promise.all(
             list.map(async (c) => {
-              const statusRes = await proxy.$api.club.checkApplyStatus(c.id);
-              c.memberStatus = statusRes.code === 200 && statusRes.data ? statusRes.data.status : 0;
-              return c;
+              try {
+                const statusRes = await proxy.$api.club.checkApplyStatus(c.id);
+                c.memberStatus = statusRes.code === 200 && statusRes.data ? statusRes.data.status : 0;
+                return c;
+              } catch (err) {
+                common_vendor.index.__f__("warn", "at pages/user/myClubs.vue:93", `[我的社团] 获取社团状态失败 clubId=${c.id}`, err);
+                c.memberStatus = 0;
+                return c;
+              }
             })
           );
           clubList.value = list;
+          common_vendor.index.__f__("log", "at pages/user/myClubs.vue:101", "[我的社团] 最终社团列表:", list);
+        } else {
+          common_vendor.index.__f__("error", "at pages/user/myClubs.vue:103", "[我的社团] API返回错误码:", res.code, res.msg);
+          common_vendor.index.showToast({
+            title: res.msg || "加载失败",
+            icon: "none"
+          });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/myClubs.vue:74", "加载我的社团失败", error);
+        common_vendor.index.__f__("error", "at pages/user/myClubs.vue:110", "[我的社团] 加载社团列表异常:", error);
         clubList.value = [];
+        common_vendor.index.showToast({
+          title: "网络错误，请重试",
+          icon: "none"
+        });
       } finally {
         isLoading.value = false;
         refreshing.value = false;
@@ -55,6 +75,18 @@ const _sfc_main = {
           return "退社申请中";
         default:
           return "未知";
+      }
+    };
+    const getMemberStatusClass = (status) => {
+      switch (status) {
+        case 0:
+          return "status-rejected";
+        case 1:
+          return "status-active";
+        case 2:
+          return "status-pending";
+        default:
+          return "status-unknown";
       }
     };
     const refreshClubs = () => {
@@ -84,13 +116,38 @@ const _sfc_main = {
           showBack: true
         }),
         c: common_vendor.f(clubList.value, (club, idx, i0) => {
-          return {
+          return common_vendor.e({
             a: club.logo || "/static/images/default-club.png",
             b: common_vendor.t(club.name),
-            c: common_vendor.t(getMemberStatusText(club.memberStatus)),
-            d: idx,
-            e: common_vendor.o(($event) => goToDetail(club), idx)
-          };
+            c: club.description
+          }, club.description ? {
+            d: common_vendor.t(club.description)
+          } : {}, {
+            e: club.memberCount !== void 0
+          }, club.memberCount !== void 0 ? {
+            f: "4da26f5c-1-" + i0,
+            g: common_vendor.p({
+              type: "person",
+              size: "14",
+              color: "#999"
+            }),
+            h: common_vendor.t(club.memberCount)
+          } : {}, {
+            i: club.category
+          }, club.category ? {
+            j: "4da26f5c-2-" + i0,
+            k: common_vendor.p({
+              type: "flag",
+              size: "14",
+              color: "#999"
+            }),
+            l: common_vendor.t(club.category)
+          } : {}, {
+            m: common_vendor.t(getMemberStatusText(club.memberStatus)),
+            n: common_vendor.n(getMemberStatusClass(club.memberStatus)),
+            o: idx,
+            p: common_vendor.o(($event) => goToDetail(club), idx)
+          });
         }),
         d: isLoading.value
       }, isLoading.value ? {
@@ -101,10 +158,16 @@ const _sfc_main = {
         })
       } : {}, {
         f: clubList.value.length === 0 && !isLoading.value
-      }, clubList.value.length === 0 && !isLoading.value ? {} : {}, {
-        g: refreshing.value,
-        h: common_vendor.o(refreshClubs),
-        i: common_vendor.o(loadMore)
+      }, clubList.value.length === 0 && !isLoading.value ? {
+        g: common_vendor.p({
+          type: "home",
+          size: "80",
+          color: "#ddd"
+        })
+      } : {}, {
+        h: refreshing.value,
+        i: common_vendor.o(refreshClubs),
+        j: common_vendor.o(loadMore)
       });
     };
   }

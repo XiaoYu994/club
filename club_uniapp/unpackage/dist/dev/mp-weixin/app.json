@@ -25,6 +25,7 @@
     "pages/club/topTen",
     "pages/club/manageRecruitment",
     "pages/chat/room",
+    "pages/chat/settings",
     "pages/chat/create",
     "pages/notice/notice",
     "pages/notice/detail"
