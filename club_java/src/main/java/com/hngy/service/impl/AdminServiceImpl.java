@@ -62,8 +62,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         }
         // 最后登录时间
         admin.setLastLoginTime(System.currentTimeMillis());
-        // 登录次数+1
-        admin.setLoginCount(admin.getLoginCount() + 1);
+        // 登录次数+1（首次登录场景 loginCount 可能为空）
+        Integer loginCount = admin.getLoginCount() == null ? 0 : admin.getLoginCount();
+        admin.setLoginCount(loginCount + 1);
         // 更新数据库
         adminMapper.updateById(admin);
         return admin;

@@ -21,7 +21,7 @@ import java.util.Map;
  * 用于测试和调试 WebSocket 连接状态
  *
  * @author xhy
- * @since 2025-01-28
+ * @since 2025-10-28
  */
 @RestController
 @RequestMapping("/admin/websocket")

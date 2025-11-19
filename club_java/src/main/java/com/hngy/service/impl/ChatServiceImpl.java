@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hngy.common.exception.ServiceException;
 import com.hngy.common.result.PageResult;
 import com.hngy.entity.po.*;
+import com.hngy.entity.vo.ChatGroupMemberVO;
 import com.hngy.entity.vo.ChatGroupVO;
 import com.hngy.entity.vo.ChatMessageVO;
 import com.hngy.mapper.*;
@@ -117,6 +118,12 @@ public class ChatServiceImpl implements IChatService {
                     .filter(m -> m.getGroupId().equals(group.getId()))
                     .findFirst()
                     .orElse(null);
+
+            // 查询成员数量
+            LambdaQueryWrapper<ClubChatGroupMember> memberCountWrapper = new LambdaQueryWrapper<>();
+            memberCountWrapper.eq(ClubChatGroupMember::getGroupId, group.getId());
+            Long memberCount = chatGroupMemberMapper.selectCount(memberCountWrapper);
+            vo.setMemberCount(memberCount.intValue());
 
             return vo;
         }).collect(Collectors.toList());
@@ -345,5 +352,90 @@ public class ChatServiceImpl implements IChatService {
         }
         
         return chatGroupMemberMapper.updateById(member) > 0;
+    }
+
+    @Override
+    public boolean updateGroupInfo(Integer groupId, String avatar, Long currentUserId) {
+        if (groupId == null) {
+            throw new ServiceException(HttpStatus.HTTP_BAD_REQUEST, "群组ID不能为空");
+        }
+
+        // 检查群组是否存在
+        ClubChatGroup group = chatGroupMapper.selectById(groupId);
+        if (group == null) {
+            throw new ServiceException(HttpStatus.HTTP_NOT_FOUND, "群组不存在");
+        }
+
+        // 检查权限：只有群主可以修改群组信息
+        if (!group.getOwnerId().equals(currentUserId.intValue())) {
+            throw new ServiceException(HttpStatus.HTTP_FORBIDDEN, "只有群主可以修改群组信息");
+        }
+
+        // 更新头像
+        if (avatar != null && !avatar.isEmpty()) {
+            group.setAvatar(avatar);
+        }
+
+        return chatGroupMapper.updateById(group) > 0;
+    }
+
+    @Override
+    public List<ChatGroupMemberVO> getGroupMembers(Integer groupId) {
+        if (groupId == null) {
+            throw new ServiceException(HttpStatus.HTTP_BAD_REQUEST, "群组ID不能为空");
+        }
+
+        // 检查群组是否存在
+        ClubChatGroup group = chatGroupMapper.selectById(groupId);
+        if (group == null) {
+            throw new ServiceException(HttpStatus.HTTP_NOT_FOUND, "群组不存在");
+        }
+
+        // 查询群组成员
+        LambdaQueryWrapper<ClubChatGroupMember> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ClubChatGroupMember::getGroupId, groupId);
+        List<ClubChatGroupMember> members = chatGroupMemberMapper.selectList(wrapper);
+
+        if (members.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 转换为VO并填充用户信息
+        List<ChatGroupMemberVO> memberVOs = new ArrayList<>();
+        for (ClubChatGroupMember member : members) {
+            ChatGroupMemberVO vo = new ChatGroupMemberVO();
+            vo.setId(member.getId());
+            vo.setGroupId(member.getGroupId());
+            vo.setUserId(member.getUserId());
+
+            // 查询用户信息
+            User user = userMapper.selectById(member.getUserId());
+            if (user != null) {
+                vo.setUsername(user.getUsername());
+                vo.setNickname(user.getUsername()); // 昵称使用用户名
+                vo.setAvatar(user.getAvatar());
+                vo.setStudentId(user.getStudentId());
+            }
+
+            // 判断角色：群主、管理员、普通成员
+            // 群主 role=2, 管理员 role=1, 普通成员 role=0
+            if (member.getUserId().equals(group.getOwnerId())) {
+                vo.setRole(2); // 群主
+            } else {
+                // 这里暂时设置为普通成员，如果有管理员表可以再扩展
+                vo.setRole(0); // 普通成员
+            }
+
+            // 加入时间（暂时使用当前时间，如果member表中有createTime可以使用）
+            vo.setJoinTime(System.currentTimeMillis());
+
+            // 在线状态（通过WebSocket处理器判断）
+            vo.setIsOnline(chatWebSocketHandler.isUserOnline(member.getUserId().longValue()));
+
+            memberVOs.add(vo);
+        }
+
+        log.info("获取群组{}的成员列表，共{}人", groupId, memberVOs.size());
+        return memberVOs;
     }
 } 

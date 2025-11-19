@@ -119,8 +119,8 @@ public class ClubApplyServiceImpl extends ServiceImpl<ClubApplyMapper, ClubApply
         // 更新招新申请人数
         recruitment.setJoinCount(recruitment.getJoinCount() + 1);
         clubRecruitmentMapper.updateById(recruitment);
-
         return "申请提交成功，请等待审核";
+
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.hngy.entity.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -45,6 +46,10 @@ public class ClubChatGroup implements Serializable {
 
     @ApiModelProperty(value = "群组类型：0-公共群 1-部门群 2-管理员群")
     private Integer type;
+
+    @ApiModelProperty(value = "群组简介")
+    @TableField(exist = false)
+    private String description;
 
     @ApiModelProperty(value = "创建时间")
     private Long createTime;

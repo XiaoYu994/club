@@ -43,7 +43,10 @@ public class ChatGroupVO {
     
     @ApiModelProperty(value = "最后一条消息时间")
     private Long lastMessageTime;
-    
+
+    @ApiModelProperty(value = "群组简介")
+    private String description;
+
     @ApiModelProperty(value = "创建时间")
     private Long createTime;
 } 

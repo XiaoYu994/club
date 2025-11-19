@@ -16,7 +16,7 @@ public class ClubJavaApplication {
 
         SpringApplication.run(ClubJavaApplication.class, args);
         System.out.println("社团管理后端服务启动成功！");
-        System.out.println("API文档地址: http://localhost:8081/doc.html");
+        System.out.println("API文档地址: http://localhost:80/doc.html");
 
     }
 

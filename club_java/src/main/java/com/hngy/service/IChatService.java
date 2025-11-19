@@ -1,6 +1,7 @@
 package com.hngy.service;
 
 import com.hngy.common.result.PageResult;
+import com.hngy.entity.vo.ChatGroupMemberVO;
 import com.hngy.entity.vo.ChatGroupVO;
 import com.hngy.entity.vo.ChatMessageVO;
 
@@ -66,4 +67,20 @@ public interface IChatService {
      * @return 是否移除成功
      */
     boolean removeUserFromGroup(Integer groupId, Long userId);
+
+    /**
+     * 更新群组信息
+     * @param groupId 群组ID
+     * @param avatar 群组头像
+     * @param currentUserId 当前用户ID
+     * @return 是否更新成功
+     */
+    boolean updateGroupInfo(Integer groupId, String avatar, Long currentUserId);
+
+    /**
+     * 获取群组成员列表
+     * @param groupId 群组ID
+     * @return 群组成员列表
+     */
+    List<ChatGroupMemberVO> getGroupMembers(Integer groupId);
 } 
