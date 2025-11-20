@@ -6,4 +6,6 @@ import lombok.Data;
 @Data
 public class ClubRecruitmentConfigPageDTO extends PageParam {
     private String keyword;
+    
+    private Integer status;
 }

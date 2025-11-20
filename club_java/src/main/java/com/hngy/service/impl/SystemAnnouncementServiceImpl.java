@@ -54,6 +54,11 @@ public class SystemAnnouncementServiceImpl extends ServiceImpl<SystemAnnouncemen
                     .or()
                     .like(SystemAnnouncement::getContent, noticePageDTO.getKeyword()));
         }
+
+        // 类型筛选
+        if (noticePageDTO.getType() != null) {
+            wrapper.eq(SystemAnnouncement::getType, noticePageDTO.getType());
+        }
         
         // 2. 排序逻辑：如果前端没有指定排序字段，默认按置顶+创建时间排序
         if (noticePageDTO.getOrderBy() == null || noticePageDTO.getOrderBy().isEmpty()) {

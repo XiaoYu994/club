@@ -48,7 +48,14 @@ public interface IUserService extends IService<User> {
     /**
      * 导出用户列表
      * @param userPageDTO - 查询参数，包含分页和筛选条件
-     * @return 返回导出结果，包含下载链接和文件名
+     * @return 返回Excel文件的字节数组
      */
-    Map<String, Object> exportUsers(UserPageDTO userPageDTO);
+    byte[] exportUsers(UserPageDTO userPageDTO);
+
+    /**
+     * 获取用户详情（包括社团参与记录和活动参与记录）
+     * @param id 用户ID
+     * @return 用户详情
+     */
+    com.hngy.entity.vo.UserDetailVO getUserDetail(Integer id);
 }

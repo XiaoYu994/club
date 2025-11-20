@@ -20,8 +20,13 @@ import com.hngy.entity.dto.UserStatusDTO;
 import com.hngy.entity.dto.userLoginDTO;
 import com.hngy.entity.po.User;
 import com.hngy.entity.po.WxSession;
+import com.hngy.entity.po.ClubActivity;
+import com.hngy.entity.po.ClubActivityApply;
+import com.hngy.entity.po.ClubInfo;
+import com.hngy.entity.po.ClubMember;
+import com.hngy.entity.vo.UserDetailVO;
 import com.hngy.entity.vo.UserVO;
-import com.hngy.mapper.UserMapper;
+import com.hngy.mapper.*;
 import com.hngy.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -56,6 +61,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private final WeChatProperties weChatProperties;
     private final UserMapper userMapper;
     private final FileStorageService fileStorageService;
+    private final ClubMemberMapper clubMemberMapper;
+    private final ClubActivityApplyMapper clubActivityApplyMapper;
+    private final ClubInfoMapper clubInfoMapper;
+    private final ClubActivityMapper clubActivityMapper;
     @Override
     public User login(userLoginDTO userLoginDTO) {
         // 测试号 TODO 如果点击的是手机号登录
@@ -90,13 +99,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     // 更新用户信息
     @Override
     public boolean updateById(UserDTO userDTO) {
-        userDTO.setId(BaseContext.getCurrentId());
-        if(userDTO.getId() == null){
+        Long userId = BaseContext.getCurrentId();
+        if(userId == null){
             throw new ServiceException(HttpStatus.HTTP_INTERNAL_ERROR, MessageConstant.USER_NOT_FOUND);
         }
+        // 查询用户
+        User user = getUser(userId.intValue());
+        // 使用 UpdateWrapper 实现动态更新（只更新非空字段）
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(User::getId, userId);
+        
+        // 只更新非空字段
+        if (userDTO.getUsername() != null && !userDTO.getUsername().isEmpty()) {
+            updateWrapper.set(User::getUsername, userDTO.getUsername());
+        }
+        if (userDTO.getAvatar() != null && !userDTO.getAvatar().isEmpty()) {
+            updateWrapper.set(User::getAvatar, userDTO.getAvatar());
+        }
+        if (userDTO.getGender() != null) {
+            updateWrapper.set(User::getGender, userDTO.getGender());
+        }
+        if (userDTO.getMobile() != null && !userDTO.getMobile().isEmpty()) {
+            updateWrapper.set(User::getMobile, userDTO.getMobile());
+        }
+        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+            updateWrapper.set(User::getEmail, userDTO.getEmail());
+        }
+        if (userDTO.getStudentId() != null && !userDTO.getStudentId().isEmpty()) {
+            updateWrapper.set(User::getStudentId, userDTO.getStudentId());
+        }
+        if (userDTO.getCollege() != null && !userDTO.getCollege().isEmpty()) {
+            updateWrapper.set(User::getCollege, userDTO.getCollege());
+        }
+        if (userDTO.getMajor() != null && !userDTO.getMajor().isEmpty()) {
+            updateWrapper.set(User::getMajor, userDTO.getMajor());
+        }
+        if (userDTO.getClassName() != null && !userDTO.getClassName().isEmpty()) {
+            updateWrapper.set(User::getClassName, userDTO.getClassName());
+        }
+        
         // 更新最后操作时间
-        userDTO.setUpdateTime(System.currentTimeMillis());
-        return userMapper.updateById(userDTO) > 0;
+        updateWrapper.set(User::getUpdateTime, System.currentTimeMillis());
+        
+        return userMapper.update(null, updateWrapper) > 0;
     }
 
     @Override
@@ -120,10 +165,45 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Boolean updateUser(Integer id, UserDTO userDTO) {
-        // 查询用户
-        final User user = getUser(id);
-        BeanUtil.copyProperties(userDTO, user);
-        return userMapper.updateById( user) > 0 ;
+        // 查询用户是否存在
+        getUser(id);
+        // 使用 UpdateWrapper 实现动态更新（只更新非空字段）
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(User::getId, id);
+        
+        // 只更新非空字段
+        if (userDTO.getUsername() != null && !userDTO.getUsername().isEmpty()) {
+            updateWrapper.set(User::getUsername, userDTO.getUsername());
+        }
+        if (userDTO.getAvatar() != null && !userDTO.getAvatar().isEmpty()) {
+            updateWrapper.set(User::getAvatar, userDTO.getAvatar());
+        }
+        if (userDTO.getGender() != null) {
+            updateWrapper.set(User::getGender, userDTO.getGender());
+        }
+        if (userDTO.getMobile() != null && !userDTO.getMobile().isEmpty()) {
+            updateWrapper.set(User::getMobile, userDTO.getMobile());
+        }
+        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
+            updateWrapper.set(User::getEmail, userDTO.getEmail());
+        }
+        if (userDTO.getStudentId() != null && !userDTO.getStudentId().isEmpty()) {
+            updateWrapper.set(User::getStudentId, userDTO.getStudentId());
+        }
+        if (userDTO.getCollege() != null && !userDTO.getCollege().isEmpty()) {
+            updateWrapper.set(User::getCollege, userDTO.getCollege());
+        }
+        if (userDTO.getMajor() != null && !userDTO.getMajor().isEmpty()) {
+            updateWrapper.set(User::getMajor, userDTO.getMajor());
+        }
+        if (userDTO.getClassName() != null && !userDTO.getClassName().isEmpty()) {
+            updateWrapper.set(User::getClassName, userDTO.getClassName());
+        }
+        
+        // 更新最后操作时间
+        updateWrapper.set(User::getUpdateTime, System.currentTimeMillis());
+        
+        return userMapper.update(null, updateWrapper) > 0;
     }
 
     @Override
@@ -136,7 +216,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public Map<String, Object> exportUsers(UserPageDTO userPageDTO) {
+    public byte[] exportUsers(UserPageDTO userPageDTO) {
         // 构造查询条件
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         if (userPageDTO.getKeyword() != null) {
@@ -184,19 +264,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             workbook.write(outputStream);
             byte[] bytes = outputStream.toByteArray();
             workbook.close();
-            // 上传文件
-            String objectName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + "/";
-            String fileName = "用户列表_" + System.currentTimeMillis() + ".xlsx";
-            FileInfo fileInfo = fileStorageService.of(bytes)
-                    .setOriginalFilename(fileName)
-                    .setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                    .setPath(objectName)
-                    .upload();
-            // 返回结果
-            Map<String, Object> result = new HashMap<>();
-            result.put("url", fileInfo.getUrl());
-            result.put("fileName", fileName);
-            return result;
+            // 直接返回字节数组，供前端下载
+            return bytes;
         } catch (IOException e) {
             throw new ServiceException(HttpStatus.HTTP_INTERNAL_ERROR, "导出失败: " + e.getMessage());
         }
@@ -226,5 +295,79 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             throw new ServiceException(HttpStatus.HTTP_INTERNAL_ERROR, MessageConstant.USER_NOT_FOUND);
         }
         return user;
+    }
+
+    @Override
+    public UserDetailVO getUserDetail(Integer id) {
+        User user = getUser(id);
+        UserDetailVO detailVO = new UserDetailVO();
+        
+        // 设置用户基本信息
+        UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
+        detailVO.setUserInfo(userVO);
+        
+        // 查询用户加入的社团
+        LambdaQueryWrapper<ClubMember> clubWrapper = new LambdaQueryWrapper<>();
+        clubWrapper.eq(ClubMember::getUserId, id.longValue())
+                  .eq(ClubMember::getStatus, 1); // 只查询正常状态的成员
+        List<ClubMember> clubMembers = clubMemberMapper.selectList(clubWrapper);
+        
+        List<UserDetailVO.ClubMemberInfo> clubs = clubMembers.stream().map(member -> {
+            UserDetailVO.ClubMemberInfo info = new UserDetailVO.ClubMemberInfo();
+            info.setClubId(member.getClubId().longValue());
+            ClubInfo clubInfo = clubInfoMapper.selectById(member.getClubId());
+            if (clubInfo != null) {
+                info.setClubName(clubInfo.getName());
+            }
+            info.setRole(member.getType());
+            // 设置角色名称
+            switch (member.getType()) {
+                case 0:
+                    info.setRoleName("普通成员");
+                    break;
+                case 1:
+                    info.setRoleName("管理员");
+                    break;
+                case 2:
+                    info.setRoleName("社长");
+                    break;
+                default:
+                    info.setRoleName("未知");
+            }
+            info.setJoinTime(member.getCreateTime());
+            info.setStatus(member.getStatus());
+            return info;
+        }).toList();
+        
+        detailVO.setClubs(clubs);
+        detailVO.setClubCount(clubs.size());
+        
+        // 查询用户参与的活动
+        LambdaQueryWrapper<ClubActivityApply> activityWrapper = new LambdaQueryWrapper<>();
+        activityWrapper.eq(ClubActivityApply::getUserId, id.longValue())
+                     .orderByDesc(ClubActivityApply::getCreateTime);
+        List<ClubActivityApply> activityApplies = clubActivityApplyMapper.selectList(activityWrapper);
+        
+        List<UserDetailVO.ActivityParticipateInfo> activities = activityApplies.stream().map(apply -> {
+            UserDetailVO.ActivityParticipateInfo info = new UserDetailVO.ActivityParticipateInfo();
+            info.setActivityId(apply.getActivityId());
+            ClubActivity activity = clubActivityMapper.selectById(apply.getActivityId());
+            if (activity != null) {
+                info.setActivityName(activity.getTitle());
+                ClubInfo clubInfo = clubInfoMapper.selectById(activity.getClubId());
+                if (clubInfo != null) {
+                    info.setClubName(clubInfo.getName());
+                }
+            }
+            info.setStatus(apply.getStatus());
+            info.setApplyTime(apply.getCreateTime());
+            info.setCheckInStatus(apply.getCheckInStatus());
+            return info;
+        }).toList();
+        
+        detailVO.setActivities(activities);
+        detailVO.setActivityCount(activities.size());
+        
+        return detailVO;
     }
 }

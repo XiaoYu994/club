@@ -84,4 +84,10 @@ public interface IClubActivityService extends IService<ClubActivity> {
      * @return 是否成功
      */
     boolean cancelActivity(Long activityId);
+    /**
+     * 导出活动列表
+     * @param clubActivityDTO 查询条件
+     * @return 导出文件信息
+     */
+    Map<String, Object> exportActivities(ClubActivityDTO clubActivityDTO);
 }

@@ -52,6 +52,12 @@ public class AdminActivityController {
         return R.success(clubActivityService.exportApplyList(activityId));
     }
 
+    @ApiOperation("导出活动列表")
+    @GetMapping("/export")
+    public R<Map<String, Object>> exportActivities(ClubActivityDTO clubActivityDTO) {
+        return R.success(clubActivityService.exportActivities(clubActivityDTO));
+    }
+
     @ApiOperation("修改活动状态")
     @PutMapping
     public R<String> updateActivityStatus(@RequestBody ActivityStatusDTO activityStatusDTO) {

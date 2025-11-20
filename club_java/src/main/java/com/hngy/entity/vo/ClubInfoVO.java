@@ -24,6 +24,9 @@ public class ClubInfoVO implements Serializable {
     @ApiModelProperty(value = "状态 0=禁用 1=正常")
     private Integer status;
 
+    @ApiModelProperty(value = "排序号")
+    private Integer orderNum;
+
     @ApiModelProperty(value = "社团logo")
     private String logo;
 

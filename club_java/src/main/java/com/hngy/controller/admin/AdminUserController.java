@@ -13,7 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -42,8 +44,8 @@ public class AdminUserController {
      */
     @GetMapping("/{id}")
     @ApiOperation("获取用户详情")
-    public R<User> getUserDetail(@PathVariable Integer id) {
-        return R.success(userService.getById(id));
+    public R<com.hngy.entity.vo.UserDetailVO> getUserDetail(@PathVariable Integer id) {
+        return R.success(userService.getUserDetail(id));
     }
 
     /**
@@ -69,7 +71,17 @@ public class AdminUserController {
      */
     @ApiOperation("导出用户列表")
     @GetMapping("/export")
-    public R<Map<String, Object>> exportUsers(UserPageDTO userPageDTO) {
-        return R.success(userService.exportUsers(userPageDTO));
+    public void exportUsers(UserPageDTO userPageDTO, HttpServletResponse response) throws IOException {
+        byte[] bytes = userService.exportUsers(userPageDTO);
+        
+        // 设置响应头
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=" + 
+            java.net.URLEncoder.encode("用户列表_" + System.currentTimeMillis() + ".xlsx", "UTF-8"));
+        response.setContentLength(bytes.length);
+        
+        // 写入响应流
+        response.getOutputStream().write(bytes);
+        response.getOutputStream().flush();
     }
 } 

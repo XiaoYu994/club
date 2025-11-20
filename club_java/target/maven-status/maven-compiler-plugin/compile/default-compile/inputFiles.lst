@@ -1,5 +1,7 @@
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\UserDetailVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\Admin.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\impl\ClubMemberServiceImpl.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\constant\NotificationConstant.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\ClubInfoVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\NoticeDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\user\NoticeController.java
@@ -9,11 +11,13 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\confi
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IClubChatGroupService.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\ClubRecruitmentConfig.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\constant\StatusConstant.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\TrendDataVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IUserService.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\ClubActivity.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\UserStatusDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\constant\ClubMemberConstant.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\ClubStatusDTO.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\TestNotificationDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mapper\ClubMemberMapper.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\ChatMessageDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\result\PageResult.java
@@ -36,11 +40,11 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entit
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\UserVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IClubActivityService.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\constant\ResponseMessageConstant.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IUserNotificationService.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\ClubMemberDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\CommonController.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\interceptor\JwtTokenAdminInterceptor.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\WxSession.java
-D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\user\ClubMessageController.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\properties\WeChatProperties.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\RecruitmentConfigDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\ChatMessageVO.java
@@ -56,7 +60,9 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entit
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\AdminVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\UserLoginVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\ClubInfo.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\ChatGroupMemberVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\exception\ServiceException.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\admin\WebSocketDebugController.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\UpdateRoleDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\AdminLoginVO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\userLoginDTO.java
@@ -66,6 +72,7 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entit
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\ClubActivityApply.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\RecruitmentAuditDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mapper\SystemAnnouncementMapper.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\impl\UserNotificationServiceImpl.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\UserDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\ClubJavaApplication.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\AdminLoginDTO.java
@@ -85,6 +92,7 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\contr
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\impl\ClubRecruitmentServiceImpl.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\ClubActivityApplyDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IClubRecruitmentService.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\po\UserNotification.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\CheckInResultDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\user\ChatRestController.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\impl\SystemAnnouncementServiceImpl.java
@@ -101,6 +109,7 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\commo
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\user\ClubActivityController.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\ClubOrderDTO.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mapper\ClubActivityMapper.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\user\UserNotificationController.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IClubApplyService.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mapper\ClubActivityApplyMapper.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\controller\user\ChatController.java
@@ -116,6 +125,8 @@ D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mappe
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\impl\ClubActivityServiceImpl.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mapper\ClubRecruitmentMapper.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\common\constant\RecruitmentConstant.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\dto\BroadcastNotificationDTO.java
+D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\mapper\UserNotificationMapper.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\config\MybatisPlusConfig.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\service\IAdminService.java
 D:\CODE\capstone-project\club-master\club\club_java\src\main\java\com\hngy\entity\vo\CheckInResultVO.java

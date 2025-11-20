@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 @ApiModel("系统管理员视图实体")
@@ -19,5 +21,7 @@ public class AdminLoginVO {
     private Integer type;
     @ApiModelProperty("令牌")
     private String token;
+    @ApiModelProperty("角色列表")
+    private List<String> roles;
 
 }

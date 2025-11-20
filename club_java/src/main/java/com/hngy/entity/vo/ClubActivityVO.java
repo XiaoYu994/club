@@ -55,5 +55,8 @@ public class ClubActivityVO implements Serializable {
     @ApiModelProperty(value = "活动扩展信息JSON")
     private String extJson;
 
+    @ApiModelProperty(value = "创建时间")
+    private Long createTime;
+
 
 }

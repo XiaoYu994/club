@@ -17,6 +17,9 @@ public class ClubUpdateDTO {
     @ApiModelProperty("社团简介")
     private String description;
 
+    @ApiModelProperty("排序号")
+    private Integer orderNum;
+
     @ApiModelProperty("社团类型 0=普通社团 1=院级社团 2=校级社团")
     private Integer type;
 

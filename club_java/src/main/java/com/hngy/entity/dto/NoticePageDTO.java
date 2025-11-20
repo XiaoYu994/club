@@ -6,4 +6,6 @@ import lombok.Data;
 @Data
 public class NoticePageDTO extends PageParam {
     private String keyword;
+    
+    private Integer type;
 }

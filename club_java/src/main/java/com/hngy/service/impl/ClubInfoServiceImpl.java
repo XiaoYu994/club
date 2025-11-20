@@ -19,6 +19,7 @@ import com.hngy.entity.vo.UserVO;
 import com.hngy.mapper.*;
 import com.hngy.service.IClubInfoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClubInfoServiceImpl extends ServiceImpl<ClubInfoMapper, ClubInfo> implements IClubInfoService {
     private final ClubInfoMapper clubInfoMapper;
     private final ClubMemberMapper clubMemberMapper;
@@ -146,11 +148,47 @@ public class ClubInfoServiceImpl extends ServiceImpl<ClubInfoMapper, ClubInfo> i
         // 使用LambdaQueryWrapper代替QueryWrapper，这样可以使用方法引用
         LambdaQueryWrapper<ClubInfo> wrapper = new LambdaQueryWrapper<>();
 
-        // 1.  关键词搜索（社团名称、描述、地点）
-        if (StringUtils.hasText(clubDTO.getKeyword())) {
-            // 在and 方法中凭借 or 在mybatisPlus中where 后面的条件是直接在()里面的 只要有一个or为true 后面的and条件就没有用了
-            wrapper.and(w -> w.like(ClubInfo::getName, clubDTO.getKeyword()));
+        // 1. 社团名称搜索
+        if (StringUtils.hasText(clubDTO.getName())) {
+            wrapper.like(ClubInfo::getName, clubDTO.getName());
         }
+
+        // 2. 关键词搜索（社团名称、描述、地点）
+        if (StringUtils.hasText(clubDTO.getKeyword())) {
+            wrapper.and(w -> w.like(ClubInfo::getName, clubDTO.getKeyword())
+                    .or()
+                    .like(ClubInfo::getDescription, clubDTO.getKeyword())
+                    .or()
+                    .like(ClubInfo::getAddress, clubDTO.getKeyword()));
+        }
+
+        // 3. 状态筛选
+        if (clubDTO.getStatus() != null) {
+            wrapper.eq(ClubInfo::getStatus, clubDTO.getStatus());
+        }
+
+        // 4. 社团类型筛选
+        if (clubDTO.getType() != null) {
+            wrapper.eq(ClubInfo::getType, clubDTO.getType());
+        }
+
+        // 5. 招新状态筛选
+        if (clubDTO.getIsRecruiting() != null) {
+            long now = System.currentTimeMillis();
+            List<Long> recruitingClubIds = clubInfoMapper.selectRecruitingClubIds(now);
+            if (clubDTO.getIsRecruiting()) {
+                if (recruitingClubIds.isEmpty()) {
+                    wrapper.eq(ClubInfo::getId, -1L);
+                } else {
+                    wrapper.in(ClubInfo::getId, recruitingClubIds);
+                }
+            } else {
+                if (!recruitingClubIds.isEmpty()) {
+                    wrapper.notIn(ClubInfo::getId, recruitingClubIds);
+                }
+            }
+        }
+
         // 执行分页查询
         page = clubInfoMapper.selectPage(page, wrapper);
         // 转换结果并返回
@@ -270,6 +308,9 @@ public class ClubInfoServiceImpl extends ServiceImpl<ClubInfoMapper, ClubInfo> i
         if (clubUpdateDTO.getType() != null) {
             club.setType(clubUpdateDTO.getType());
         }
+        if (clubUpdateDTO.getOrderNum() != null) {
+            club.setOrderNum(clubUpdateDTO.getOrderNum());
+        }
         if (StringUtils.hasText(clubUpdateDTO.getAddress())) {
             club.setAddress(clubUpdateDTO.getAddress());
         }
@@ -291,24 +332,34 @@ public class ClubInfoServiceImpl extends ServiceImpl<ClubInfoMapper, ClubInfo> i
         BeanUtil.copyProperties(clubInfoDTO, club);
         club.setCreateTime(System.currentTimeMillis()); // 创建时间
         club.setStatus(StatusConstant.ENABLE); // 默认启用社团
-        club.setCreateUserId(BaseContext.getCurrentId().intValue()); // 系统创建人ID
+
+        Long creatorId = clubInfoDTO.getCreateUserId();
+        if (creatorId == null) {
+            creatorId = BaseContext.getCurrentId();
+        }
+        if (creatorId == null) {
+            throw new ServiceException(HttpStatus.UNAUTHORIZED.value(), MessageConstant.USER_NOT_FOUND);
+        }
+        club.setCreateUserId(creatorId.intValue()); // 系统创建人ID
         clubInfoMapper.insert(club);
         // 创建一个社团后自己生成一个该社团下的聊天群组
         ClubChatGroup chatGroup = new ClubChatGroup();
         chatGroup.setClubId(club.getId().intValue());
         chatGroup.setName(club.getName());
         chatGroup.setAvatar(club.getLogo());
-        chatGroup.setOwnerId(clubInfoDTO.getCreateUserId().intValue());
+        chatGroup.setOwnerId(creatorId.intValue());
         chatGroup.setCreateTime(System.currentTimeMillis());
         chatGroup.setType(ClubInfoConstant.GROUP_TYPE_PUBLIC); // 设置为公共群类型
         clubChatGroupMapper.insert(chatGroup);
         // 该成员自动加入该社团
-        if(userMapper.selectById(clubInfoDTO.getCreateUserId()) == null) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), MessageConstant.USER_NOT_FOUND);
+        User creator = userMapper.selectById(creatorId.intValue());
+        if (creator == null) {
+            log.warn("Creator user {} not found in user table, skip auto member binding", creatorId);
+            return true;
         }
         ClubMember member = new ClubMember();
         member.setClubId(club.getId().intValue());
-        member.setUserId(clubInfoDTO.getCreateUserId());
+        member.setUserId(creatorId);
         member.setType(ClubMemberConstant.ROLE_PRESIDENT); // 直接是社长
         member.setStatus(ClubInfoConstant.MEMBER_STATUS_NORMAL);
         member.setJoinTime(System.currentTimeMillis());
@@ -317,7 +368,7 @@ public class ClubInfoServiceImpl extends ServiceImpl<ClubInfoMapper, ClubInfo> i
         // 该成员自动加入聊天群组
         ClubChatGroupMember clubChatGroupMember = new ClubChatGroupMember();
         clubChatGroupMember.setGroupId(chatGroup.getId()); // 使用正确的群组ID
-        clubChatGroupMember.setUserId(clubInfoDTO.getCreateUserId().intValue()); // 用户Id
+        clubChatGroupMember.setUserId(creatorId.intValue()); // 用户Id
         return clubChatGroupMemberMapper.insert(clubChatGroupMember)>0;
     }
 

@@ -1,7 +1,10 @@
 package com.hngy.controller.admin;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hngy.common.constant.NotificationConstant;
 import com.hngy.common.result.R;
+import com.hngy.entity.dto.BroadcastNotificationDTO;
+import com.hngy.entity.dto.TestNotificationDTO;
 import com.hngy.entity.po.User;
 import com.hngy.mapper.UserMapper;
 import com.hngy.service.IUserNotificationService;
@@ -38,18 +41,40 @@ public class WebSocketDebugController {
     @GetMapping("/online-users")
     public R<Map<String, Object>> getOnlineUsers() {
         Map<String, Object> result = new HashMap<>();
-        result.put("onlineUserIds", chatWebSocketHandler.getOnlineUserIds());
-        result.put("onlineCount", chatWebSocketHandler.getOnlineCount());
-        log.info("【WebSocket调试】查询在线用户，数量: {}", chatWebSocketHandler.getOnlineCount());
+        java.util.Set<Long> onlineUserIds = chatWebSocketHandler.getOnlineUserIds();
+        
+        // 获取在线用户的详细信息
+        java.util.List<Map<String, Object>> onlineUserDetails = new java.util.ArrayList<>();
+        for (Long userId : onlineUserIds) {
+            User user = userMapper.selectById(userId);
+            if (user != null) {
+                Map<String, Object> userInfo = new HashMap<>();
+                userInfo.put("userId", user.getId());
+                userInfo.put("username", user.getUsername());
+                userInfo.put("avatar", user.getAvatar());
+                userInfo.put("realName", user.getUsername()); // User实体没有realName字段,使用username
+                userInfo.put("studentId", user.getStudentId());
+                onlineUserDetails.add(userInfo);
+            }
+        }
+        
+        // 获取总用户数
+        long totalUserCount = userMapper.selectCount(null);
+        
+        result.put("onlineUsers", onlineUserDetails);
+        result.put("onlineCount", onlineUserIds.size());
+        result.put("totalUserCount", totalUserCount);
+        log.info("【WebSocket调试】查询在线用户，数量: {}，总用户数: {}", onlineUserIds.size(), totalUserCount);
         return R.success(result);
     }
 
     @ApiOperation("测试发送通知给指定用户")
     @PostMapping("/test-notification")
-    public R<String> testNotification(@RequestParam Long userId,
-                                      @RequestParam(defaultValue = "admin_notification") String type,
-                                      @RequestParam(defaultValue = "测试通知") String title,
-                                      @RequestParam(defaultValue = "这是一条测试消息") String message) {
+    public R<String> testNotification(@RequestBody TestNotificationDTO dto) {
+        Long userId = dto.getUserId();
+        String type = dto.getType() != null ? dto.getType() : "admin_notification";
+        String title = dto.getTitle() != null ? dto.getTitle() : "测试通知";
+        String message = dto.getMessage() != null ? dto.getMessage() : "这是一条测试消息";
         log.info("【WebSocket调试】测试发送通知给用户 {}，类型: {}", userId, type);
 
         // 1. 先保存通知到数据库（不管用户是否在线）
@@ -72,17 +97,31 @@ public class WebSocketDebugController {
         boolean isOnline = chatWebSocketHandler.isUserOnline(userId);
 
         if (isOnline) {
-            // 构建测试通知消息（统一格式）
-            String testMessage = String.format(
-                "{\"type\":\"%s_notification\",\"title\":\"%s\",\"message\":\"%s\",\"extraInfo\":null,\"activityId\":999,\"activityTitle\":\"%s\",\"timestamp\":%d}",
-                type, title, message, title, System.currentTimeMillis()
-            );
+            // 构建测试通知消息（统一格式，确保类型正确）
+            // 特殊处理：admin_notification 需要转换为 admin_notification_notification
+            String notificationType;
+            if ("admin_notification".equals(type)) {
+                notificationType = "admin_notification_notification";
+            } else if (type.endsWith("_notification")) {
+                notificationType = type;
+            } else {
+                notificationType = type + "_notification";
+            }
+            JSONObject notification = new JSONObject();
+            notification.put("type", notificationType);
+            notification.put("title", title);
+            notification.put("message", message);
+            notification.put("extraInfo", null);
+            notification.put("activityId", null);
+            notification.put("activityTitle", null);
+            notification.put("timestamp", System.currentTimeMillis());
 
             try {
-                chatWebSocketHandler.sendMessageToUser(userId, testMessage);
+                chatWebSocketHandler.sendMessageToUser(userId, notification.toJSONString());
+                log.info("【WebSocket调试】成功发送通知给用户 {}，类型: {}", userId, notificationType);
                 return R.success("通知已保存到数据库，并通过WebSocket实时推送给在线用户 " + userId);
             } catch (Exception e) {
-                log.error("【WebSocket调试】发送实时通知失败: {}", e.getMessage());
+                log.error("【WebSocket调试】发送实时通知失败: {}", e.getMessage(), e);
                 return R.success("通知已保存到数据库，但WebSocket推送失败（用户可在消息列表中查看）");
             }
         } else {
@@ -103,10 +142,10 @@ public class WebSocketDebugController {
 
     @ApiOperation("向所有在线用户广播通知")
     @PostMapping("/broadcast-notification")
-    public R<Map<String, Object>> broadcastNotification(
-            @RequestParam(defaultValue = "system_broadcast") String type,
-            @RequestParam(defaultValue = "系统广播通知") String title,
-            @RequestParam(defaultValue = "这是一条系统广播消息") String message) {
+    public R<Map<String, Object>> broadcastNotification(@RequestBody BroadcastNotificationDTO dto) {
+        String type = dto.getType() != null ? dto.getType() : "system_broadcast";
+        String title = dto.getTitle() != null ? dto.getTitle() : "系统广播通知";
+        String message = dto.getMessage() != null ? dto.getMessage() : "这是一条系统广播消息";
         log.info("【WebSocket调试】开始向所有用户广播通知，类型: {}", type);
 
         // 1. 查询所有用户（不仅仅是在线用户）
@@ -139,11 +178,25 @@ public class WebSocketDebugController {
         java.util.Set<Long> onlineUserIds = chatWebSocketHandler.getOnlineUserIds();
         int onlineCount = onlineUserIds.size();
 
-        // 构建广播通知消息（统一格式）
-        String broadcastMessage = String.format(
-            "{\"type\":\"%s_notification\",\"title\":\"%s\",\"message\":\"%s\",\"extraInfo\":null,\"activityId\":999,\"activityTitle\":\"%s\",\"timestamp\":%d}",
-            type, title, message, title, System.currentTimeMillis()
-        );
+        // 构建广播通知消息（统一格式，确保类型正确）
+        // 特殊处理：system_broadcast 需要转换为 system_broadcast_notification
+        String broadcastNotificationType;
+        if ("system_broadcast".equals(type)) {
+            broadcastNotificationType = "system_broadcast_notification";
+        } else if (type.endsWith("_notification")) {
+            broadcastNotificationType = type;
+        } else {
+            broadcastNotificationType = type + "_notification";
+        }
+        JSONObject broadcastNotification = new JSONObject();
+        broadcastNotification.put("type", broadcastNotificationType);
+        broadcastNotification.put("title", title);
+        broadcastNotification.put("message", message);
+        broadcastNotification.put("extraInfo", null);
+        broadcastNotification.put("activityId", null);
+        broadcastNotification.put("activityTitle", null);
+        broadcastNotification.put("timestamp", System.currentTimeMillis());
+        String broadcastMessage = broadcastNotification.toJSONString();
 
         // 向所有在线用户发送WebSocket消息
         int pushSuccessCount = 0;
@@ -156,7 +209,7 @@ public class WebSocketDebugController {
                 log.debug("【WebSocket调试】成功向在线用户 {} 发送广播消息", userId);
             } catch (Exception e) {
                 pushFailCount++;
-                log.error("【WebSocket调试】向用户 {} 发送广播消息失败: {}", userId, e.getMessage());
+                log.error("【WebSocket调试】向用户 {} 发送广播消息失败: {}", userId, e.getMessage(), e);
             }
         }
 

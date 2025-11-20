@@ -26,7 +26,8 @@
     {
       "name": "jwt.admin-ttl",
       "type": "java.lang.Long",
-      "sourceType": "com.hngy.common.properties.JwtProperties"
+      "sourceType": "com.hngy.common.properties.JwtProperties",
+      "defaultValue": 0
     },
     {
       "name": "jwt.user-secret-key",
@@ -42,7 +43,8 @@
     {
       "name": "jwt.user-ttl",
       "type": "java.lang.Long",
-      "sourceType": "com.hngy.common.properties.JwtProperties"
+      "sourceType": "com.hngy.common.properties.JwtProperties",
+      "defaultValue": 0
     },
     {
       "name": "wechat.appid",

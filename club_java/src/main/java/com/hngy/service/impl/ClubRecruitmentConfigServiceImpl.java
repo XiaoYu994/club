@@ -45,6 +45,10 @@ public class ClubRecruitmentConfigServiceImpl extends ServiceImpl<ClubRecruitmen
             wrapper.and(w -> w.like(ClubRecruitmentConfig::getName, configPageDTO.getKeyword()).or().
                                like(ClubRecruitmentConfig::getSemester, configPageDTO.getKeyword()));
         }
+        // 状态筛选
+        if (configPageDTO.getStatus() != null) {
+            wrapper.eq(ClubRecruitmentConfig::getStatus, configPageDTO.getStatus());
+        }
         page = clubRecruitmentConfigMapper.selectPage(page, wrapper);
         return PageResult.of(page, RecruitmentConfigVO.class);
     }

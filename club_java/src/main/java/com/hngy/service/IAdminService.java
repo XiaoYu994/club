@@ -7,6 +7,7 @@ import com.hngy.entity.dto.*;
 import com.hngy.entity.po.Admin;
 import com.hngy.entity.vo.AdminVO;
 import com.hngy.entity.vo.StatisticsVO;
+import com.hngy.entity.vo.TrendDataVO;
 
 /**
  * <p>
@@ -50,6 +51,13 @@ public interface IAdminService extends IService<Admin> {
     boolean createAdmin(AdminDTO adminDTO);
 
     /**
+     * @desc: 更新管理员信息
+     * @Author:  XiaoYu
+     * @date:  2025/11/20
+    **/
+    boolean updateAdmin(AdminDTO adminDTO);
+
+    /**
      * @desc: 更新管理员状态
      * @Author:  XiaoYu
      * @date:  2025/7/24 下午5:29
@@ -62,4 +70,13 @@ public interface IAdminService extends IService<Admin> {
      * @date:  2025/7/24 下午5:29
     **/
     boolean resetPassword(Long adminId);
+
+    /**
+     * @desc: 获取趋势数据
+     * @param days 天数（7或30）
+     * @return 趋势数据
+     * @Author:  XiaoYu
+     * @date:  2025/11/19
+    **/
+    TrendDataVO getTrendData(Integer days);
 }

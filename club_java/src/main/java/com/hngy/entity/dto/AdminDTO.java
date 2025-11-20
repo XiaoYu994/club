@@ -7,23 +7,28 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel("添加管理员")
+@ApiModel("管理员DTO")
 public class AdminDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "管理员名称")
+    @ApiModelProperty("管理员ID")
+    private Long id;
+
+    @ApiModelProperty("用户名")
     private String username;
 
-    @ApiModelProperty(value = "密码")
+    @ApiModelProperty("密码")
     private String password;
 
-    @ApiModelProperty(value = "描述")
+    @ApiModelProperty("描述")
     private String description;
 
-    @ApiModelProperty(value = "手机号")
+    @ApiModelProperty("手机号")
     private String phone;
 
-    @ApiModelProperty(value = "类型 0=普通管理员 1=超级管理员")
+    @ApiModelProperty("类型 0=普通管理员 1=超级管理员")
     private Integer type;
 
+    @ApiModelProperty("状态 0=禁用 1=正常")
+    private Integer status;
 }

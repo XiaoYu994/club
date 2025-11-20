@@ -2,7 +2,10 @@ package com.hngy.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.hngy.entity.po.ClubInfo;
+import com.hngy.entity.vo.StatisticsVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -29,4 +32,23 @@ public interface ClubInfoMapper extends BaseMapper<ClubInfo> {
 
     @Select("SELECT COUNT(*) FROM club_info")
     int count();
+    
+    /**
+     * 查询热门社团（按成员数排序）
+     * @param limit 限制数量
+     * @return 热门社团列表
+     */
+    @Select("SELECT ci.id as club_id, ci.name as club_name, " +
+            "COALESCE(COUNT(cm.id), 0) as member_count " +
+            "FROM club_info ci " +
+            "LEFT JOIN club_member cm ON ci.id = cm.club_id " +
+            "GROUP BY ci.id, ci.name " +
+            "ORDER BY member_count DESC " +
+            "LIMIT #{limit}")
+    @Results({
+        @Result(property = "clubId", column = "club_id"),
+        @Result(property = "clubName", column = "club_name"),
+        @Result(property = "memberCount", column = "member_count")
+    })
+    List<StatisticsVO.ClubStatItem> selectTopClubsByMemberCount(@Param("limit") int limit);
 }

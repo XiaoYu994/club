@@ -475,7 +475,7 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
         // 使用LambdaQueryWrapper代替QueryWrapper，这样可以使用方法引用
         LambdaQueryWrapper<ClubActivity> wrapper = new LambdaQueryWrapper<>();
 
-        // 1. 分组关键词搜索（标题、描述、地点），确保与其他条件正确组合
+        // 1. 分组关键词搜索（标题、描述、地点）
         if (StringUtils.hasText(clubActivityDTO.getKeyword())) {
             wrapper.and(w -> w.like(ClubActivity::getTitle, clubActivityDTO.getKeyword())
                     .or()
@@ -483,6 +483,40 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
                     .or()
                     .like(ClubActivity::getAddress, clubActivityDTO.getKeyword()));
         }
+
+        // 2. 状态筛选
+        if (clubActivityDTO.getStatus() != null) {
+            wrapper.eq(ClubActivity::getStatus, clubActivityDTO.getStatus());
+        }
+
+        // 3. 时间范围筛选
+        if (clubActivityDTO.getStartTime() != null) {
+            wrapper.ge(ClubActivity::getStartTime, clubActivityDTO.getStartTime());
+        }
+        if (clubActivityDTO.getEndTime() != null) {
+            wrapper.le(ClubActivity::getEndTime, clubActivityDTO.getEndTime());
+        }
+
+        // 4. 社团ID筛选
+        if (clubActivityDTO.getClubId() != null) {
+            wrapper.eq(ClubActivity::getClubId, clubActivityDTO.getClubId());
+        }
+
+        // 5. 社团类型筛选
+        if (clubActivityDTO.getClubType() != null) {
+             // 查询指定类型的社团ID列表
+             LambdaQueryWrapper<ClubInfo> clubWrapper = new LambdaQueryWrapper<>();
+             clubWrapper.eq(ClubInfo::getType, clubActivityDTO.getClubType());
+             List<ClubInfo> clubs = clubInfoMapper.selectList(clubWrapper);
+             
+             if (!clubs.isEmpty()) {
+                 List<Long> clubIds = clubs.stream().map(ClubInfo::getId).toList();
+                 wrapper.in(ClubActivity::getClubId, clubIds);
+             } else {
+                 wrapper.eq(ClubActivity::getId, -1L); // 无匹配社团，返回空
+             }
+        }
+
         // 执行分页查询
         page = clubActivityMapper.selectPage(page, wrapper);
 
@@ -492,8 +526,7 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
             BeanUtils.copyProperties(activity, vo);
             vo.setClubName(getClubName(activity.getClubId()));
             return vo;
-        }
-        );
+        });
     }
 
     @Override
@@ -624,10 +657,120 @@ public class ClubActivityServiceImpl extends ServiceImpl<ClubActivityMapper, Clu
         return updated;
     }
 
+    @Override
+    public Map<String, Object> exportActivities(ClubActivityDTO clubActivityDTO) {
+        // 1. 获取数据 (复用getActivity的逻辑，但不分页)
+        LambdaQueryWrapper<ClubActivity> wrapper = new LambdaQueryWrapper<>();
+        
+        if (StringUtils.hasText(clubActivityDTO.getKeyword())) {
+            wrapper.and(w -> w.like(ClubActivity::getTitle, clubActivityDTO.getKeyword())
+                    .or()
+                    .like(ClubActivity::getDescription, clubActivityDTO.getKeyword())
+                    .or()
+                    .like(ClubActivity::getAddress, clubActivityDTO.getKeyword()));
+        }
+        if (clubActivityDTO.getStatus() != null) {
+            wrapper.eq(ClubActivity::getStatus, clubActivityDTO.getStatus());
+        }
+        if (clubActivityDTO.getStartTime() != null) {
+            wrapper.ge(ClubActivity::getStartTime, clubActivityDTO.getStartTime());
+        }
+        if (clubActivityDTO.getEndTime() != null) {
+            wrapper.le(ClubActivity::getEndTime, clubActivityDTO.getEndTime());
+        }
+        if (clubActivityDTO.getClubId() != null) {
+            wrapper.eq(ClubActivity::getClubId, clubActivityDTO.getClubId());
+        }
+        if (clubActivityDTO.getClubType() != null) {
+             LambdaQueryWrapper<ClubInfo> clubWrapper = new LambdaQueryWrapper<>();
+             clubWrapper.eq(ClubInfo::getType, clubActivityDTO.getClubType());
+             List<ClubInfo> clubs = clubInfoMapper.selectList(clubWrapper);
+             if (!clubs.isEmpty()) {
+                 List<Long> clubIds = clubs.stream().map(ClubInfo::getId).toList();
+                 wrapper.in(ClubActivity::getClubId, clubIds);
+             } else {
+                 wrapper.eq(ClubActivity::getId, -1L);
+             }
+        }
+        
+        wrapper.orderByDesc(ClubActivity::getCreateTime);
+        List<ClubActivity> activities = clubActivityMapper.selectList(wrapper);
+
+        try {
+            // 2. 创建Excel
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("活动列表");
+
+            // 标题行
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"序号", "活动标题", "所属社团", "活动地点", "开始时间", "结束时间", "状态", "创建时间"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                sheet.setColumnWidth(i, 5000);
+            }
+
+            // 数据行
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            for (int i = 0; i < activities.size(); i++) {
+                ClubActivity activity = activities.get(i);
+                Row row = sheet.createRow(i + 1);
+                
+                row.createCell(0).setCellValue(i + 1);
+                row.createCell(1).setCellValue(activity.getTitle());
+                row.createCell(2).setCellValue(getClubName(activity.getClubId()));
+                row.createCell(3).setCellValue(activity.getAddress());
+                
+                // 时间转换
+                String startTimeStr = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(activity.getStartTime()));
+                String endTimeStr = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(activity.getEndTime()));
+                row.createCell(4).setCellValue(startTimeStr);
+                row.createCell(5).setCellValue(endTimeStr);
+                
+                // 状态
+                String statusName = switch (activity.getStatus()) {
+                    case 0 -> "已取消";
+                    case 1 -> "待审核";
+                    case 2 -> "进行中";
+                    case 3 -> "已结束";
+                    default -> "未知";
+                };
+                row.createCell(6).setCellValue(statusName);
+                
+                String createTimeStr = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(activity.getCreateTime()));
+                row.createCell(7).setCellValue(createTimeStr);
+            }
+
+            // 3. 上传
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            workbook.close();
+
+            String objectName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + "/";
+            String fileName = "活动列表_" + System.currentTimeMillis() + ".xlsx";
+
+            FileInfo fileInfo = fileStorageService.of(bytes)
+                                                .setOriginalFilename(fileName)
+                                                .setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                                                .setPath(objectName)
+                                                .upload();
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("url", fileInfo.getUrl());
+            result.put("fileName", fileName);
+            return result;
+
+        } catch (IOException e) {
+            log.error("导出活动列表失败", e);
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "导出失败: " + e.getMessage());
+        }
+    }
+
     private String getClubName(Integer clubId) {
         ClubInfo clubInfo = clubInfoMapper.selectById(clubId);
         if (clubInfo == null) {
-            throw new ServiceException(HttpStatus.NOT_FOUND.value(), ActivityConstant.ERROR_ACTIVITY_NOT_FOUND);
+            return "未知社团";
         }
         return clubInfo.getName();
     }
