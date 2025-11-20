@@ -48,6 +48,21 @@ function showNotification(options = {}) {
       color: "#ff9800",
       defaultTitle: "活动提醒"
     },
+    admin_notification: {
+      icon: "notification-filled",
+      color: "#3b82f6",
+      defaultTitle: "管理员通知"
+    },
+    admin_message: {
+      icon: "chat-filled",
+      color: "#3b82f6",
+      defaultTitle: "管理员消息"
+    },
+    system_broadcast: {
+      icon: "sound-filled",
+      color: "#ff9800",
+      defaultTitle: "系统广播"
+    },
     default: {
       icon: "notification-filled",
       color: "#3b82f6",
@@ -60,27 +75,27 @@ function showNotification(options = {}) {
   if (extraInfo) {
     content += "\n\n" + extraInfo;
   }
-  common_vendor.index.__f__("log", "at utils/notification.js:84", "【通知】准备显示消息，标题:", finalTitle, "内容:", content);
+  common_vendor.index.__f__("log", "at utils/notification.js:99", "【通知】准备显示消息，标题:", finalTitle, "内容:", content);
   notificationQueue.push({
     title: finalTitle,
     content,
     onConfirm,
     onCancel
   });
-  common_vendor.index.__f__("log", "at utils/notification.js:94", "【通知】当前队列长度:", notificationQueue.length, "是否正在显示:", isShowing);
+  common_vendor.index.__f__("log", "at utils/notification.js:109", "【通知】当前队列长度:", notificationQueue.length, "是否正在显示:", isShowing);
   if (!isShowing) {
     showNextNotification();
   }
 }
 function showNextNotification() {
   if (notificationQueue.length === 0) {
-    common_vendor.index.__f__("log", "at utils/notification.js:107", "【通知】队列为空，停止显示");
+    common_vendor.index.__f__("log", "at utils/notification.js:122", "【通知】队列为空，停止显示");
     isShowing = false;
     return;
   }
   isShowing = true;
   const notification = notificationQueue.shift();
-  common_vendor.index.__f__("log", "at utils/notification.js:115", "【通知】开始显示消息:", notification.title);
+  common_vendor.index.__f__("log", "at utils/notification.js:130", "【通知】开始显示消息:", notification.title);
   try {
     common_vendor.index.showModal({
       title: notification.title,
@@ -88,7 +103,7 @@ function showNextNotification() {
       showCancel: false,
       confirmText: "知道了",
       success: (res) => {
-        common_vendor.index.__f__("log", "at utils/notification.js:124", "【通知】用户点击了确认按钮");
+        common_vendor.index.__f__("log", "at utils/notification.js:139", "【通知】用户点击了确认按钮");
         if (res.confirm && notification.onConfirm) {
           notification.onConfirm();
         }
@@ -97,31 +112,31 @@ function showNextNotification() {
         }, 300);
       },
       fail: (err) => {
-        common_vendor.index.__f__("error", "at utils/notification.js:134", "【通知】显示失败:", err);
+        common_vendor.index.__f__("error", "at utils/notification.js:149", "【通知】显示失败:", err);
         setTimeout(() => {
           showNextNotification();
         }, 300);
       }
     });
   } catch (error) {
-    common_vendor.index.__f__("error", "at utils/notification.js:142", "【通知】showModal 异常:", error);
+    common_vendor.index.__f__("error", "at utils/notification.js:157", "【通知】showModal 异常:", error);
     setTimeout(() => {
       showNextNotification();
     }, 300);
   }
 }
 function install(app) {
-  common_vendor.index.__f__("log", "at utils/notification.js:155", "【通知】正在安装通知插件...");
+  common_vendor.index.__f__("log", "at utils/notification.js:170", "【通知】正在安装通知插件...");
   if (app.config && app.config.globalProperties) {
     app.config.globalProperties.$showNotification = showNotification;
-    common_vendor.index.__f__("log", "at utils/notification.js:160", "【通知】已注册到 Vue3 globalProperties");
+    common_vendor.index.__f__("log", "at utils/notification.js:175", "【通知】已注册到 Vue3 globalProperties");
   } else if (app.prototype) {
     app.prototype.$showNotification = showNotification;
-    common_vendor.index.__f__("log", "at utils/notification.js:165", "【通知】已注册到 Vue2 prototype");
+    common_vendor.index.__f__("log", "at utils/notification.js:180", "【通知】已注册到 Vue2 prototype");
   }
   if (typeof common_vendor.index !== "undefined") {
     common_vendor.index.$showNotification = showNotification;
-    common_vendor.index.__f__("log", "at utils/notification.js:171", "【通知】已注册到 uni 全局对象");
+    common_vendor.index.__f__("log", "at utils/notification.js:186", "【通知】已注册到 uni 全局对象");
   }
 }
 const notificationPlugin = {

@@ -127,7 +127,8 @@ export default {
         'club_quit_approved_notification',     // 退社申请通过（通知用户）
         'club_quit_rejected_notification',     // 退社申请拒绝（通知用户）
         'system_broadcast_notification',       // 系统广播通知
-        'admin_notification_notification'      // 管理员通知
+        'admin_notification_notification',    // 管理员通知
+        'admin_message_notification'           // 管理员指定消息
       ]
 
       notificationTypes.forEach(type => {

@@ -40,6 +40,17 @@ export const systemMenuRoutes = [
     },
   },
   {
+    path: 'users/:id',
+    name: 'SystemUserDetail',
+    component: () => import('@/views/system/users/Detail.vue'),
+    meta: {
+      title: '用户详情',
+      requiresAuth: true,
+      roles: ['SUPER', 'ADMIN'],
+      hidden: true,
+    },
+  },
+  {
     path: 'activities',
     name: 'SystemActivities',
     component: () => import('@/views/system/activities/List.vue'),
@@ -87,30 +98,7 @@ export const systemMenuRoutes = [
       menuGroup: '内容与通知',
     },
   },
-  {
-    path: 'finance',
-    name: 'SystemFinance',
-    component: () => import('@/views/system/finance/List.vue'),
-    meta: {
-      title: '财务管理',
-      icon: 'Coin',
-      requiresAuth: true,
-      roles: ['SUPER'],
-      menuGroup: '运营支持',
-    },
-  },
-  {
-    path: 'resources',
-    name: 'SystemResources',
-    component: () => import('@/views/system/resources/List.vue'),
-    meta: {
-      title: '资源管理',
-      icon: 'Box',
-      requiresAuth: true,
-      roles: ['SUPER', 'ADMIN'],
-      menuGroup: '运营支持',
-    },
-  },
+
   {
     path: 'admins',
     name: 'SystemAdmins',
@@ -124,36 +112,12 @@ export const systemMenuRoutes = [
     },
   },
   {
-    path: 'settings/base',
-    name: 'SystemSettingsBase',
-    component: () => import('@/views/system/settings/Base.vue'),
+    path: 'monitor/websocket',
+    name: 'SystemMonitorWebSocket',
+    component: () => import('@/views/system/monitor/WebSocket.vue'),
     meta: {
-      title: '基础配置',
-      icon: 'Setting',
-      requiresAuth: true,
-      roles: ['SUPER', 'ADMIN'],
-      menuGroup: '系统管理',
-    },
-  },
-  {
-    path: 'logs/operations',
-    name: 'SystemLogOperations',
-    component: () => import('@/views/system/logs/Operation.vue'),
-    meta: {
-      title: '操作日志',
-      icon: 'Document',
-      requiresAuth: true,
-      roles: ['SUPER'],
-      menuGroup: '系统管理',
-    },
-  },
-  {
-    path: 'logs/logins',
-    name: 'SystemLogLogins',
-    component: () => import('@/views/system/logs/Login.vue'),
-    meta: {
-      title: '登录日志',
-      icon: 'Lock',
+      title: '消息监控',
+      icon: 'Connection',
       requiresAuth: true,
       roles: ['SUPER'],
       menuGroup: '系统管理',
@@ -246,9 +210,20 @@ export const hiddenSystemRoutes = [
     },
   },
   {
+    path: 'account/profile',
+    name: 'AdminProfile',
+    component: () => import('@/views/system/account/Profile.vue'),
+    meta: {
+      title: '个人中心',
+      requiresAuth: true,
+      roles: ['SUPER', 'ADMIN'],
+      hidden: true,
+    },
+  },
+  {
     path: 'account/password',
-    name: 'SystemPassword',
-    component: () => import('@/views/system/Password.vue'),
+    name: 'AdminPassword',
+    component: () => import('@/views/system/account/Profile.vue'),
     meta: {
       title: '修改密码',
       requiresAuth: true,

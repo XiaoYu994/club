@@ -38,7 +38,20 @@ service.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
     if (!config.skipAuth && authStore.token) {
-      config.headers.Authorization = `Bearer ${authStore.token}`
+      // 根据URL路径判断使用不同的请求头名称
+      // 管理员API使用 'token' 请求头，用户API使用 'authentication' 请求头
+      const url = config.url || ''
+      const baseURL = config.baseURL || service.defaults.baseURL || ''
+      const fullUrl = url.startsWith('http') ? url : `${baseURL}${url}`
+      
+      // 判断是否为管理员接口（/admin路径）
+      if (url.includes('/admin') || fullUrl.includes('/admin')) {
+        // 管理员接口使用 'token' 请求头
+        config.headers.token = `Bearer ${authStore.token}`
+      } else {
+        // 其他接口使用 'authentication' 请求头（兼容用户端）
+        config.headers.authentication = `Bearer ${authStore.token}`
+      }
     }
     config.headers['ngrok-skip-browser-warning'] = 'true'
     return config

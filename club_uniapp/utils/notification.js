@@ -65,6 +65,21 @@ export function showNotification(options = {}) {
       color: '#ff9800',
       defaultTitle: '活动提醒',
     },
+    admin_notification: {
+      icon: 'notification-filled',
+      color: '#3b82f6',
+      defaultTitle: '管理员通知',
+    },
+    admin_message: {
+      icon: 'chat-filled',
+      color: '#3b82f6',
+      defaultTitle: '管理员消息',
+    },
+    system_broadcast: {
+      icon: 'sound-filled',
+      color: '#ff9800',
+      defaultTitle: '系统广播',
+    },
     default: {
       icon: 'notification-filled',
       color: '#3b82f6',

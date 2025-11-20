@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="65677063-042d-4bb1-9d2d-89d645797967" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/controller/admin/AdminActivityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/controller/admin/AdminActivityController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/controller/admin/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/controller/admin/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/controller/admin/WebSocketDebugController.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/controller/admin/WebSocketDebugController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/AdminDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/AdminDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/ClubDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/ClubDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/ClubRecruitmentConfigPageDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/ClubRecruitmentConfigPageDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/ClubUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/ClubUpdateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/NoticePageDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/dto/NoticePageDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/AdminLoginVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/AdminLoginVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/ClubActivityVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/ClubActivityVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/ClubInfoVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/ClubInfoVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/StatisticsVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/entity/vo/StatisticsVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/mapper/ClubInfoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/mapper/ClubInfoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/IAdminService.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/IAdminService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/IClubActivityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/IClubActivityService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/AdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/AdminServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/ClubActivityServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/ClubActivityServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/ClubInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/ClubInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/ClubRecruitmentConfigServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/ClubRecruitmentConfigServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/SystemAnnouncementServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/src/main/java/com/hngy/service/impl/SystemAnnouncementServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/META-INF/spring-configuration-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/META-INF/spring-configuration-metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/ClubJavaApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/ClubJavaApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ActivityConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ActivityConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ApplyStatusConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ApplyStatusConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ClubInfoConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ClubInfoConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ClubMemberConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ClubMemberConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/HttpsConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/HttpsConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/JwtClaimsConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/JwtClaimsConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/MessageConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/MessageConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/NoticeConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/NoticeConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/NotificationConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/NotificationConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/RecruitmentConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/RecruitmentConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ResponseMessageConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/ResponseMessageConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/StatusConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/constant/StatusConstant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/context/BaseContext.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/context/BaseContext.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/exception/GlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/exception/GlobalExceptionHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/exception/ServiceException.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/exception/ServiceException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/page/PageParam.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/page/PageParam.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/properties/JwtProperties.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/properties/JwtProperties.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/properties/WeChatProperties.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/properties/WeChatProperties.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/result/PageResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/result/PageResult.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/result/R.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/result/R.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/result/ResultCode.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/result/ResultCode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/utils/HttpClientUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/utils/HttpClientUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/utils/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/common/utils/JwtUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/JsonConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/JsonConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/MybatisPlusConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/MybatisPlusConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/WebMvcConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/WebMvcConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/WebSocketConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/config/WebSocketConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/CommonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/CommonController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminActivityController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminActivityController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminClubController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminClubController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminNoticeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminNoticeController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminRecruitmentConfigController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminRecruitmentConfigController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminRecruitmentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminRecruitmentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminUserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/AdminUserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/WebSocketDebugController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/admin/WebSocketDebugController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ChatController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ChatController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ChatRestController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ChatRestController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ClubActivityController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ClubActivityController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ClubInfoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ClubInfoController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ClubRecruitmentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/ClubRecruitmentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/NoticeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/NoticeController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/UserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/UserNotificationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/controller/user/UserNotificationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ActivityStatusDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ActivityStatusDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminLoginDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminLoginDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminPageDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminPageDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminStatusDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/AdminStatusDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ChatMessageDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ChatMessageDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/CheckInResultDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/CheckInResultDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubActivityApplyDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubActivityApplyDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubActivityDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubActivityDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubInfoDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubInfoDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubMemberDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubMemberDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubOrderDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubOrderDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubRecruitmentConfigPageDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubRecruitmentConfigPageDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubStatusDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubStatusDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubUpdateDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ClubUpdateDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/CreateRecruitmentDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/CreateRecruitmentDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/NoticeDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/NoticeDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/NoticePageDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/NoticePageDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/PasswordUpdateDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/PasswordUpdateDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/RecruitmentAuditDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/RecruitmentAuditDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/RecruitmentConfigDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/RecruitmentConfigDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ReviewApplyDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/ReviewApplyDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/SingCodeDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/SingCodeDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UpdateRoleDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UpdateRoleDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UpdateStatusDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UpdateStatusDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UserDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UserDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UserPageDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UserPageDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UserStatusDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/UserStatusDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/userLoginDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/dto/userLoginDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/Admin.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/Admin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubActivity.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubActivity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubActivityApply.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubActivityApply.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubApply.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubApply.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubChatGroup.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubChatGroup.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubChatGroupMember.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubChatGroupMember.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubChatMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubChatMessage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubMember.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubMember.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubRecruitment.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubRecruitment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubRecruitmentConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/ClubRecruitmentConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/SignCodeInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/SignCodeInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/SystemAnnouncement.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/SystemAnnouncement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/User$UserBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/User$UserBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/UserNotification.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/UserNotification.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/WxSession$WxSessionBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/WxSession$WxSessionBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/WxSession.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/po/WxSession.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ActivityDetailVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ActivityDetailVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ActivityStatsVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ActivityStatsVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/AdminLoginVO$AdminLoginVOBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/AdminLoginVO$AdminLoginVOBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/AdminLoginVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/AdminLoginVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/AdminVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/AdminVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ChatGroupMemberVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ChatGroupMemberVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ChatGroupVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ChatGroupVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ChatMessageVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ChatMessageVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/CheckInResultVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/CheckInResultVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubActivityApplyVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubActivityApplyVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubActivityVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubActivityVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubApplyListVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubApplyListVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubDetailVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubDetailVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubInfoVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubInfoVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubMemberVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/ClubMemberVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/MyClubApplyVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/MyClubApplyVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/NoticeVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/NoticeVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/RecruitmentAuditVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/RecruitmentAuditVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/RecruitmentConfigVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/RecruitmentConfigVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/RecruitmentVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/RecruitmentVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/SignCodeVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/SignCodeVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/StatisticsVO$StatisticsVOBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/StatisticsVO$StatisticsVOBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/StatisticsVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/StatisticsVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/UserLoginVO$UserLoginVOBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/UserLoginVO$UserLoginVOBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/UserLoginVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/UserLoginVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/UserVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/entity/vo/UserVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/interceptor/JwtTokenAdminInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/interceptor/JwtTokenAdminInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/interceptor/JwtTokenUserInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/interceptor/JwtTokenUserInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/interceptor/WebSocketInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/interceptor/WebSocketInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/AdminMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/AdminMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubActivityApplyMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubActivityApplyMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubActivityMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubActivityMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubApplyMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubApplyMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubChatGroupMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubChatGroupMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubChatGroupMemberMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubChatGroupMemberMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubChatMessageMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubChatMessageMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubInfoMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubInfoMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubMemberMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubMemberMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubRecruitmentConfigMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubRecruitmentConfigMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubRecruitmentMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/ClubRecruitmentMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/SystemAnnouncementMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/SystemAnnouncementMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/UserMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/UserMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/UserNotificationMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/mapper/UserNotificationMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/scheduled/StatusUpdateScheduledTask.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/scheduled/StatusUpdateScheduledTask.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IAdminService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IAdminService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IChatService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IChatService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubActivityService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubActivityService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubApplyService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubApplyService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubChatGroupMemberService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubChatGroupMemberService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubChatGroupService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubChatGroupService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubChatMessageService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubChatMessageService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubInfoService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubInfoService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubMemberService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubMemberService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubRecruitmentConfigService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubRecruitmentConfigService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubRecruitmentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IClubRecruitmentService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/ISystemAnnouncementService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/ISystemAnnouncementService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IUserNotificationService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IUserNotificationService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IUserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/IUserService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/AdminServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/AdminServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ChatServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ChatServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubActivityServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubActivityServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubApplyServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubApplyServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubChatGroupMemberServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubChatGroupMemberServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubChatGroupServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubChatGroupServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubChatMessageServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubChatMessageServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubInfoServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubInfoServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubMemberServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubMemberServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubRecruitmentConfigServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubRecruitmentConfigServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubRecruitmentServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/ClubRecruitmentServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/SystemAnnouncementServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/SystemAnnouncementServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/UserNotificationServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/UserNotificationServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/service/impl/UserServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/classes/com/hngy/websocket/ChatWebSocketHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/classes/com/hngy/websocket/ChatWebSocketHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/club_java/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_java/target/test-classes/com/hngy/ClubJavaApplicationTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_uniapp/unpackage/dist/dev/.sourcemap/mp-weixin/pages/club/topTen.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/club_uniapp/unpackage/dist/dev/.sourcemap/mp-weixin/pages/club/topTen.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_uniapp/unpackage/dist/dev/mp-weixin/common/vendor.js" beforeDir="false" afterPath="$PROJECT_DIR$/club_uniapp/unpackage/dist/dev/mp-weixin/common/vendor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/api/system/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/api/system/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/layouts/SystemAdminLayout.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/layouts/SystemAdminLayout.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/router/routes/system.js" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/router/routes/system.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/utils/format.js" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/utils/format.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/utils/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/utils/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/Dashboard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/Dashboard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/activities/Detail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/activities/Detail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/activities/List.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/activities/List.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/admins/List.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/admins/List.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/clubs/ClubDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/clubs/ClubDetail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/clubs/List.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/clubs/List.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/notices/List.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/notices/List.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/recruitment/Audit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/recruitment/Audit.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/recruitment/AuditDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/recruitment/AuditDetail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/recruitment/ConfigForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/recruitment/ConfigForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/recruitment/Configs.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/recruitment/Configs.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/settings/Base.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/settings/Base.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/users/Detail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/users/Detail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/club_web/src/views/system/users/List.vue" beforeDir="false" afterPath="$PROJECT_DIR$/club_web/src/views/system/users/List.vue" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="35j2p42YEaoXoqMFe8LSYxctZZh" />
+  <component name="ProjectViewState">
+    <option name="abbreviatePackageNames" value="true" />
+    <option name="flattenModules" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/CODE/capstone-project/club-master/club",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.27397.103" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="65677063-042d-4bb1-9d2d-89d645797967" name="更改" comment="" />
+      <created>1763609339690</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763609339690</updated>
+      <workItem from="1763609341611" duration="63000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

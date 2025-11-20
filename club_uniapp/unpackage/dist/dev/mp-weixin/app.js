@@ -155,14 +155,16 @@ const _sfc_main = {
         // 退社申请拒绝（通知用户）
         "system_broadcast_notification",
         // 系统广播通知
-        "admin_notification_notification"
+        "admin_notification_notification",
         // 管理员通知
+        "admin_message_notification"
+        // 管理员指定消息
       ];
       notificationTypes.forEach((type) => {
         utils_websocket.wsClient.onMessageType(type, handleNotification);
-        common_vendor.index.__f__("log", "at App.vue:135", `【App】已注册通知类型: ${type}`);
+        common_vendor.index.__f__("log", "at App.vue:136", `【App】已注册通知类型: ${type}`);
       });
-      common_vendor.index.__f__("log", "at App.vue:138", "【App】全局通知处理器注册完成");
+      common_vendor.index.__f__("log", "at App.vue:139", "【App】全局通知处理器注册完成");
     },
     // 触发全局事件（供其他页面监听状态变化）
     emitNotificationEvent(message) {
@@ -248,18 +250,18 @@ const _sfc_main = {
               index: 3,
               text: badgeText
             });
-            common_vendor.index.__f__("log", "at App.vue:238", "【TabBar】更新红点数量:", badgeText);
+            common_vendor.index.__f__("log", "at App.vue:239", "【TabBar】更新红点数量:", badgeText);
           },
           fail: () => {
             common_vendor.index.setTabBarBadge({
               index: 3,
               text: "1"
             });
-            common_vendor.index.__f__("log", "at App.vue:246", "【TabBar】设置红点数量: 1");
+            common_vendor.index.__f__("log", "at App.vue:247", "【TabBar】设置红点数量: 1");
           }
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at App.vue:250", "【TabBar】更新红点失败:", error);
+        common_vendor.index.__f__("error", "at App.vue:251", "【TabBar】更新红点失败:", error);
       }
     }
   }

@@ -29,21 +29,27 @@
           :collapse-transition="false"
           class="system-menu"
           router
+          :unique-opened="false"
         >
-          <template v-for="group in menuGroups" :key="group.name">
-            <el-menu-item-group>
+          <template v-for="group in menuGroups">
+            <el-menu-item-group v-if="!isCollapsed" :key="`group-${group.name}`">
               <template #title>
-                <span v-if="!isCollapsed" class="menu-group-title">{{ group.name }}</span>
-              </template>
-              <template v-for="item in group.items" :key="item.path">
-                <el-menu-item :index="`/${item.path}`">
-                  <el-icon v-if="item.meta?.icon">
-                    <component :is="item.meta.icon" />
-                  </el-icon>
-                  <span>{{ item.meta?.title }}</span>
-                </el-menu-item>
+                <span class="menu-group-title">{{ group.name }}</span>
               </template>
             </el-menu-item-group>
+              <el-menu-item 
+                v-for="item in group.items" 
+                :key="item.path"
+                :index="`/${item.path}`" 
+                class="menu-item"
+              >
+                <el-icon>
+                  <component :is="item.meta?.icon || 'Menu'" />
+                  </el-icon>
+                <template #title>
+                  <span>{{ item.meta?.title }}</span>
+                </template>
+                </el-menu-item>
           </template>
         </el-menu>
       </el-scrollbar>
@@ -65,18 +71,9 @@
         </div>
 
         <div class="header-right">
-          <el-input
-            v-model="searchKeyword"
-            placeholder="搜索功能或社团..."
-            class="header-search"
-            :prefix-icon="Search"
-            clearable
-            @keyup.enter="handleSearch"
-          />
-
           <div class="role-badges" v-if="roleBadges.length">
             <el-tag v-for="tag in roleBadges" :key="tag" effect="plain" size="small">
-              {{ tag }}
+              {{ getRoleLabel(tag) }}
             </el-tag>
           </div>
 
@@ -91,7 +88,6 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="profile">个人中心</el-dropdown-item>
-                <el-dropdown-item command="password">修改密码</el-dropdown-item>
                 <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -116,7 +112,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { Search, ArrowDown, Expand, Fold } from '@element-plus/icons-vue'
+import { ArrowDown, Expand, Fold } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { systemMenuRoutes } from '@/router/routes/system'
 import brandLogo from '@/assets/logo.svg'
@@ -126,7 +122,6 @@ const route = useRoute()
 const router = useRouter()
 
 const isCollapsed = ref(false)
-const searchKeyword = ref('')
 
 const brandLogoUrl = brandLogo
 
@@ -178,22 +173,19 @@ const goDashboard = () => {
   router.push('/dashboard')
 }
 
-const handleSearch = () => {
-  const keyword = searchKeyword.value.trim()
-  if (!keyword) return
-  const target = availableMenus.value.find((item) => item.meta?.title.includes(keyword))
-  if (target) {
-    router.push(`/${target.path}`)
-    searchKeyword.value = ''
-  } else {
-    ElMessage.info('未找到匹配的功能')
+const getRoleLabel = (role) => {
+  const roleMap = {
+    'SUPER': '超级管理员',
+    'ADMIN': '管理员',
+    'USER': '普通用户'
   }
+  return roleMap[role] || role
 }
 
 const handleCommand = async (command) => {
   switch (command) {
     case 'profile':
-      router.push('/dashboard')
+      router.push('/account/profile')
       break
     case 'password':
       router.push('/account/password')
@@ -228,16 +220,19 @@ const handleCommand = async (command) => {
 .layout-aside {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(148, 163, 184, 0.2);
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.1), rgba(241, 245, 249, 0.6));
+  border-right: 1px solid rgba(148, 163, 184, 0.15);
+  background: #ffffff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
 }
 
 .brand {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 16px 12px;
+  padding: 16px;
   min-height: 64px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  background: #ffffff;
 }
 
 .brand-logo {
@@ -277,32 +272,58 @@ const handleCommand = async (command) => {
 }
 
 .menu-group-title {
-  padding: 16px 18px 8px;
+  padding: 12px 20px 8px;
   font-size: 12px;
-  letter-spacing: 1px;
-  color: var(--text-color-placeholder);
+  letter-spacing: 0.5px;
+  color: rgba(100, 116, 139, 0.8);
   text-transform: uppercase;
+  font-weight: 600;
 }
 
 .system-menu {
   border-right: none;
   background-color: transparent;
+  padding: 8px 0;
 }
 
 .system-menu :deep(.el-menu-item) {
-  margin: 4px 12px;
-  border-radius: 10px;
+  margin: 2px 12px;
+  border-radius: 8px;
   color: var(--text-color-secondary);
+  height: 44px;
+  line-height: 44px;
+  padding-left: 20px !important;
+  transition: all 0.2s ease;
+}
+
+.system-menu :deep(.el-menu-item:hover) {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: var(--text-color-primary);
 }
 
 .system-menu :deep(.el-menu-item.is-active) {
-  background: linear-gradient(90deg, rgba(148, 163, 184, 0.2), rgba(148, 163, 184, 0.05));
-  color: var(--primary-color, #1f6feb);
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.08));
+  color: #6366f1;
   font-weight: 600;
+  border-left: 3px solid #6366f1;
+}
+
+.system-menu :deep(.el-menu-item .el-icon) {
+  margin-right: 12px;
+  font-size: 18px;
+  width: 20px;
+}
+
+.system-menu :deep(.el-menu-item-group__title) {
+  padding: 12px 20px 8px;
+}
+
+.system-menu :deep(.el-menu-item-group) {
+  margin-bottom: 4px;
 }
 
 .layout-main {
-  background: linear-gradient(120deg, rgba(232, 241, 255, 0.6), rgba(249, 250, 251, 0.8));
+  background: #f5f7fa;
 }
 
 .layout-header {
@@ -327,9 +348,6 @@ const handleCommand = async (command) => {
   gap: 16px;
 }
 
-.header-search {
-  width: 240px;
-}
 
 .role-badges {
   display: flex;
@@ -349,7 +367,8 @@ const handleCommand = async (command) => {
 }
 
 .layout-content {
-  padding: 20px 28px 32px;
+  padding: 24px;
+  min-height: calc(100vh - 64px);
 }
 
 .fade-transform-enter-active,
